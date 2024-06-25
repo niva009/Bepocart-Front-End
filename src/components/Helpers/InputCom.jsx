@@ -3,7 +3,6 @@ export default function InputCom({
   type,
   name,
   placeholder,
-  children,
   inputHandler,
   value,
   inputClasses,
@@ -13,24 +12,22 @@ export default function InputCom({
     <div className="input-com w-full h-full">
       {label && (
         <label
-          className={`input-label capitalize block  mb-2 ${labelClasses || ""}`}
+          className={`input-label capitalize block mb-2 ${labelClasses || ""}`}
           htmlFor={name}
         >
           {label}
         </label>
       )}
-      <div className="input-wrapper border border-qgray-border w-full h-full overflow-hidden relative ">
+      <div className="input-wrapper border border-qgray-border w-full h-full overflow-hidden relative">
         <input
           placeholder={placeholder}
           value={value}
           onChange={inputHandler}
-          className={`input-field placeholder:text-sm text-sm px-6 text-dark-gray w-full h-full font-normal bg-white focus:ring-0 focus:outline-none ${
-            inputClasses || ""
-          }`}
+          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${inputClasses}`}
           type={type}
           id={name}
+          name={name}
         />
-        {children && children}
       </div>
     </div>
   );

@@ -3,6 +3,8 @@ import ThinBag from "../../../Helpers/icons/ThinBag";
 import Middlebar from "./Middlebar";
 import Navbar from "./Navbar";
 import TopBar from "./TopBar";
+import Logo from '../../../../assets/bepocart.png';
+
 
 export default function HeaderOne({ className, drawerAction, type = 1 }) {
   return (
@@ -58,9 +60,7 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
                 <img
                   width="152"
                   height="36"
-                  src={`${
-                    import.meta.env.VITE_PUBLIC_URL
-                  }/assets/images/logo.svg`}
+                  src={Logo}
                   alt="logo"
                 />
               </Link>

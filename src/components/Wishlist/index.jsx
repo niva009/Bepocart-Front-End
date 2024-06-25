@@ -4,6 +4,7 @@ import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
 import ProductsTable from "./ProductsTable";
 
+
 export default function Wishlist({ wishlist = true }) {
   return (
     <Layout childrenClasses={wishlist ? "pt-0 pb-0" : ""}>

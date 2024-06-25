@@ -5,6 +5,7 @@ import ThinLove from "../../../Helpers/icons/ThinLove";
 import ThinPeople from "../../../Helpers/icons/ThinPeople";
 import SearchBox from "../../../Helpers/SearchBox";
 import { Link } from "react-router-dom";
+import Logo from '../../../../assets/bepocart.png';
 
 export default function Middlebar({ className, type }) {
   return (
@@ -18,9 +19,7 @@ export default function Middlebar({ className, type }) {
                   <img
                     width="152"
                     height="36"
-                    src={`${
-                      import.meta.env.VITE_PUBLIC_URL
-                    }/assets/images/logo-3.svg`}
+                    src={Logo}
                     alt="logo"
                   />
                 </Link>
@@ -40,9 +39,7 @@ export default function Middlebar({ className, type }) {
                   <img
                     width="152"
                     height="36"
-                    src={`${
-                      import.meta.env.VITE_PUBLIC_URL
-                    }/assets/images/logo.svg`}
+                    src={Logo}
                     alt="logo"
                   />
                 </Link>

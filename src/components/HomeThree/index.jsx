@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import axios from "axios"; // Import axios if using for API calls
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import LayoutHomeThree from "../Partials/LayoutHomeThree";
 import Banner from "./Banner";
 import BrandSection from "./BrandSection";
@@ -14,20 +14,40 @@ import SectionStyleFour from "../Helpers/SectionStyleFour";
 export default function HomeThree() {
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [recommendedProducts, setRecommendedProducts] = useState([]);
+  const [banners, setBanners] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/products/");
-        console.log("Data    :",response.data)
-        const { products } = response.data;
+        // Fetch all products
+        const productsResponse = await axios.get("http://127.0.0.1:8000/products/");
+        console.log("All Products Data:", productsResponse.data);
+        const { products } = productsResponse.data;
         const brands = products.map(product => product.brand);
         setProducts(products);
         setBrands(brands);
+
+        // Fetch recommended products with authorization token
+        const token = localStorage.getItem('token');
+        console.log("token", token);
+        const recommendedResponse = await axios.get("http://127.0.0.1:8000/recommended/", {
+          headers: {
+            'Authorization': `${token}`,
+          },
+        });
+        console.log("Recommended Products Data:", recommendedResponse.data.data);
+        setRecommendedProducts(recommendedResponse.data.data);
+
+        // Fetch banners data
+        const bannersResponse = await axios.get("http://127.0.0.1:8000/offer-banner/");
+        console.log("Banners Data:", bannersResponse.data.banner);
+        setBanners(bannersResponse.data.banner);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -42,13 +62,13 @@ export default function HomeThree() {
         />
         <SectionStyleThree
           type={3}
-          products={products}
-          sectionTitle="RECOMEND FOR YOU"
+          products={recommendedProducts}
+          sectionTitle="recomended for you"
           seeMoreUrl="/all-products"
           className="new-products mb-[60px]"
         />
         <ProductsAds
-          ads={[`${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-3.png`]}
+          ads={banners}
           className="products-ads-section mb-[60px]"
         />
 
@@ -57,7 +77,7 @@ export default function HomeThree() {
           products={products}
           brands={brands}
           categoryTitle="Mobile & Tablet"
-          sectionTitle="OFFER FOR YOU"
+          sectionTitle="New Arrivals"
           seeMoreUrl="/all-products"
           className="category-products mb-[60px]"
         />

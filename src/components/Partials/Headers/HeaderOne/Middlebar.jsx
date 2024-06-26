@@ -57,7 +57,7 @@ export default function Middlebar({ className, type }) {
                 </Link>
                 <span
                   className={`w-[18px] h-[18px] rounded-full  absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] ${
-                    type === 3 ? "bg-qh3-blue text-white" : "bg-qyellow"
+                    type === 3 ? "bg-qh3-blue text-white" : "bg-qh3-blue"
                   }`}
                 >
                   2
@@ -71,7 +71,7 @@ export default function Middlebar({ className, type }) {
                 </Link>
                 <span
                   className={`w-[18px] h-[18px] rounded-full  absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] ${
-                    type === 3 ? "bg-qh3-blue text-white" : "bg-qyellow"
+                    type === 3 ? "bg-qh3-blue text-white" : "bg-qh3-blue"
                   }`}
                 >
                   1
@@ -86,7 +86,7 @@ export default function Middlebar({ className, type }) {
                   </Link>
                   <span
                     className={`w-[18px] h-[18px] rounded-full  absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] ${
-                      type === 3 ? "bg-qh3-blue text-white" : "bg-qyellow"
+                      type === 3 ? "bg-qh3-blue text-white" : "bg-qh3-blue"
                     }`}
                   >
                     15

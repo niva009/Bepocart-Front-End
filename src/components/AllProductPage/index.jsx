@@ -1,10 +1,11 @@
-import { useState } from "react";
-import productDatas from "../../data/products.json";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import BreadcrumbCom from "../BreadcrumbCom";
 import ProductCardStyleOne from "../Helpers/Cards/ProductCardStyleOne";
 import DataIteration from "../Helpers/DataIteration";
 import Layout from "../Partials/Layout";
 import ProductsFilter from "./ProductsFilter";
+import axios from "axios";
 
 export default function AllProductPage() {
   const [filters, setFilter] = useState({
@@ -34,6 +35,11 @@ export default function AllProductPage() {
     sizeXXL: false,
     sizeFit: false,
   });
+  const { id } = useParams(); 
+  const navigate = useNavigate(); 
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const checkboxHandler = (e) => {
     const { name } = e.target;
@@ -44,13 +50,43 @@ export default function AllProductPage() {
   };
   const [volume, setVolume] = useState({ min: 200, max: 500 });
 
+  console.log(id);
+
   const [storage, setStorage] = useState(null);
   const filterStorage = (value) => {
     setStorage(value);
   };
   const [filterToggle, setToggle] = useState(false);
 
-  const { products } = productDatas;
+  useEffect(() => {
+    const fetchProductsByCategory = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`http://127.0.0.1:8000/subcategory/${id}/`, {
+          headers: {
+            'Authorization': `${token}`,
+          },
+        });
+        console.log("Category ID:", id); 
+        console.log("Response Data:", response.data.products);
+        setProducts(response.data.products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          navigate('/login'); 
+        } else {
+          setError("Error fetching products");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProductsByCategory(); // Fetch products if id is available
+    }
+  }, [id, navigate]);
 
   return (
     <>
@@ -74,9 +110,8 @@ export default function AllProductPage() {
                 {/* ads */}
                 <div className="w-full hidden lg:block h-[295px]">
                   <img
-                    src={`${
-                      import.meta.env.VITE_PUBLIC_URL
-                    }/assets/images/ads-5.png`}
+                    src={`${import.meta.env.VITE_PUBLIC_URL
+                      }/assets/images/ads-5.png`}
                     alt=""
                     className="w-full h-full object-contain"
                   />
@@ -143,9 +178,8 @@ export default function AllProductPage() {
 
                 <div className="w-full h-[164px] overflow-hidden mb-[40px]">
                   <img
-                    src={`${
-                      import.meta.env.VITE_PUBLIC_URL
-                    }/assets/images/ads-6.png`}
+                    src={`${import.meta.env.VITE_PUBLIC_URL
+                      }/assets/images/ads-6.png`}
                     alt=""
                     className="w-full h-full object-contain"
                   />

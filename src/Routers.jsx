@@ -25,8 +25,8 @@ import HomeThree from "./components/HomeThree";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeThree /> },
-  { path: "/all-products", element: <AllProductPage /> },
-  { path: "/single-product", element: <SingleProductPage /> },
+  { path: "/category/:id", element: <AllProductPage /> },
+  { path: "/single-product/:id", element: <SingleProductPage /> },
   { path: "/cart", element: <CardPage /> },
   { path: "/checkout", element: <CheakoutPage /> },
   { path: "/wishlist", element: <Wishlist /> },

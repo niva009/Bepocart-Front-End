@@ -32,7 +32,7 @@ export default function ProductCardRowStyleTwo({ className, datas, type }) {
                 </span>
               ))}
             </div>
-            <Link to="/single-product">
+            <Link to={`/single-product/${datas.id}/`}>
               <p className="title mb-2 sm:text-[15px] text-[13px] font-600 text-qblack leading-[24px] line-clamp-2 hover:text-blue-600">
                 {datas.name}
               </p>

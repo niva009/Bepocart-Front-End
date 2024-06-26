@@ -54,7 +54,7 @@ export default function Banner({ className }) {
                 <div
                   className="w-full h-full relative"
                   style={{
-                    backgroundImage: `url(https://talent-johnston-murray-bone.trycloudflare.com${item.image})`,
+                    backgroundImage: `url(http://127.0.0.1:8000${item.image})`,
                     backgroundRepeat: "no-repeat",
                     backgroundSize: "cover",
                   }}

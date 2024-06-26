@@ -10,12 +10,16 @@ import SectionStyleTwo from "../Helpers/SectionStyleTwo";
 import ViewMoreTitle from "../Helpers/ViewMoreTitle";
 import CampaignCountDown from "./CampaignCountDown";
 import SectionStyleFour from "../Helpers/SectionStyleFour";
+import offerBanner1 from "../../assets/ads-1.png";
+import offerBanner2 from "../../assets/ads-2.png";
+import flashsale from "../../assets/flash-sale-ads.png";
 
 export default function HomeThree() {
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [banners, setBanners] = useState([]);
+  const [offerProduct, setOfferProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,10 +31,13 @@ export default function HomeThree() {
         const brands = products.map(product => product.brand);
         setProducts(products);
         setBrands(brands);
+      } catch (error) {
+        console.error("Error fetching all products:", error);
+      }
 
+      try {
         // Fetch recommended products with authorization token
         const token = localStorage.getItem('token');
-        console.log("token", token);
         const recommendedResponse = await axios.get("http://127.0.0.1:8000/recommended/", {
           headers: {
             'Authorization': `${token}`,
@@ -38,13 +45,26 @@ export default function HomeThree() {
         });
         console.log("Recommended Products Data:", recommendedResponse.data.data);
         setRecommendedProducts(recommendedResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching recommended products:", error);
+      }
 
+      try {
         // Fetch banners data
         const bannersResponse = await axios.get("http://127.0.0.1:8000/offer-banner/");
         console.log("Banners Data:", bannersResponse.data.banner);
         setBanners(bannersResponse.data.banner);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching banners:", error);
+      }
+
+      try {
+        // Fetch offer products
+        const offerProductResponse = await axios.get("http://127.0.0.1:8000/buy-1-get-1/");
+        console.log("Offer Products Data:", offerProductResponse.data.data);
+        setOfferProducts(offerProductResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching offer products:", error);
       }
     };
 
@@ -60,18 +80,19 @@ export default function HomeThree() {
           sectionTitle="Shop by Brand"
           className="brand-section-wrapper mb-[60px]"
         />
-        <SectionStyleThree
+        {/* <SectionStyleThree
           type={3}
           products={recommendedProducts}
-          sectionTitle="recomended for you"
+          sectionTitle="Recommended for you"
           seeMoreUrl="/all-products"
           className="new-products mb-[60px]"
         />
         <ProductsAds
-          ads={banners}
+          ads={[
+            flashsale
+          ]}
           className="products-ads-section mb-[60px]"
-        />
-
+        /> */}
         <SectionStyleOneHmThree
           type={3}
           products={products}
@@ -81,32 +102,27 @@ export default function HomeThree() {
           seeMoreUrl="/all-products"
           className="category-products mb-[60px]"
         />
-
         <ViewMoreTitle
           className="top-selling-product mb-[60px]"
           seeMoreUrl="/all-products"
-          categoryTitle="Top Selling Products"
+          categoryTitle="Buy One Get One"
         >
           <SectionStyleTwo
             type={3}
-            products={products.slice(3, products.length)}
+            products={offerProduct}
           />
         </ViewMoreTitle>
-
         <ProductsAds
           ads={[
-            `${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-1.png`,
-            `${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-2.png`,
+            offerBanner1, // Directly using the imported image
+            offerBanner2  // You can add more images like this
           ]}
-          sectionHeight="sm:h-[295px] h-full"
           className="products-ads-section mb-[60px]"
-        />
+        />;
         <SectionStyleOneHmThree
           type={3}
-          categoryBackground={`${
-            import.meta.env.VITE_PUBLIC_URL
-          }/assets/images/section-category-2.jpg`}
-          products={products.slice(4, products.length)}
+          categoryBackground={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/section-category-2.jpg`}
+          products={products.slice(20)}
           brands={brands}
           categoryTitle="Electronics"
           sectionTitle="Popular Sales"

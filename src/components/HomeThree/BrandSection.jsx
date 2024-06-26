@@ -3,6 +3,8 @@ import axios from 'axios';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Link } from "react-router-dom";
+
 
 export default function BrandSection({ className, sectionTitle, type }) {
   const [brands, setBrands] = useState([]);
@@ -67,18 +69,21 @@ export default function BrandSection({ className, sectionTitle, type }) {
 
         <Slider {...settings} className="brand-slider">
           {brands.map((brand) => (
-            <div key={brand.id} className="item">
-              <div className="w-full h-[130px] bg-white border border-primarygray flex justify-center items-center rounded-full overflow-hidden">
-                <img
-                  src={`${import.meta.env.VITE_PUBLIC_URL}${brand.image}`}
-                  alt={`${brand.name} logo`}
-                  className="max-w-full max-h-full object-contain"
-                />
+            <Link to={`/category/${brand.id}/`}>
+              <div key={brand.id} className="item">
+                <div className="w-full h-[130px] bg-white border border-primarygray flex justify-center items-center rounded-full overflow-hidden">
+                  <img
+                    src={`${import.meta.env.VITE_PUBLIC_URL}${brand.image}`}
+                    alt={`${brand.name} logo`}
+                    className="max-w-full max-h-full object-contain"
+                  />
+                </div>
+                <p className="mt-2 text-center text-sm font-medium text-qblacktext">
+                  {brand.name}
+                </p>
               </div>
-              <p className="mt-2 text-center text-sm font-medium text-qblacktext">
-                {brand.name}
-              </p>
-            </div>
+            </Link>
+
           ))}
         </Slider>
       </div>

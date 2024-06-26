@@ -37,7 +37,7 @@ export default function Navbar({ className, type }) {
 
   return (
     <div
-      className={`nav-widget-wrapper w-full h-[60px] relative z-30 ${type === 3 ? "bg-qh3-blue" : "bg-qyellow"
+      className={`nav-widget-wrapper w-full h-[60px] relative z-30 ${type === 3 ? "bg-qh3-blue" : "bg-qh3-blue"
         } ${className || ""}`}
     >
       <div className="container-x mx-auto h-full">

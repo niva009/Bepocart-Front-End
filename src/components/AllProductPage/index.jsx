@@ -35,6 +35,7 @@ export default function AllProductPage() {
     sizeXXL: false,
     sizeFit: false,
   });
+
   const { id } = useParams(); 
   const navigate = useNavigate(); 
   const [products, setProducts] = useState([]);
@@ -48,9 +49,8 @@ export default function AllProductPage() {
       [name]: !prevState[name],
     }));
   };
-  const [volume, setVolume] = useState({ min: 200, max: 500 });
 
-  console.log(id);
+  const [volume, setVolume] = useState({ min: 200, max: 500 });
 
   const [storage, setStorage] = useState(null);
   const filterStorage = (value) => {
@@ -84,7 +84,7 @@ export default function AllProductPage() {
     };
 
     if (id) {
-      fetchProductsByCategory(); // Fetch products if id is available
+      fetchProductsByCategory(); 
     }
   }, [id, navigate]);
 
@@ -122,8 +122,7 @@ export default function AllProductPage() {
                 <div className="products-sorting w-full bg-white md:h-[70px] flex md:flex-row flex-col md:space-y-0 space-y-5 md:justify-between md:items-center p-[30px] mb-[40px]">
                   <div>
                     <p className="font-400 text-[13px]">
-                      <span className="text-qgray"> Showing</span> 1–16 of 66
-                      results
+                      <span className="text-qgray"> Showing</span> 1–16 of {products.length} results
                     </p>
                   </div>
                   <div className="flex space-x-3 items-center">
@@ -167,16 +166,20 @@ export default function AllProductPage() {
                   </button>
                 </div>
                 <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1  xl:gap-[30px] gap-5 mb-[40px]">
-                  <DataIteration datas={products} startLength={0} endLength={6}>
-                    {({ datas }) => (
-                      <div data-aos="fade-up" key={datas.id}>
-                        <ProductCardStyleOne datas={datas} />
-                      </div>
-                    )}
-                  </DataIteration>
+                  {products && products.length > 0 ? (
+                    <DataIteration datas={products}>
+                      {({ datas }) => (
+                        <div data-aos="fade-up" key={datas.id}>
+                          <ProductCardStyleOne datas={datas} />
+                        </div>
+                      )}
+                    </DataIteration>
+                  ) : (
+                    <p>No products found</p>
+                  )}
                 </div>
 
-                <div className="w-full h-[164px] overflow-hidden mb-[40px]">
+                {/* <div className="w-full h-[164px] overflow-hidden mb-[40px]">
                   <img
                     src={`${import.meta.env.VITE_PUBLIC_URL
                       }/assets/images/ads-6.png`}
@@ -185,18 +188,18 @@ export default function AllProductPage() {
                   />
                 </div>
                 <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 xl:gap-[30px] gap-5 mb-[40px]">
-                  <DataIteration
-                    datas={products}
-                    startLength={6}
-                    endLength={15}
-                  >
-                    {({ datas }) => (
-                      <div data-aos="fade-up" key={datas.id}>
-                        <ProductCardStyleOne datas={datas} />
-                      </div>
-                    )}
-                  </DataIteration>
-                </div>
+                  {products && products.length > 0 ? (
+                    <DataIteration datas={products}>
+                      {({ datas }) => (
+                        <div data-aos="fade-up" key={datas.id}>
+                          <ProductCardStyleOne datas={datas} />
+                        </div>
+                      )}
+                    </DataIteration>
+                  ) : (
+                    <p>No products found</p>
+                  )}
+                </div> */}
               </div>
             </div>
           </div>

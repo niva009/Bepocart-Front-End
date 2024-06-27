@@ -1,12 +1,8 @@
-function DataIteration(props) {
-  const { datas = [], startLength, endLength, children } = props;
+function DataIteration({ datas = [], children }) {
   return (
     <>
       {datas &&
-        datas.length >= endLength &&
-        datas
-          .slice(startLength, endLength)
-          .map((value) => children({ datas: value }))}
+        datas.map((value) => children({ datas: value }))}
     </>
   );
 }

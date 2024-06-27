@@ -24,9 +24,7 @@ export default function HomeThree() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch all products
         const productsResponse = await axios.get("http://127.0.0.1:8000/products/");
-        console.log("All Products Data:", productsResponse.data);
         const { products } = productsResponse.data;
         const brands = products.map(product => product.brand);
         setProducts(products);
@@ -36,14 +34,12 @@ export default function HomeThree() {
       }
 
       try {
-        // Fetch recommended products with authorization token
         const token = localStorage.getItem('token');
-        const recommendedResponse = await axios.get("http://127.0.0.1:8000/recommended/", {
+        const recommendedResponse = await axios.get("http://127.0.0.1:8000/recently-viewed/", {
           headers: {
             'Authorization': `${token}`,
           },
         });
-        console.log("Recommended Products Data:", recommendedResponse.data.data);
         setRecommendedProducts(recommendedResponse.data.data);
       } catch (error) {
         console.error("Error fetching recommended products:", error);
@@ -52,7 +48,6 @@ export default function HomeThree() {
       try {
         // Fetch banners data
         const bannersResponse = await axios.get("http://127.0.0.1:8000/offer-banner/");
-        console.log("Banners Data:", bannersResponse.data.banner);
         setBanners(bannersResponse.data.banner);
       } catch (error) {
         console.error("Error fetching banners:", error);
@@ -60,8 +55,7 @@ export default function HomeThree() {
 
       try {
         // Fetch offer products
-        const offerProductResponse = await axios.get("http://127.0.0.1:8000/buy-1-get-1/");
-        console.log("Offer Products Data:", offerProductResponse.data.data);
+        const offerProductResponse = await axios.get("http://127.0.0.1:8000/buy-1-get-1-free/");
         setOfferProducts(offerProductResponse.data.data);
       } catch (error) {
         console.error("Error fetching offer products:", error);
@@ -80,7 +74,7 @@ export default function HomeThree() {
           sectionTitle="Shop by Brand"
           className="brand-section-wrapper mb-[60px]"
         />
-        {/* <SectionStyleThree
+        <SectionStyleThree
           type={3}
           products={recommendedProducts}
           sectionTitle="Recommended for you"
@@ -92,7 +86,7 @@ export default function HomeThree() {
             flashsale
           ]}
           className="products-ads-section mb-[60px]"
-        /> */}
+        />
         <SectionStyleOneHmThree
           type={3}
           products={products}
@@ -122,7 +116,7 @@ export default function HomeThree() {
         <SectionStyleOneHmThree
           type={3}
           categoryBackground={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/section-category-2.jpg`}
-          products={products.slice(20)}
+          products={products.slice(12)}
           brands={brands}
           categoryTitle="Electronics"
           sectionTitle="Popular Sales"

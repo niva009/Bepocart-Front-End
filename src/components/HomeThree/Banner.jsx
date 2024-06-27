@@ -66,7 +66,7 @@ export default function Banner({ className }) {
                           VR BOX 3D Glass
                         </p>
                         <h1 className="md:text-[66px] text-[40px]  font-bold text-black md:leading-[80px] leading-[40px] mb-[44px]">
-                          {item.name}
+                          {/* {item.name} */}
                         </h1>
 
                         <Link to="#" passhref="true">

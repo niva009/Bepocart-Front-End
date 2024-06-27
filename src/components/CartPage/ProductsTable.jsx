@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import InputQuantityCom from '../Helpers/InputQuantityCom'; // Assuming this is your input quantity component
-
+import axios from 'axios';
 export default function ProductsTable({ className }) {
   const [cartProducts, setCartProducts] = useState([]);
+  // const cartProductsMemoized = useMemo(() => cartProducts, [cartProducts]);
+
 
   useEffect(() => {
     const fetchCartProducts = async () => {
@@ -13,11 +15,12 @@ export default function ProductsTable({ className }) {
             Authorization: `${token}`,
           },
         });
+        console.log("Cart Data   :", response)
         if (!response.ok) {
           throw new Error('Failed to fetch cart products');
         }
         const data = await response.json();
-        setCartProducts(data.data); 
+        setCartProducts(data.data);
         console.log(data.data);
       } catch (error) {
         console.error('Error fetching cart products:', error);
@@ -25,7 +28,22 @@ export default function ProductsTable({ className }) {
     };
 
     fetchCartProducts();
-  }, []); 
+  }, []);
+
+  const handleDeleteProduct = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.delete(`http://127.0.0.1:8000/cart-delete/${id}/`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      setCartProducts(prevProducts => prevProducts.filter(product => product.id !== id));
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+  
 
   return (
     <div className={`w-full ${className || ''}`}>
@@ -96,9 +114,9 @@ export default function ProductsTable({ className }) {
                 </td>
                 <td className="text-right py-4">
                   <div className="flex space-x-1 items-center justify-center">
-                    <span>
-              remove
-                    </span>
+                    <button onClick={() => handleDeleteProduct(product.id)} className="text-[15px] font-normal text-red-600 hover:text-red-700 cursor-pointer">
+                      Remove
+                    </button>
                   </div>
                 </td>
               </tr>

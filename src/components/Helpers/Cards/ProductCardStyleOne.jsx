@@ -1,11 +1,24 @@
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import Compair from "../icons/Compair";
 import QuickViewIco from "../icons/QuickViewIco";
 import Star from "../icons/Star";
 import ThinLove from "../icons/ThinLove";
+import SelectOptionsModal from './SelectOptionsModal';
+import { toast } from 'react-toastify';
+import './modal-styles.css';
 
 export default function ProductCardStyleOne({ datas, type }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
+  console.log('ProductCardStyleOne datas:', datas);
+
+  if (!datas) {
+    return null;
+  }
+
   const available =
     (datas.cam_product_sale /
       (datas.cam_product_available + datas.cam_product_sale)) *
@@ -16,7 +29,7 @@ export default function ProductCardStyleOne({ datas, type }) {
       const token = localStorage.getItem('token');
       if (!token) {
         console.error("Token not found");
-        alert("Please login to add products to your wishlist.");
+        toast.error("Please login to add products to your wishlist.");
         return;
       }
 
@@ -34,9 +47,9 @@ export default function ProductCardStyleOne({ datas, type }) {
       );
 
       if (response.status === 201) {
-        alert("Product added to wishlist!");
+        toast.success("Product added to wishlist!");
       } else {
-        alert("Failed to add product to wishlist.");
+        toast.error("Failed to add product to wishlist.");
       }
     } catch (error) {
       console.error("Error adding product to wishlist:", error);
@@ -44,7 +57,49 @@ export default function ProductCardStyleOne({ datas, type }) {
         console.error("Error response data:", error.response.data);
         console.error("Error response status:", error.response.status);
       }
-      alert("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
+  const handleAddToCart = (productId) => {
+    setSelectedProductId(productId);
+    setIsModalOpen(true);
+  };
+
+  const addToCart = async (color, size) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error("Token not found");
+        toast.error("Please login to add products to your cart.");
+        return;
+      }
+
+      console.log("Token:", token);
+
+      const response = await axios.post(
+        `http://127.0.0.1:8000/cart/${selectedProductId}/`,
+        { color, size },
+        {
+          headers: {
+            'Authorization': `${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        toast.success("Product added to cart!");
+      } else {
+        toast.error("Failed to add product to cart.");
+      }
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+      }
+      toast.error("An error occurred. Please try again.");
     }
   };
 
@@ -56,13 +111,11 @@ export default function ProductCardStyleOne({ datas, type }) {
       <div
         className="product-card-img w-full h-[200px]"
         style={{
-          background: `url(${import.meta.env.VITE_PUBLIC_URL}${
-            datas.image
-          }) no-repeat center`,
-          backgroundSize: "cover", 
+          background: `url(${import.meta.env.VITE_PUBLIC_URL}${datas.image}) no-repeat center`,
+          backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          display: "flex", 
+          display: "flex",
         }}
       >
         {/* product available progress */}
@@ -82,9 +135,7 @@ export default function ProductCardStyleOne({ datas, type }) {
                   style={{
                     width: `${datas.campaingn_product ? 100 - available : 0}%`,
                   }}
-                  className={`h-full absolute left-0 top-0  ${
-                    type === 3 ? "bg-qh3-blue" : "bg-qyellow"
-                  }`}
+                  className={`h-full absolute left-0 top-0 ${type === 3 ? "bg-qh3-blue" : "bg-qyellow"}`}
                 ></div>
               </div>
             </div>
@@ -94,9 +145,7 @@ export default function ProductCardStyleOne({ datas, type }) {
         {datas.product_type && !datas.campaingn_product && (
           <div className="product-type absolute right-[14px] top-[17px]">
             <span
-              className={`text-[9px] font-700 leading-none py-[6px] px-3 uppercase text-white rounded-full tracking-wider ${
-                datas.product_type === "popular" ? "bg-[#19CC40]" : "bg-qyellow"
-              }`}
+              className={`text-[9px] font-700 leading-none py-[6px] px-3 uppercase text-white rounded-full tracking-wider ${datas.product_type === "popular" ? "bg-[#19CC40]" : "bg-qyellow"}`}
             >
               {datas.product_type}
             </span>
@@ -109,6 +158,7 @@ export default function ProductCardStyleOne({ datas, type }) {
           <button
             type="button"
             className={type === 3 ? "blue-btn" : "yellow-btn"}
+            onClick={() => handleAddToCart(datas.id)}
           >
             <div className="flex items-center space-x-3">
               <span>
@@ -127,11 +177,11 @@ export default function ProductCardStyleOne({ datas, type }) {
           </button>
         </div>
         <div className="reviews flex space-x-[5px] mb-3">
-          {Array.from(Array(datas.review), () => (
-            <span key={datas.review + Math.random()}>
+          {Array.from(Array(datas.review), (_, index) => (
+            <span key={index}>
               <div className="flex">
-              <Star />
-            </div>
+                <Star />
+              </div>
             </span>
           ))}
         </div>
@@ -150,15 +200,15 @@ export default function ProductCardStyleOne({ datas, type }) {
         </p>
       </div>
       {/* quick-access-btns */}
-      <div className="quick-access-btns flex flex-col space-y-2 absolute group-hover:right-4 -right-10 top-20  transition-all duration-300 ease-in-out">
-        <a href="#">
+      <div className="quick-access-btns flex flex-col space-y-2 absolute group-hover:right-4 -right-10 top-20 transition-all duration-300 ease-in-out">
+        <Link to={`/single-product/${datas.id}/`}>
           <span className="w-10 h-10 flex justify-center items-center bg-primarygray rounded">
             <QuickViewIco />
           </span>
-        </a>
+        </Link>
         <a href="#" onClick={() => addToWishlist(datas.id)}>
           <span className="w-10 h-10 flex justify-center items-center bg-primarygray rounded">
-            <ThinLove />   {/* Add product to wishlist */}
+            <ThinLove />
           </span>
         </a>
         <a href="#">
@@ -167,6 +217,12 @@ export default function ProductCardStyleOne({ datas, type }) {
           </span>
         </a>
       </div>
+
+      <SelectOptionsModal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        onAddToCart={addToCart}
+      />
     </div>
   );
 }

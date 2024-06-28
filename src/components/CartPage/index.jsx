@@ -6,7 +6,52 @@ import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
 import ProductsTable from "./ProductsTable";
 
+import { useEffect, useState } from 'react';
+
 export default function CardPage({ cart = true }) {
+  const [cartProducts, setCartProducts] = useState([]);
+  const [subtotal, setSubtotal] = useState(0);
+  const [shipping, setShipping] = useState(0);
+  const [discount, setDiscount] = useState(0);
+  const [total, setTotal] = useState(0);
+
+
+
+  useEffect(() => {
+    const fetchCartProducts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch('http://127.0.0.1:8000/cart-products/', {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch cart products');
+        }
+        const data = await response.json();
+        setCartProducts(data.data);
+        setSubtotal(data.TotalPrice ?? 0);
+        setShipping(data.Shipping ?? 0);
+        setDiscount(data.Discount ?? 0);
+        setTotal(data.Subtotal ?? 0);
+
+
+
+        console.log("Total     :",data.Subtotal);
+        console.log("Discount  :",data.Discount);
+        console.log("Shipping Charge   :",data.Shipping);
+        console.log("Sub total   :",data.TotalPrice);
+
+
+      } catch (error) {
+        console.error('Error fetching cart products:', error);
+      }
+    };
+
+    fetchCartProducts();
+  }, []);
+
   return (
     <Layout childrenClasses={cart ? "pt-0 pb-0" : ""}>
       {cart === false ? (
@@ -34,7 +79,7 @@ export default function CardPage({ cart = true }) {
           </div>
           <div className="w-full mt-[23px]">
             <div className="container-x mx-auto">
-              <ProductsTable className="mb-[30px]" />
+              <ProductsTable className="mb-[30px]" cartProducts={cartProducts} />
               <div className="w-full sm:flex justify-between">
                 <div className="discount-code sm:w-[270px] w-full mb-5 sm:mb-0 h-[50px] flex">
                   <div className="flex-1 h-full">
@@ -45,18 +90,16 @@ export default function CardPage({ cart = true }) {
                   </button>
                 </div>
                 <div className="flex space-x-2.5 items-center">
-                  <a href="#">
+                  <Link to="/">
                     <div className="w-[220px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
                       <span className="text-sm font-semibold">
                         Continue Shopping
                       </span>
                     </div>
-                  </a>
-                  <a href="#">
-                    <div className="w-[140px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
-                      <span className="text-sm font-semibold">Update Cart</span>
-                    </div>
-                  </a>
+                  </Link>
+                  <button type="button" className="w-[140px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
+                    <a href="/cart" className="text-sm font-semibold">Update Cart</a>
+                  </button>
                 </div>
               </div>
               <div className="w-full mt-[30px] flex sm:justify-end">
@@ -66,7 +109,7 @@ export default function CardPage({ cart = true }) {
                       <p className="text-[15px] font-medium text-qblack">
                         Subtotal
                       </p>
-                      <p className="text-[15px] font-medium text-qred">$365</p>
+                      <p className="text-[15px] font-medium text-qred">${subtotal.toFixed(2)}</p>
                     </div>
                     <div className="w-full h-[1px] bg-[#EDEDED]"></div>
                   </div>
@@ -78,106 +121,55 @@ export default function CardPage({ cart = true }) {
                       <li>
                         <div className="flex justify-between items-center">
                           <div className="flex space-x-2.5 items-center">
-                            <div className="input-radio">
+                            {/* <div className="input-radio">
                               <input
                                 type="radio"
                                 name="price"
                                 className="accent-pink-500"
                               />
-                            </div>
-                            <span className="text-[13px] text-normal text-qgraytwo">
-                              Free Shipping
+                            </div> */}
+                            <span className="text-[13px] text-normal text-green-500">
+                              Discount
                             </span>
                           </div>
-                          <span className="text-[13px] text-normal text-qgraytwo">
-                            +$00.00
+                          <span className="text-[13px] text-normal text-green-500">
+                            +${discount.toFixed(2)}
                           </span>
                         </div>
                       </li>
                       <li>
                         <div className="flex justify-between items-center">
                           <div className="flex space-x-2.5 items-center">
-                            <div className="input-radio">
+                            {/* <div className="input-radio">
                               <input
                                 type="radio"
                                 name="price"
                                 className="accent-pink-500"
                               />
-                            </div>
-                            <span className="text-[13px] text-normal text-qgraytwo">
-                              Flat Rate
+                            </div> */}
+                            <span className="text-[13px] text-normal text-green-500">
+                              Shipping Charge
                             </span>
                           </div>
-                          <span className="text-[13px] text-normal text-qgraytwo">
-                            +$00.00
+                          <span className="text-[13px] text-normal text-green-500">
+                            +${shipping.toFixed(2)}
                           </span>
                         </div>
                       </li>
-                      <li>
-                        <div className="flex justify-between items-center">
-                          <div className="flex space-x-2.5 items-center">
-                            <div className="input-radio">
-                              <input
-                                type="radio"
-                                name="price"
-                                className="accent-pink-500"
-                              />
-                            </div>
-                            <span className="text-[13px] text-normal text-qgraytwo">
-                              Local Delivery
-                            </span>
-                          </div>
-                          <span className="text-[13px] text-normal text-qgraytwo">
-                            +$00.00
-                          </span>
-                        </div>
-                      </li>
+                      
                     </ul>
                   </div>
-                  <div className="shipping-calculation w-full mb-3">
-                    <div className="title mb-[17px]">
-                      <h1 className="text-[15px] font-medium">
-                        Calculate Shipping
-                      </h1>
-                    </div>
-                    <div className="w-full h-[50px] border border-[#EDEDED] px-5 flex justify-between items-center mb-2">
-                      <span className="text-[13px] text-qgraytwo">
-                        Select Country
-                      </span>
-                      <span>
-                        <svg
-                          width="11"
-                          height="7"
-                          viewBox="0 0 11 7"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M5.4 6.8L0 1.4L1.4 0L5.4 4L9.4 0L10.8 1.4L5.4 6.8Z"
-                            fill="#222222"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div className="w-full h-[50px]">
-                      <InputCom
-                        inputClasses="w-full h-full"
-                        type="text"
-                        placeholder="Postcode / ZIP"
-                      />
-                    </div>
-                  </div>
-                  <button type="button" className="w-full mb-10">
+                  {/* <button type="button" className="w-full mb-10">
                     <div className="w-full h-[50px] bg-[#F6F6F6] flex justify-center items-center">
                       <span className="text-sm font-semibold">Update Cart</span>
                     </div>
-                  </button>
+                  </button> */}
                   <div className="total mb-6">
                     <div className=" flex justify-between">
                       <p className="text-[18px] font-medium text-qblack">
                         Total
                       </p>
-                      <p className="text-[18px] font-medium text-qred">$365</p>
+                      <p className="text-[18px] font-medium text-qred">${total.toFixed(2)}</p>
                     </div>
                   </div>
                   <Link to="/checkout">

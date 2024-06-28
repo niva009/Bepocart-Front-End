@@ -22,11 +22,17 @@ import TermsCondition from "./components/TermsCondition/index";
 import TrackingOrder from "./components/TrackingOrder";
 import Wishlist from "./components/Wishlist";
 import HomeThree from "./components/HomeThree";
+// import SearchResults from "./components/SearchResult";
+
+
+
+
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeThree /> },
   { path: "/category/:id", element: <AllProductPage /> },
   { path: "/single-product/:id", element: <SingleProductPage /> },
+  // { path: "/search-results/", element: <SearchResults /> },
   { path: "/cart", element: <CardPage /> },
   { path: "/checkout", element: <CheakoutPage /> },
   { path: "/wishlist", element: <Wishlist /> },

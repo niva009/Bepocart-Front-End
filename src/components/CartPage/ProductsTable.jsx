@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import InputQuantityCom from '../Helpers/InputQuantityCom'; // Assuming this is your input quantity component
 import axios from 'axios';
+
 export default function ProductsTable({ className }) {
   const [cartProducts, setCartProducts] = useState([]);
-  // const cartProductsMemoized = useMemo(() => cartProducts, [cartProducts]);
-
 
   useEffect(() => {
     const fetchCartProducts = async () => {
@@ -15,13 +13,11 @@ export default function ProductsTable({ className }) {
             Authorization: `${token}`,
           },
         });
-        console.log("Cart Data   :", response)
         if (!response.ok) {
           throw new Error('Failed to fetch cart products');
         }
         const data = await response.json();
         setCartProducts(data.data);
-        console.log(data.data);
       } catch (error) {
         console.error('Error fetching cart products:', error);
       }
@@ -29,11 +25,12 @@ export default function ProductsTable({ className }) {
 
     fetchCartProducts();
   }, []);
+  
 
   const handleDeleteProduct = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.delete(`http://127.0.0.1:8000/cart-delete/${id}/`, {
+      await axios.delete(`http://127.0.0.1:8000/cart-delete/${id}/`, {
         headers: {
           Authorization: `${token}`,
         },
@@ -43,7 +40,56 @@ export default function ProductsTable({ className }) {
       console.error('Error deleting product:', error);
     }
   };
-  
+
+  const updateProductQuantityIncrement = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(`http://127.0.0.1:8000/cart/increment/${id}/`, {}, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (response.status === 200) {
+        setCartProducts(prevProducts => prevProducts.map(product =>
+          product.id === id ? { ...product, quantity: product.quantity + 1 } : product
+        ));
+      } else {
+        throw new Error('Failed to update product quantity');
+      }
+    } catch (error) {
+      console.error('Error updating product quantity:', error);
+    }
+  };
+
+  const updateProductQuantityDecrement = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(`http://127.0.0.1:8000/cart/decrement/${id}/`, {}, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (response.status === 200) {
+        setCartProducts(prevProducts => prevProducts.map(product =>
+          product.id === id ? { ...product, quantity: product.quantity - 1 } : product
+        ));
+      } else {
+        throw new Error('Failed to update product quantity');
+      }
+    } catch (error) {
+      console.error('Error updating product quantity:', error);
+    }
+  };
+
+  const increment = (id) => {
+    updateProductQuantityIncrement(id);
+  };
+
+  const decrement = (id, currentQuantity) => {
+    if (currentQuantity > 1) {
+      updateProductQuantityDecrement(id);
+    }
+  };
 
   return (
     <div className={`w-full ${className || ''}`}>
@@ -102,7 +148,25 @@ export default function ProductsTable({ className }) {
                 </td>
                 <td className="py-4">
                   <div className="flex justify-center items-center">
-                    <InputQuantityCom />
+                    <div className="w-[120px] h-[40px] px-[26px] flex items-center border border-qgray-border">
+                      <div className="flex justify-between items-center w-full">
+                        <button
+                          onClick={() => decrement(product.id, product.quantity)}
+                          type="button"
+                          className="text-base text-qgray"
+                        >
+                          -
+                        </button>
+                        <span className="text-qblack">{product.quantity}</span>
+                        <button
+                          onClick={() => increment(product.id)}
+                          type="button"
+                          className="text-base text-qgray"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </td>
                 <td className="text-right py-4">

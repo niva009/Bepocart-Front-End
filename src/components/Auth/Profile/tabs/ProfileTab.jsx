@@ -1,25 +1,88 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import InputCom from "../../../Helpers/InputCom";
+import axios from "axios";
 
 export default function ProfileTab() {
-  const [profileImg, setprofileImg] = useState(null);
+  const [first_name, setFirstName] = useState("");
+  const [last_name, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [place, setPlace] = useState("");
+  const [password, setPassword] = useState("");
+  const [zip_code, setZipCode] = useState("");
+  const [image, setImage] = useState(null);
   const profileImgInput = useRef(null);
-  const browseprofileImg = () => {
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:8000/profile-view/', {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+      console.log(response.data)
+      const { data } = response;
+      setFirstName(data.first_name);
+      setLastName(data.last_name);
+      setEmail(data.email);
+      setPhone(data.phone);
+      setPlace(data.place);
+      setPassword(data.password);
+      setZipCode(data.zip_code);
+      setImage(data.image); 
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  const browseProfileImg = () => {
     profileImgInput.current.click();
   };
-  const profileImgChangHandler = (e) => {
-    if (e.target.value !== "") {
+
+  const profileImgChangeHandler = (e) => {
+    if (e.target.files.length > 0) {
       const imgReader = new FileReader();
       imgReader.onload = (event) => {
-        setprofileImg(event.target.result);
+        setImage(event.target.result);
       };
       imgReader.readAsDataURL(e.target.files[0]);
     }
   };
+
+  const updateProfile = async () => {
+    try {
+      const response = await axios.put('http://api.example.com/profile', {
+        first_name,
+        last_name,
+        email,
+        phone,
+        place,
+        password,
+        zip_code,
+        image,
+      }, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Profile updated successfully:', response.data);
+      // Handle success (e.g., show success message)
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      // Handle error appropriately (e.g., show error message)
+    }
+  };
+
   return (
     <>
       <div className="flex space-x-8">
-        <div className="w-[570px] ">
+        <div className="w-[570px]">
           <div className="input-item flex space-x-2.5 mb-8">
             <div className="w-1/2 h-full">
               <InputCom
@@ -27,6 +90,8 @@ export default function ProfileTab() {
                 placeholder="Demo Name"
                 type="text"
                 inputClasses="h-[50px]"
+                value={first_name}
+                onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
             <div className="w-1/2 h-full">
@@ -35,6 +100,8 @@ export default function ProfileTab() {
                 placeholder="Demo Name"
                 type="text"
                 inputClasses="h-[50px]"
+                value={last_name}
+                onChange={(e) => setLastName(e.target.value)}
               />
             </div>
           </div>
@@ -42,37 +109,33 @@ export default function ProfileTab() {
             <div className="w-1/2 h-full">
               <InputCom
                 label="Email*"
-                placeholder="demoemial@gmail.com"
+                placeholder="demoemail@gmail.com"
                 type="email"
                 inputClasses="h-[50px]"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="w-1/2 h-full">
               <InputCom
                 label="Phone Number*"
-                placeholder="012 3  *******"
+                placeholder="0123456789"
                 type="text"
                 inputClasses="h-[50px]"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </div>
           </div>
           <div className="input-item mb-8">
             <div className="w-full">
               <InputCom
-                label="Country*"
-                placeholder="country"
+                label="State*"
+                placeholder="State"
                 type="text"
                 inputClasses="h-[50px]"
-              />
-            </div>
-          </div>
-          <div className="input-item mb-8">
-            <div className="w-full">
-              <InputCom
-                label="Address*"
-                placeholder="your address here"
-                type="text"
-                inputClasses="h-[50px]"
+                value={place}
+                onChange={(e) => setPlace(e.target.value)}
               />
             </div>
           </div>
@@ -80,17 +143,21 @@ export default function ProfileTab() {
             <div className="w-1/2 h-full">
               <InputCom
                 label="Town / City*"
-                placeholder=""
+                placeholder="City"
                 type="text"
                 inputClasses="h-[50px]"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <div className="w-1/2 h-full">
               <InputCom
                 label="Postcode / ZIP*"
-                placeholder=""
+                placeholder="Zip Code"
                 type="text"
                 inputClasses="h-[50px]"
+                value={zip_code}
+                onChange={(e) => setZipCode(e.target.value)}
               />
             </div>
           </div>
@@ -115,7 +182,7 @@ export default function ProfileTab() {
                 </svg>
               </span>
             </h1>
-            <p className="text-sm text-qgraytwo mb-5 ">
+            <p className="text-sm text-qgraytwo mb-5">
               Profile of at least Size
               <span className="ml-1 text-qblack">300x300</span>. Gifs work too.
               <span className="ml-1 text-qblack">Max 5mb</span>.
@@ -125,7 +192,7 @@ export default function ProfileTab() {
                 <div className="sm:w-[198px] sm:h-[198px] w-[199px] h-[199px] rounded-full overflow-hidden relative">
                   <img
                     src={
-                      profileImg ||
+                      image ||
                       `${
                         import.meta.env.VITE_PUBLIC_URL
                       }/assets/images/edit-profileimg.jpg`
@@ -136,13 +203,13 @@ export default function ProfileTab() {
                 </div>
                 <input
                   ref={profileImgInput}
-                  onChange={(e) => profileImgChangHandler(e)}
+                  onChange={(e) => profileImgChangeHandler(e)}
                   type="file"
                   className="hidden"
                 />
                 <div
-                  onClick={browseprofileImg}
-                  className="w-[32px] h-[32px] absolute bottom-7 sm:right-0 right-[105px]  bg-qblack rounded-full cursor-pointer"
+                  onClick={browseProfileImg}
+                  className="w-[32px] h-[32px] absolute bottom-7 sm:right-0 right-[105px] bg-qblack rounded-full cursor-pointer"
                 >
                   <svg
                     width="32"
@@ -173,6 +240,7 @@ export default function ProfileTab() {
         <button
           type="button"
           className="w-[164px] h-[50px] bg-qblack text-white text-sm"
+          onClick={updateProfile}
         >
           Update Profile
         </button>

@@ -3,14 +3,14 @@ import InputCom from "../../../Helpers/InputCom";
 import axios from "axios";
 
 export default function ProfileTab() {
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [place, setPlace] = useState("");
   const [password, setPassword] = useState("");
-  const [zip_code, setZipCode] = useState("");
-  const [image, setImage] = useState(null);
+  const [zipCode, setZipCode] = useState("");
+  const [image, setImage] = useState("");
   const profileImgInput = useRef(null);
 
   useEffect(() => {
@@ -24,16 +24,18 @@ export default function ProfileTab() {
           Authorization: `${localStorage.getItem('token')}`,
         },
       });
-      console.log(response.data)
-      const { data } = response;
-      setFirstName(data.first_name);
-      setLastName(data.last_name);
-      setEmail(data.email);
-      setPhone(data.phone);
-      setPlace(data.place);
-      setPassword(data.password);
-      setZipCode(data.zip_code);
-      setImage(data.image); 
+
+      const profileData = response.data.data;
+      setFirstName(profileData.first_name);
+      setLastName(profileData.last_name);
+      setEmail(profileData.email);
+      setPhone(profileData.phone);
+      setPlace(profileData.place);
+      setPassword(profileData.password);
+      setZipCode(profileData.zip_code);
+      setImage(profileData.image);
+      console.log("User Data:", profileData);
+
     } catch (error) {
       console.error('Error fetching profile data:', error);
     }
@@ -55,19 +57,20 @@ export default function ProfileTab() {
 
   const updateProfile = async () => {
     try {
-      const response = await axios.put('http://api.example.com/profile', {
-        first_name,
-        last_name,
-        email,
-        phone,
-        place,
-        password,
-        zip_code,
-        image,
-      }, {
+      const formData = new FormData();
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+      formData.append('email', email);
+      formData.append('phone', phone);
+      formData.append('place', place);
+      formData.append('password', password);
+      formData.append('zip_code', zipCode);
+      formData.append('image', image); 
+
+      const response = await axios.put('http://127.0.0.1:8000/profile/', formData, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
 
@@ -81,26 +84,26 @@ export default function ProfileTab() {
 
   return (
     <>
-      <div className="flex space-x-8">
+      <div className="flex space-x-10">
         <div className="w-[570px]">
           <div className="input-item flex space-x-2.5 mb-8">
             <div className="w-1/2 h-full">
               <InputCom
                 label="First Name*"
-                placeholder="Demo Name"
+                placeholder="First Name"
                 type="text"
                 inputClasses="h-[50px]"
-                value={first_name}
+                value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
             <div className="w-1/2 h-full">
               <InputCom
                 label="Last Name*"
-                placeholder="Demo Name"
+                placeholder="Last Name"
                 type="text"
                 inputClasses="h-[50px]"
-                value={last_name}
+                value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
             </div>
@@ -109,7 +112,7 @@ export default function ProfileTab() {
             <div className="w-1/2 h-full">
               <InputCom
                 label="Email*"
-                placeholder="demoemail@gmail.com"
+                placeholder="Email"
                 type="email"
                 inputClasses="h-[50px]"
                 value={email}
@@ -119,7 +122,7 @@ export default function ProfileTab() {
             <div className="w-1/2 h-full">
               <InputCom
                 label="Phone Number*"
-                placeholder="0123456789"
+                placeholder="Phone Number"
                 type="text"
                 inputClasses="h-[50px]"
                 value={phone}
@@ -139,24 +142,14 @@ export default function ProfileTab() {
               />
             </div>
           </div>
-          <div className="input-item flex space-x-2.5 mb-8">
-            <div className="w-1/2 h-full">
+          <div className="input-item mb-8">
+            <div className="w-full">
               <InputCom
-                label="Town / City*"
-                placeholder="City"
+                label="Zip Code*"
+                placeholder="ZIP CODE"
                 type="text"
                 inputClasses="h-[50px]"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="w-1/2 h-full">
-              <InputCom
-                label="Postcode / ZIP*"
-                placeholder="Zip Code"
-                type="text"
-                inputClasses="h-[50px]"
-                value={zip_code}
+                value={zipCode}
                 onChange={(e) => setZipCode(e.target.value)}
               />
             </div>
@@ -183,9 +176,7 @@ export default function ProfileTab() {
               </span>
             </h1>
             <p className="text-sm text-qgraytwo mb-5">
-              Profile of at least Size
-              <span className="ml-1 text-qblack">300x300</span>. Gifs work too.
-              <span className="ml-1 text-qblack">Max 5mb</span>.
+              Profile images should be at least 300x300 pixels. GIFs are also supported with a maximum size of 5MB.
             </p>
             <div className="flex xl:justify-center justify-start">
               <div className="relative">
@@ -193,9 +184,7 @@ export default function ProfileTab() {
                   <img
                     src={
                       image ||
-                      `${
-                        import.meta.env.VITE_PUBLIC_URL
-                      }/assets/images/edit-profileimg.jpg`
+                      `${import.meta.env.VITE_PUBLIC_URL}/assets/images/edit-profileimg.jpg`
                     }
                     alt=""
                     className="object-cover w-full h-full"

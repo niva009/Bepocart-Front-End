@@ -38,7 +38,7 @@ export default function Profile() {
   return (
     <Layout childrenClasses="pt-0 pb-0">
       <div className="profile-page-wrapper w-full">
-        <div className="container-x mx-auto">
+        <div className="container-fluid mx-auto">
           <div className="w-full my-10">
             <BreadcrumbCom
               paths={[
@@ -94,7 +94,7 @@ export default function Profile() {
                       </Link>
                     </div>
 
-                    <div className="item group">
+                    {/* <div className="item group">
                       <Link to="/profile#payment">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
                           <span>
@@ -105,7 +105,7 @@ export default function Profile() {
                           </span>
                         </div>
                       </Link>
-                    </div>
+                    </div> */}
                     <div className="item group">
                       <Link to="/profile#order">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
@@ -116,7 +116,7 @@ export default function Profile() {
                         </div>
                       </Link>
                     </div>
-                    <div className="item group">
+                    {/* <div className="item group">
                       <Link to="/profile#wishlist">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
                           <span>
@@ -127,7 +127,7 @@ export default function Profile() {
                           </span>
                         </div>
                       </Link>
-                    </div>
+                    </div> */}
                     <div className="item group">
                       <Link to="/profile#address">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">

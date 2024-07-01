@@ -5,52 +5,77 @@ import InputCom from "../Helpers/InputCom";
 import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
 import ProductsTable from "./ProductsTable";
-
+import axios from "axios";
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 export default function CardPage({ cart = true }) {
   const [cartProducts, setCartProducts] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [subtotal, setSubtotal] = useState(0);
   const [shipping, setShipping] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
-
-
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartProducts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch('http://127.0.0.1:8000/cart-products/', {
+        const response = await axios.get('http://127.0.0.1:8000/cart-products/', {
           headers: {
             Authorization: `${token}`,
           },
         });
-        if (!response.ok) {
-          throw new Error('Failed to fetch cart products');
-        }
-        const data = await response.json();
+        const data = response.data;
         setCartProducts(data.data);
-        setSubtotal(data.TotalPrice ?? 0);
+        setSubtotal(data.Subtotal ?? 0);
         setShipping(data.Shipping ?? 0);
         setDiscount(data.Discount ?? 0);
-        setTotal(data.Subtotal ?? 0);
+        setTotal(data.TotalPrice ?? 0);
 
-
-
-        console.log("Total     :",data.Subtotal);
-        console.log("Discount  :",data.Discount);
-        console.log("Shipping Charge   :",data.Shipping);
-        console.log("Sub total   :",data.TotalPrice);
-
+        console.log("Total:", data.Subtotal);
+        console.log("Discount:", data.Discount);
+        console.log("Shipping Charge:", data.Shipping);
+        console.log("Sub total:", data.TotalPrice);
 
       } catch (error) {
         console.error('Error fetching cart products:', error);
       }
     };
 
+    const fetchUserAddresses = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/get-address/", {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        setAddresses(response.data.address);
+        console.log("User addresses:", response.data.address);
+      } catch (error) {
+        console.error("Error fetching user addresses:", error);
+      }
+    };
+
     fetchCartProducts();
-  }, []);
+    fetchUserAddresses();
+  }, [token]);
+
+  const handleSelectAddress = (addressId) => {
+    setSelectedAddressId(addressId);
+  };
+
+  const handleProceedToCheckout = () => {
+    if (selectedAddressId) {
+      navigate(`/checkout/${selectedAddressId}/`);
+    } else {
+      alert("Please select an address before proceeding to checkout.");
+    }
+  };
+
+  console.log("Selected Address Id:", selectedAddressId);
 
   return (
     <Layout childrenClasses={cart ? "pt-0 pb-0" : ""}>
@@ -81,13 +106,40 @@ export default function CardPage({ cart = true }) {
             <div className="container-x mx-auto">
               <ProductsTable className="mb-[30px]" cartProducts={cartProducts} />
               <div className="w-full sm:flex justify-between">
-                <div className="discount-code sm:w-[270px] w-full mb-5 sm:mb-0 h-[50px] flex">
-                  <div className="flex-1 h-full">
-                    <InputCom type="text" placeholder="Discount Code" />
+                <div className="discount-code sm:w-[1000px] w-full mb-5 sm:mb-0 h-[50px] flex">
+                  <div className="lg:w-1/2 w-full">
+                    <h1 className="sm:text-2xl text-xl text-qblack font-medium mb-5">
+                      Select Address
+                    </h1>
+                    <div className="form-area">
+                      {/* Address Selection */}
+                      <div className="mb-5">
+                        <div className="border border-[#EDEDED] p-4 rounded-lg">
+                          {addresses.map((address) => (
+                            <div
+                              key={address.id}
+                              className="mb-3 p-3 border border-[#EDEDED] rounded-lg"
+                            >
+                              <label className="block mb-1 text-sm text-qgray">
+                                <input
+                                  type="radio"
+                                  name="address"
+                                  className="mr-2"
+                                  onChange={() => handleSelectAddress(address.id)}
+                                />
+                                {`${address.address}, ${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
+                              </label>
+                            </div>
+                          ))}
+                          {/* Add new address button */}
+                          <button className="text-sm text-qblack underline">
+                            Add New Address
+                          </button>
+                        </div>
+                      </div>
+                      {/* Other form fields */}
+                    </div>
                   </div>
-                  <button type="button" className="w-[90px] h-[50px] black-btn">
-                    <span className="text-sm font-semibold">Apply</span>
-                  </button>
                 </div>
                 <div className="flex space-x-2.5 items-center">
                   <Link to="/">
@@ -109,7 +161,7 @@ export default function CardPage({ cart = true }) {
                       <p className="text-[15px] font-medium text-qblack">
                         Subtotal
                       </p>
-                      <p className="text-[15px] font-medium text-qred">${subtotal.toFixed(2)}</p>
+                      <p className="text-[15px] font-medium text-qred">${total.toFixed(2)}</p>
                     </div>
                     <div className="w-full h-[1px] bg-[#EDEDED]"></div>
                   </div>
@@ -156,29 +208,22 @@ export default function CardPage({ cart = true }) {
                           </span>
                         </div>
                       </li>
-                      
+
                     </ul>
                   </div>
-                  {/* <button type="button" className="w-full mb-10">
-                    <div className="w-full h-[50px] bg-[#F6F6F6] flex justify-center items-center">
-                      <span className="text-sm font-semibold">Update Cart</span>
-                    </div>
-                  </button> */}
                   <div className="total mb-6">
                     <div className=" flex justify-between">
                       <p className="text-[18px] font-medium text-qblack">
                         Total
                       </p>
-                      <p className="text-[18px] font-medium text-qred">${total.toFixed(2)}</p>
+                      <p className="text-[18px] font-medium text-qred">${subtotal.toFixed(2)}</p>
                     </div>
                   </div>
-                  <Link to="/checkout">
-                    <div className="w-full h-[50px] black-btn flex justify-center items-center">
-                      <span className="text-sm font-semibold">
-                        Proceed to Checkout
-                      </span>
-                    </div>
-                  </Link>
+                  <div className="w-full h-[50px] black-btn flex justify-center items-center" onClick={handleProceedToCheckout}>
+                    <span className="text-sm font-semibold">
+                      Proceed to Checkout
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

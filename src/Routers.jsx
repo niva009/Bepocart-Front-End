@@ -22,6 +22,7 @@ import TermsCondition from "./components/TermsCondition/index";
 import TrackingOrder from "./components/TrackingOrder";
 import Wishlist from "./components/Wishlist";
 import HomeThree from "./components/HomeThree";
+import OrderSuccess from "./components/Success/odrer-success.jsx";
 // import SearchResults from "./components/SearchResult";
 
 
@@ -33,8 +34,9 @@ const router = createBrowserRouter([
   { path: "/category/:id", element: <AllProductPage /> },
   { path: "/single-product/:id", element: <SingleProductPage /> },
   // { path: "/search-results/", element: <SearchResults /> },
+  { path: "/order-success/", element: <OrderSuccess /> },
   { path: "/cart", element: <CardPage /> },
-  { path: "/checkout", element: <CheakoutPage /> },
+  { path: "/checkout/:id/", element: <CheakoutPage /> },
   { path: "/wishlist", element: <Wishlist /> },
   { path: "/flash-sale", element: <FlashSale /> },
   { path: "/saller-page", element: <SallerPage /> },

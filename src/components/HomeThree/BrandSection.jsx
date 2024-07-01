@@ -56,7 +56,7 @@ export default function BrandSection({ className, sectionTitle, type }) {
 
   return (
     <div data-aos="fade-up" className={`w-full ${className || ""}`}>
-      <div className="container-fluid mx-auto">
+      <div className="container-x mx-auto">
         {type !== 3 && (
           <div className="section-title flex justify-between items-center mb-5">
             <div>

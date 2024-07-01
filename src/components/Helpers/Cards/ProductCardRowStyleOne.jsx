@@ -8,7 +8,7 @@ export default function ProductCardRowStyleTwo({ className, datas, type }) {
   return (
     <div
       data-aos="fade-left"
-      className={`product-row-card-style-one w-full h-[250px] bg-white group relative overflow-hidden ${
+      className={`product-row-card-style-one w-full h-[400px] bg-white group relative overflow-hidden ${
         className || ""
       }`}
     >

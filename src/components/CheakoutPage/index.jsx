@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
+import InputCom from "../Helpers/InputCom";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -10,7 +12,18 @@ export default function CheckoutPage() {
   const [shipping, setShipping] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [couponData, setCouponData] = useState([]);
+  const [couponCode, setCouponCode] = useState("");
+
   const token = localStorage.getItem("token");
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setSelectedAddress(parseInt(id)); // Parse id from params
+  }, [id]);
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -20,17 +33,12 @@ export default function CheckoutPage() {
             Authorization: `${token}`,
           },
         });
-        const data = response.data; // Assuming response.data is the object returned
-        setCartItems(data.data); // Assuming data.data contains the cart items
-        console.log("Cart items:", data.data);
-        console.log("Cart Total:", data.TotalPrice);
-        console.log("Cart Subtotal:", data.Subtotal);
-        console.log("Shipping Charge:", data.Shipping);
-        setSubtotal(data.Subtotal ?? 0); // Setting subtotal with proper handling for NaN
-        setShipping(data.Shipping ?? 0); // Setting shipping charge with proper handling for NaN
-        setDiscount(data.Discount ?? 0); // Setting discount with proper handling for NaN
-        setTotal(data.TotalPrice ?? 0); // Setting total with proper handling for NaN
-
+        const data = response.data;
+        setCartItems(data.data);
+        setSubtotal(data.Subtotal ?? 0);
+        setShipping(data.Shipping ?? 0);
+        setDiscount(data.Discount ?? 0);
+        setTotal(data.TotalPrice ?? 0);
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
@@ -44,15 +52,75 @@ export default function CheckoutPage() {
           },
         });
         setAddresses(response.data.address);
-        console.log("User addresses:", response.data.address);
       } catch (error) {
         console.error("Error fetching user addresses:", error);
       }
     };
 
+    const fetchCouponData = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/coupons/");
+        setCouponData(response.data);
+        console.log("Coupon data:", response.data);
+      } catch (error) {
+        console.error("Error fetching coupon data:", error);
+      }
+    };
+
     fetchCartItems();
     fetchUserAddresses();
+    fetchCouponData();
   }, [token]);
+
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod(method);
+    if (method === "COD") {
+      setShipping(prevShipping => prevShipping + 40);
+    } else {
+      setShipping(prevShipping => prevShipping - 40);
+    }
+  };
+
+  const handlePlaceOrder = async () => {
+    if (!selectedAddress) {
+      alert("Please select an address to place the order.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`http://127.0.0.1:8000/order/create/${selectedAddress}/`, {
+        payment_method: paymentMethod,
+        coupon_code: couponCode, // Include coupon code in the request
+      }, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      console.log("Order created:", response.data);
+      navigate("/order-success");
+    } catch (error) {
+      console.error("Error creating order:", error);
+    }
+  };
+
+  const applyCoupon = () => {
+    const appliedCoupon = couponData.find((coupon) => coupon.code === couponCode);
+
+    if (appliedCoupon) {
+      if (appliedCoupon.active) {
+        setDiscount(appliedCoupon.value);
+      } else {
+        alert("Coupon code is inactive.");
+      }
+    } else {
+      alert("Invalid coupon code.");
+    }
+  };
+
+
+  const handleChange = (e) => {
+    setCouponCode(e.target.value); // Update couponCode state with input value
+  };
 
   return (
     <Layout childrenClasses="pt-0 pb-0">
@@ -92,46 +160,32 @@ export default function CheckoutPage() {
               </div>
             </div>
             <div className="w-full lg:flex lg:space-x-5">
-              <div className="lg:w-1/2 w-full">
-                <h1 className="sm:text-2xl text-xl text-qblack font-medium mb-5">
-                  Select Address
-                </h1>
-                <div className="form-area">
-                  {/* Address Selection */}
-                  <div className="mb-5">
-                    <div className="border border-[#EDEDED] p-4 rounded-lg">
-                      {addresses.map((address) => (
-                        <div
-                          key={address.id}
-                          className="mb-3 p-3 border border-[#EDEDED] rounded-lg"
-                        >
-                          <label className="block mb-1 text-sm text-qgray">
-                            <input
-                              type="radio"
-                              name="address"
-                              className="mr-2"
-                            // Implement onChange handler to select address
-                            />
-                            {`${address.address}, ${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
-                          </label>
-                        </div>
-                      ))}
-                      {/* Add new address button */}
-                      <button className="text-sm text-qblack underline">
-                        Add New Address
-                      </button>
-                    </div>
-                  </div>
-                  {/* Other form fields */}
+              <div className="lg:w-1/2 w-full mb-5 lg:mb-0">
+                <div className="flex items-center space-x-4">
+                  <InputCom
+                    type="text"
+                    placeholder="Discount Code"
+                    className="flex-grow"
+                    value={couponCode}
+                    onChange={handleChange}
+                  />
+                  <button
+                    type="button"
+                    className="w-[90px] h-[40px] black-btn rounded-md"
+                    onClick={applyCoupon} // Use applyCoupon directly without ||
+                  >
+                    <span className="text-sm font-semibold">Apply</span>
+                  </button>
+
+
                 </div>
               </div>
-              <div className="flex-1">
+
+              <div className="lg:w-1/2 w-full">
                 <h1 className="sm:text-2xl text-xl text-qblack font-medium mb-5">
                   Order Summary
                 </h1>
-                {/* Order Summary component */}
                 <div className="w-full px-10 py-6 border border-[#EDEDED]">
-                  {/* Product list */}
                   <div className="product-list w-full mb-6">
                     <ul className="flex flex-col space-y-4">
                       {cartItems.map((item, index) => (
@@ -152,7 +206,6 @@ export default function CheckoutPage() {
                                     x{item.quantity}
                                   </sup>
                                 </h4>
-
                                 <p className="text-[13px] text-qgray">
                                   {item.description}
                                 </p>
@@ -160,7 +213,7 @@ export default function CheckoutPage() {
                             </div>
                             <div>
                               <span className="text-[15px] text-qblack font-medium">
-                                ${item.salePrice}
+                                ${item.salePrice * item.quantity}
                               </span>
                             </div>
                           </div>
@@ -168,7 +221,6 @@ export default function CheckoutPage() {
                       ))}
                     </ul>
                   </div>
-                  {/* Subtotal and total */}
                   <div className="flex justify-between">
                     <div>
                       <p className="text-[13px] font-medium text-qblack uppercase">
@@ -181,7 +233,6 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                   </div>
-                  {/* Shipping */}
                   <div className="flex justify-between mt-4">
                     <div>
                       <p className="text-[13px] font-medium text-qblack uppercase">
@@ -197,9 +248,7 @@ export default function CheckoutPage() {
                         )}
                       </p>
                     </div>
-
                   </div>
-                  {/* Order total */}
                   <div className="flex justify-between mt-4">
                     <div>
                       <p className="text-[15px] font-medium text-qblack uppercase">
@@ -207,11 +256,10 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-[15px] font-medium text-qred">${subtotal.toFixed(2)}
+                      <p className="text-[15px] font-medium text-qred">${(subtotal + shipping).toFixed(2)}
                       </p>
                     </div>
                   </div>
-                  {/* Payment methods */}
                   <div className="mt-6">
                     <p className="text-lg font-medium text-qblack mb-3">
                       Payment Method
@@ -222,6 +270,7 @@ export default function CheckoutPage() {
                         id="cashOnDelivery"
                         name="paymentMethod"
                         className="text-accent-pink-500"
+                        onChange={() => handlePaymentMethodChange("COD")}
                       />
                       <label htmlFor="cashOnDelivery" className="text-qblack">
                         Cash on Delivery
@@ -233,21 +282,19 @@ export default function CheckoutPage() {
                         id="creditCard"
                         name="paymentMethod"
                         className="text-accent-pink-500"
+                        onChange={() => handlePaymentMethodChange("razorpay")}
                       />
                       <label htmlFor="creditCard" className="text-qblack">
                         Net Banking
                       </label>
                     </div>
                   </div>
-                  {/* Place order button */}
                   <div className="mt-6">
-                    <a href="#">
-                      <div className="w-full h-12 bg-black text-white flex justify-center items-center">
-                        <span className="text-sm font-semibold">
-                          Place Order Now
-                        </span>
-                      </div>
-                    </a>
+                    <button className="w-full h-12 bg-black text-white flex justify-center items-center" onClick={handlePlaceOrder}>
+                      <span className="text-sm font-semibold">
+                        Place Order Now
+                      </span>
+                    </button>
                   </div>
                 </div>
               </div>

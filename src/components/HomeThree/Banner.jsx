@@ -10,7 +10,7 @@ export default function Banner({ className }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/banners/');
+        const response = await axios.get('https://isa-pointing-relax-potentially.trycloudflare.com/banners/');
         setSliderData(response.data.banner); 
         console.log("Data:", response.data.banner); 
       } catch (error) {
@@ -54,7 +54,7 @@ export default function Banner({ className }) {
                 <div
                   className="w-full h-full relative"
                   style={{
-                    backgroundImage: `url(http://127.0.0.1:8000${item.image})`,
+                    backgroundImage: `url(https://isa-pointing-relax-potentially.trycloudflare.com/${item.image})`,
                     backgroundRepeat: "no-repeat",
                     backgroundSize: "cover",
                   }}

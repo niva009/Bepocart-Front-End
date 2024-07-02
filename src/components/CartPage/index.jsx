@@ -23,7 +23,7 @@ export default function CardPage({ cart = true }) {
   useEffect(() => {
     const fetchCartProducts = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/cart-products/', {
+        const response = await axios.get('https://isa-pointing-relax-potentially.trycloudflare.com/cart-products/', {
           headers: {
             Authorization: `${token}`,
           },
@@ -47,7 +47,7 @@ export default function CardPage({ cart = true }) {
 
     const fetchUserAddresses = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/get-address/", {
+        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/get-address/", {
           headers: {
             Authorization: `${token}`,
           },

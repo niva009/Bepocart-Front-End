@@ -24,7 +24,7 @@ export default function HomeThree() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsResponse = await axios.get("http://127.0.0.1:8000/products/");
+        const productsResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/products/");
         const { products } = productsResponse.data;
         const brands = products.map(product => product.brand);
         setProducts(products);
@@ -35,7 +35,7 @@ export default function HomeThree() {
 
       try {
         const token = localStorage.getItem('token');
-        const recommendedResponse = await axios.get("http://127.0.0.1:8000/recently-viewed/", {
+        const recommendedResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/recently-viewed/", {
           headers: {
             'Authorization': `${token}`,
           },
@@ -47,7 +47,7 @@ export default function HomeThree() {
 
       try {
         // Fetch banners data
-        const bannersResponse = await axios.get("http://127.0.0.1:8000/offer-banner/");
+        const bannersResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/offer-banner/");
         setBanners(bannersResponse.data.banner);
       } catch (error) {
         console.error("Error fetching banners:", error);
@@ -55,7 +55,7 @@ export default function HomeThree() {
 
       try {
         // Fetch offer products
-        const offerProductResponse = await axios.get("http://127.0.0.1:8000/buy-1-get-1-free/");
+        const offerProductResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/buy-1-get-1-free/");
         setOfferProducts(offerProductResponse.data.data);
       } catch (error) {
         console.error("Error fetching offer products:", error);

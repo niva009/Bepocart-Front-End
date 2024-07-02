@@ -1,16 +1,19 @@
 import { useRef, useState, useEffect } from "react";
-import InputCom from "../../../Helpers/InputCom";
+import TextField from '@mui/material/TextField';
 import axios from "axios";
 
 export default function ProfileTab() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [place, setPlace] = useState("");
-  const [password, setPassword] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [image, setImage] = useState("");
+
+  const[profile, setProfile] = useState({
+    first_name:"",
+    last_name:"",
+    email:"",
+    phone:"",
+    state:"",
+    zip_code:"",
+  })
+  const[image,setImage] = useState([])
+
   const profileImgInput = useRef(null);
 
   useEffect(() => {
@@ -19,34 +22,28 @@ export default function ProfileTab() {
 
   const fetchProfileData = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:8000/profile-view/', {
+      const response = await axios.get('https://isa-pointing-relax-potentially.trycloudflare.com/profile-view/', {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
         },
       });
 
-      const profileData = response.data.data;
-      setFirstName(profileData.first_name);
-      setLastName(profileData.last_name);
-      setEmail(profileData.email);
-      setPhone(profileData.phone);
-      setPlace(profileData.place);
-      setPassword(profileData.password);
-      setZipCode(profileData.zip_code);
-      setImage(profileData.image);
-      console.log("User Data:", profileData);
+      setProfile(response.data.data);
+      console.log(response.data.data)
 
     } catch (error) {
       console.error('Error fetching profile data:', error);
     }
   };
 
+  console.log(profile,"profile Information");
+
   const browseProfileImg = () => {
     profileImgInput.current.click();
   };
 
   const profileImgChangeHandler = (e) => {
-    if (e.target.files.length > 0) {
+    if (e.target.files.length > 0) {  
       const imgReader = new FileReader();
       imgReader.onload = (event) => {
         setImage(event.target.result);
@@ -55,19 +52,20 @@ export default function ProfileTab() {
     }
   };
 
+  // console.log(firstName,"first name");
+
   const updateProfile = async () => {
     try {
       const formData = new FormData();
-      formData.append('first_name', firstName);
-      formData.append('last_name', lastName);
-      formData.append('email', email);
-      formData.append('phone', phone);
-      formData.append('place', place);
-      formData.append('password', password);
-      formData.append('zip_code', zipCode);
-      formData.append('image', image); 
+      formData.append('first_name', profile.firstName);
+      formData.append('last_name', profile.lastName);
+      formData.append('email', profile.email);
+      formData.append('phone', profile.phone);
+      formData.append('place', profile.place);
+      formData.append('zip_code', profile.zipCode);
+      formData.append('image', image.image); 
 
-      const response = await axios.put('http://127.0.0.1:8000/profile/', formData, {
+      const response = await axios.put('https://isa-pointing-relax-potentially.trycloudflare.com/profile/', formData, {
         headers: {
           Authorization: `${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data',
@@ -75,11 +73,20 @@ export default function ProfileTab() {
       });
 
       console.log('Profile updated successfully:', response.data);
+      alert("profiel updated successfully")
       // Handle success (e.g., show success message)
     } catch (error) {
       console.error('Error updating profile:', error);
       // Handle error appropriately (e.g., show error message)
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      [name]: value,
+    }));
   };
 
   return (
@@ -88,69 +95,75 @@ export default function ProfileTab() {
         <div className="w-[570px]">
           <div className="input-item flex space-x-2.5 mb-8">
             <div className="w-1/2 h-full">
-              <InputCom
+              <TextField
                 label="First Name*"
                 placeholder="First Name"
                 type="text"
+                name="first_name"
                 inputClasses="h-[50px]"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                value={profile?.first_name || ""}
+                onChange={handleChange}
               />
             </div>
             <div className="w-1/2 h-full">
-              <InputCom
+              <TextField
                 label="Last Name*"
                 placeholder="Last Name"
+                name="last_name"
                 type="text"
+                value={profile?.last_name || ""}
                 inputClasses="h-[50px]"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={handleChange}
               />
             </div>
           </div>
           <div className="input-item flex space-x-2.5 mb-8">
             <div className="w-1/2 h-full">
-              <InputCom
+              <TextField
                 label="Email*"
                 placeholder="Email"
                 type="email"
+                name="email"
+                value={profile?.email || ""}
                 inputClasses="h-[50px]"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleChange}
               />
             </div>
             <div className="w-1/2 h-full">
-              <InputCom
+              <TextField
                 label="Phone Number*"
                 placeholder="Phone Number"
-                type="text"
+                type="Number"
+                name="phone"
                 inputClasses="h-[50px]"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                value={profile?.phone || ""}
+                onChange={handleChange}
               />
             </div>
           </div>
           <div className="input-item mb-8">
             <div className="w-full">
-              <InputCom
+              <TextField
                 label="State*"
                 placeholder="State"
                 type="text"
+                name="state"
+                value={profile?.state || ""}
                 inputClasses="h-[50px]"
-                value={place}
-                onChange={(e) => setPlace(e.target.value)}
+                onChange={handleChange}
               />
             </div>
           </div>
           <div className="input-item mb-8">
             <div className="w-full">
-              <InputCom
+              <TextField
                 label="Zip Code*"
                 placeholder="ZIP CODE"
-                type="text"
+                type="Number"
+                name="zipcode"
+                value={profile?.zipcode || ""}
                 inputClasses="h-[50px]"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -183,10 +196,9 @@ export default function ProfileTab() {
                 <div className="sm:w-[198px] sm:h-[198px] w-[199px] h-[199px] rounded-full overflow-hidden relative">
                   <img
                     src={
-                      image ||
-                      `${import.meta.env.VITE_PUBLIC_URL}/assets/images/edit-profileimg.jpg`
+                      `{https://isa-pointing-relax-potentially.trycloudflare.com/${profile.image}`
                     }
-                    alt=""
+                    alt={profile.first_name}
                     className="object-cover w-full h-full"
                   />
                 </div>

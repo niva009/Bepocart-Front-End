@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
-import InputCom from "../Helpers/InputCom";
+import TextField from '@mui/material/TextField';
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function CheckoutPage() {
@@ -16,6 +16,8 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [couponData, setCouponData] = useState([]);
   const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState(null);
+  const [couponDiscount, setCouponDiscount] = useState(0);
 
   const token = localStorage.getItem("token");
   const { id } = useParams();
@@ -28,9 +30,9 @@ export default function CheckoutPage() {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/cart-products/", {
+        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/cart-products/", {
           headers: {
-            Authorization: `${token}`,
+            Authorization: ` ${token}`,
           },
         });
         const data = response.data;
@@ -46,9 +48,9 @@ export default function CheckoutPage() {
 
     const fetchUserAddresses = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/get-address/", {
+        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/get-address/", {
           headers: {
-            Authorization: `${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         setAddresses(response.data.address);
@@ -59,7 +61,7 @@ export default function CheckoutPage() {
 
     const fetchCouponData = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/coupons/");
+        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/cupons/");
         setCouponData(response.data);
         console.log("Coupon data:", response.data);
       } catch (error) {
@@ -72,12 +74,20 @@ export default function CheckoutPage() {
     fetchCouponData();
   }, [token]);
 
+  console.log("all coupons", couponData);
+
+  useEffect(() => {
+    const calculatedTotal = total + shipping - discount;
+    setSubtotal(calculatedTotal);
+  }, [total, shipping, discount]);
+
+
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
     if (method === "COD") {
-      setShipping(prevShipping => prevShipping + 40);
+      setShipping((prevShipping) => prevShipping + 40);
     } else {
-      setShipping(prevShipping => prevShipping - 40);
+      setShipping((prevShipping) => prevShipping - 40);
     }
   };
 
@@ -88,7 +98,7 @@ export default function CheckoutPage() {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:8000/order/create/${selectedAddress}/`, {
+      const response = await axios.post(`https://isa-pointing-relax-potentially.trycloudflare.com/order/create/${selectedAddress}/`, {
         payment_method: paymentMethod,
         coupon_code: couponCode, // Include coupon code in the request
       }, {
@@ -103,24 +113,36 @@ export default function CheckoutPage() {
     }
   };
 
-  const applyCoupon = () => {
-    const appliedCoupon = couponData.find((coupon) => coupon.code === couponCode);
+  const handleChange = (e) => {
+    const { name, value } = e.target; 
+    setCouponCode(value);
+  };
 
-    if (appliedCoupon) {
-      if (appliedCoupon.active) {
-        setDiscount(appliedCoupon.value);
+  const applyCoupon = () => {
+    setCouponError(null);
+    if (couponCode !== "") {
+      const appliedCoupon = couponData.find(
+        (coupon) => coupon.code === couponCode && coupon.status === "Active"
+      );
+
+      if (appliedCoupon) {
+        alert("Coupon code applied successfully");
+        const discountAmount = parseFloat(appliedCoupon.discount);
+        setCouponDiscount(discountAmount);
+        setDiscount((prevDiscount) => prevDiscount + discountAmount);
       } else {
-        alert("Coupon code is inactive.");
+        setCouponError("Invalid or inactive coupon code");
       }
     } else {
-      alert("Invalid coupon code.");
+      setCouponError("Please enter a coupon code");
     }
   };
 
 
-  const handleChange = (e) => {
-    setCouponCode(e.target.value); // Update couponCode state with input value
-  };
+  console.log(couponCode, "coupon code data");
+  console.log(couponDiscount, "discount amount");
+
+
 
   return (
     <Layout childrenClasses="pt-0 pb-0">
@@ -162,11 +184,9 @@ export default function CheckoutPage() {
             <div className="w-full lg:flex lg:space-x-5">
               <div className="lg:w-1/2 w-full mb-5 lg:mb-0">
                 <div className="flex items-center space-x-4">
-                  <InputCom
-                    type="text"
+                  <TextField
                     placeholder="Discount Code"
-                    className="flex-grow"
-                    value={couponCode}
+                    name='couponCode'
                     onChange={handleChange}
                   />
                   <button
@@ -176,8 +196,6 @@ export default function CheckoutPage() {
                   >
                     <span className="text-sm font-semibold">Apply</span>
                   </button>
-
-
                 </div>
               </div>
 
@@ -194,7 +212,7 @@ export default function CheckoutPage() {
                             <div className="flex items-center space-x-3">
                               <div className="rounded-full overflow-hidden w-12 h-12">
                                 <img
-                                  src={`http://127.0.0.1:8000/${item.image}`}
+                                  src={`https://isa-pointing-relax-potentially.trycloudflare.com/${item.image}`}
                                   alt={item.name}
                                   className="w-full h-full object-cover"
                                 />
@@ -233,6 +251,18 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                   </div>
+                  <div className="flex justify-between">
+                    <div>
+                      <p className="text-[13px] font-medium text-qblack uppercase">
+                        Discount
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-medium text-qblack">
+                        ${discount.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
                   <div className="flex justify-between mt-4">
                     <div>
                       <p className="text-[13px] font-medium text-qblack uppercase">
@@ -256,7 +286,7 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-[15px] font-medium text-qred">${(subtotal + shipping).toFixed(2)}
+                      <p className="text-[15px] font-medium text-qred">${(subtotal).toFixed(2)}
                       </p>
                     </div>
                   </div>

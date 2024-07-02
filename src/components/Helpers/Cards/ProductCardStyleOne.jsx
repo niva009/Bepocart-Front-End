@@ -36,7 +36,7 @@ export default function ProductCardStyleOne({ datas, type }) {
       console.log("Token:", token);
 
       const response = await axios.post(
-        `http://127.0.0.1:8000/add-wishlist/${productId}/`,
+        `https://isa-pointing-relax-potentially.trycloudflare.com/add-wishlist/${productId}/`,
         {},
         {
           headers: {
@@ -78,7 +78,7 @@ export default function ProductCardStyleOne({ datas, type }) {
       console.log("Token:", token);
 
       const response = await axios.post(
-        `http://127.0.0.1:8000/cart/${selectedProductId}/`,
+        `https://isa-pointing-relax-potentially.trycloudflare.com/cart/${selectedProductId}/`,
         { color, size },
         {
           headers: {
@@ -111,7 +111,7 @@ export default function ProductCardStyleOne({ datas, type }) {
       <div
         className="product-card-img w-full h-[200px]"
         style={{
-          background: `url(${import.meta.env.VITE_PUBLIC_URL}${datas.image}) no-repeat center`,
+          background: `url(${"https://isa-pointing-relax-potentially.trycloudflare.com/"}${datas.image}) no-repeat center`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

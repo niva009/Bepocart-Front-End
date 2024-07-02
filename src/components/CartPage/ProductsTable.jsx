@@ -8,7 +8,7 @@ export default function ProductsTable({ className }) {
     const fetchCartProducts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch('http://127.0.0.1:8000/cart-products/', {
+        const response = await fetch('https://isa-pointing-relax-potentially.trycloudflare.com/cart-products/', {
           headers: {
             Authorization: `${token}`,
           },
@@ -30,7 +30,7 @@ export default function ProductsTable({ className }) {
   const handleDeleteProduct = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://127.0.0.1:8000/cart-delete/${id}/`, {
+      await axios.delete(`https://isa-pointing-relax-potentially.trycloudflare.com/cart-delete/${id}/`, {
         headers: {
           Authorization: `${token}`,
         },
@@ -44,7 +44,7 @@ export default function ProductsTable({ className }) {
   const updateProductQuantityIncrement = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put(`http://127.0.0.1:8000/cart/increment/${id}/`, {}, {
+      const response = await axios.put(`https://isa-pointing-relax-potentially.trycloudflare.com/cart/increment/${id}/`, {}, {
         headers: {
           Authorization: `${token}`,
         },
@@ -64,7 +64,7 @@ export default function ProductsTable({ className }) {
   const updateProductQuantityDecrement = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put(`http://127.0.0.1:8000/cart/decrement/${id}/`, {}, {
+      const response = await axios.put(`https://isa-pointing-relax-potentially.trycloudflare.com/cart/decrement/${id}/`, {}, {
         headers: {
           Authorization: `${token}`,
         },
@@ -115,7 +115,7 @@ export default function ProductsTable({ className }) {
                   <div className="flex space-x-6 items-center">
                     <div className="w-[80px] h-[80px] overflow-hidden flex justify-center items-center border border-[#EDEDED]">
                       <img
-                        src={`${import.meta.env.VITE_PUBLIC_URL}${product.image}`}
+                        src={`${"https://isa-pointing-relax-potentially.trycloudflare.com/"}${product.image}`}
                         alt={product.name}
                         className="w-full h-full object-contain"
                       />

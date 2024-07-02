@@ -27,7 +27,7 @@ export default function Login() {
     e.preventDefault();
     setMessage(""); 
     axios
-      .post("http://127.0.0.1:8000/login/", data)
+      .post("https://isa-pointing-relax-potentially.trycloudflare.com/login/", data)
       .then((response) => {
         console.log("Response:", response.data);
         const token = response.data.token; 

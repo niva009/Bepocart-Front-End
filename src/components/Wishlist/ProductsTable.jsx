@@ -11,7 +11,7 @@ export default function ProductsTable({ className }) {
   const fetchWishlist = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get("http://127.0.0.1:8000/wishlist/", {
+      const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/wishlist/", {
         headers: {
           'Authorization': `${token}`
         }
@@ -26,7 +26,7 @@ export default function ProductsTable({ className }) {
   const handleDeleteItem = async (itemId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://127.0.0.1:8000/wishlist-delete/${itemId}/`, {
+      await axios.delete(`https://isa-pointing-relax-potentially.trycloudflare.com/wishlist-delete/${itemId}/`, {
         headers: {
           'Authorization': `${token}`
         }
@@ -58,7 +58,7 @@ export default function ProductsTable({ className }) {
                   <div className="flex space-x-6 items-center">
                     <div className="w-[80px] h-[80px] overflow-hidden flex justify-center items-center border border-[#EDEDED]">
                       <img
-                        src={`${import.meta.env.VITE_PUBLIC_URL}${item.productImage}`}
+                        src={`${"https://isa-pointing-relax-potentially.trycloudflare.com/"}${item.productImage}`}
                         alt={item.productName}
                         className="w-full h-full object-contain"
                       />

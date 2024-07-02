@@ -3,7 +3,7 @@ export default function InputCom({
   type,
   name,
   placeholder,
-  inputHandler,
+  handleChange,
   value,
   inputClasses,
   labelClasses = "text-qgray text-[13px] font-normal",
@@ -22,7 +22,7 @@ export default function InputCom({
         <input
           placeholder={placeholder}
           value={value}
-          onChange={inputHandler}
+          onChange={handleChange}
           className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${inputClasses}`}
           type={type}
           id={name}

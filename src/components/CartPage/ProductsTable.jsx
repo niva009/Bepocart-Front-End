@@ -1,14 +1,29 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function ProductsTable({ className }) {
   const [cartProducts, setCartProducts] = useState([]);
+  const [offer, setOffer] = useState([]);
+
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/offer/`)
+      .then((response) => {
+        setOffer(response.data);
+      })
+      .catch((error) => {
+        console.log("error fetching offer products", error);
+      });
+  }, []);
 
   useEffect(() => {
     const fetchCartProducts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch('https://isa-pointing-relax-potentially.trycloudflare.com/cart-products/', {
+        const response = await fetch(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
           headers: {
             Authorization: `${token}`,
           },
@@ -25,26 +40,25 @@ export default function ProductsTable({ className }) {
 
     fetchCartProducts();
   }, []);
-  
 
   const handleDeleteProduct = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://isa-pointing-relax-potentially.trycloudflare.com/cart-delete/${id}/`, {
+      await axios.delete(`${import.meta.env.VITE_PUBLIC_URL}/cart-delete/${id}/`, {
         headers: {
           Authorization: `${token}`,
         },
       });
       setCartProducts(prevProducts => prevProducts.filter(product => product.id !== id));
     } catch (error) {
-      console.error('Error deleting product:', error);
+    console.error('Error deleting product:', error);
     }
   };
 
   const updateProductQuantityIncrement = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put(`https://isa-pointing-relax-potentially.trycloudflare.com/cart/increment/${id}/`, {}, {
+      const response = await axios.put(`${import.meta.env.VITE_PUBLIC_URL}/cart/increment/${id}/`, {}, {
         headers: {
           Authorization: `${token}`,
         },
@@ -64,7 +78,7 @@ export default function ProductsTable({ className }) {
   const updateProductQuantityDecrement = async (id) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put(`https://isa-pointing-relax-potentially.trycloudflare.com/cart/decrement/${id}/`, {}, {
+      const response = await axios.put(`${import.meta.env.VITE_PUBLIC_URL}/cart/decrement/${id}/`, {}, {
         headers: {
           Authorization: `${token}`,
         },
@@ -78,11 +92,14 @@ export default function ProductsTable({ className }) {
       }
     } catch (error) {
       console.error('Error updating product quantity:', error);
+ 
     }
   };
 
-  const increment = (id) => {
-    updateProductQuantityIncrement(id);
+  const increment = (id, currentQuantity, stock) => {
+    if (currentQuantity < stock) {
+      updateProductQuantityIncrement(id);
+    }
   };
 
   const decrement = (id, currentQuantity) => {
@@ -91,8 +108,122 @@ export default function ProductsTable({ className }) {
     }
   };
 
+  const hasOfferProducts = cartProducts.some(product => product.offer_type !== null);
+
+  console.log("cart data......:", cartProducts);
+  console.log("offer getting details  ", offer);
+
+  const offerCategory = offer[0];
+
+  console.log("offerCategory-information", offerCategory);
+  console.log("cart information:", cartProducts);
+
+  // Log offerCategory details for debugging
+  console.log("offerCategory:", offerCategory);
+  console.log("is_active:", offerCategory?.is_active);
+  console.log("get_option:", offerCategory?.get_option);
+
+  let totalPrice = 0;
+  let offerName = "";
+  let freeQuantity = 0;
+  let discountAllowedProducts = []; // Array to store products with discount_product === "Discount Allowed"
+  
+  // Check if offerCategory is active
+  if (offerCategory?.is_active === true) {
+    if (offerCategory?.get_option === 1) {
+      offerName = "BUY-ONE-GET-ONE";
+    } else if (offerCategory?.get_option === 2) {
+      offerName = "BUY-TWO-GET-ONE";
+    }
+
+    cartProducts.forEach((product, index) => {
+      const price = parseFloat(product?.salePrice);
+      const quantity = parseInt(product?.quantity);
+
+      if (!isNaN(price) && !isNaN(quantity)) {
+        totalPrice += price * quantity;
+        console.log(`Product at index ${index}: has_offer=${product?.has_offer}, discount_product=${product?.discount_product}`);
+      } else {
+        console.warn(`Invalid data at index ${index}: price=${product?.salePrice}, quantity=${product?.quantity}`);
+      }
+    });
+  } else {
+    if (offerCategory?.get_option === 1) {
+      offerName = "BUY-ONE-GET-ONE";
+    } else if (offerCategory?.get_option === 2) {
+      offerName = "BUY-TWO-GET-ONE";
+    }
+
+    console.log("Offer Name:", offerName);
+
+    if (offerName === "BUY-ONE-GET-ONE") {
+      cartProducts.forEach((product, index) => {
+        const price = parseFloat(product?.salePrice);
+        const quantity = parseInt(product?.quantity);
+
+        if (!isNaN(price) && !isNaN(quantity)) {
+          console.log(`Product at index ${index}: has_offer=${product?.has_offer}, discount_product=${product?.discount_product}`);
+          
+          if (product.has_offer === "Offer Applied" && product.discount_product === "normal") {
+            totalPrice += price * quantity;
+          } else if (product.has_offer === "Offer Not Applicable" && product.discount_product === "Discount Allowed") {
+            totalPrice += price * quantity;
+          } else if (product.discount_product === "Discount Allowed") {
+            discountAllowedProducts.push({ price, quantity, index });
+          }
+
+          if (product.has_offer === "Offer Applied") {
+            freeQuantity += quantity;
+          }
+        } else {
+          console.warn(`Invalid data at index ${index}: price=${product?.salePrice}, quantity=${product?.quantity}`);
+        }
+      });
+    } else {
+      cartProducts.forEach((product, index) => {
+        const price = parseFloat(product?.salePrice);
+        const quantity = parseInt(product?.quantity);
+
+        if (!isNaN(price) && !isNaN(quantity)) {
+          console.log(`Product at index ${index}: has_offer=${product?.has_offer}, discount_product=${product?.discount_product}`);
+          
+          if (product.has_offer === "Offer Applied" && product.discount_product === "normal") {
+            totalPrice += price * quantity;
+          } else if (product.has_offer === "Offer Not Applicable" && product.discount_product === "Discount Allowd") {
+            totalPrice += price * quantity;
+          } else if (product.has_offer === "Offer Applied" && product.discount_product === "normal"  || product.discount_product === "Discount Allowd") {
+                
+            
+
+          }
+
+          if (product.has_offer === "Offer Applied") {
+            freeQuantity += quantity;
+          }
+        } else {
+          console.warn(`Invalid data at index ${index}: price=${product?.salePrice}, quantity=${product?.quantity}`);
+        }
+      });
+    }
+  }
+  // Output results
+  console.log("Total Price:", totalPrice);
+  console.log("Free Quantity:", freeQuantity);
+  // console.log("Discount Allowed Products:", discountAllowedProducts);
+
   return (
     <div className={`w-full ${className || ''}`}>
+      {hasOfferProducts && (
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <select className="px-4 py-2 rounded bg-gray-200">
+              <option value="option1">Option 1</option>
+              <option value="option2">Option 2</option>
+            </select>
+          </div>
+          <p style={{ color: "green", fontWeight: "bold" }}>Offer Available</p>
+        </div>
+      )}
       <div className="relative w-full overflow-x-auto border border-[#EDEDED]">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <tbody>
@@ -115,7 +246,7 @@ export default function ProductsTable({ className }) {
                   <div className="flex space-x-6 items-center">
                     <div className="w-[80px] h-[80px] overflow-hidden flex justify-center items-center border border-[#EDEDED]">
                       <img
-                        src={`${"https://isa-pointing-relax-potentially.trycloudflare.com/"}${product.image}`}
+                        src={`${import.meta.env.VITE_PUBLIC_URL}${product.image}`}
                         alt={product.name}
                         className="w-full h-full object-contain"
                       />
@@ -124,6 +255,11 @@ export default function ProductsTable({ className }) {
                       <p className="font-medium text-[15px] text-qblack">
                         {product.name}
                       </p>
+                      {product.offer_type !== null && (
+                        <p style={{ paddingTop: "30px", color: "green", fontWeight: "bold" }}>
+                          {product.offer_type} Offer Available
+                        </p>
+                      )}
                     </div>
                   </div>
                 </td>
@@ -159,9 +295,10 @@ export default function ProductsTable({ className }) {
                         </button>
                         <span className="text-qblack">{product.quantity}</span>
                         <button
-                          onClick={() => increment(product.id)}
+                          onClick={() => increment(product.id, product.quantity, product.stock)}
                           type="button"
                           className="text-base text-qgray"
+                          disabled={product.quantity >= product.stock}
                         >
                           +
                         </button>

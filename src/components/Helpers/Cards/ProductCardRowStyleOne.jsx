@@ -45,12 +45,6 @@ export default function ProductCardRowStyleTwo({ className, datas, type }) {
                 {datas.salePrice}
               </span>
             </p>
-            <button type="button" className="w-[110px] h-[30px]">
-              <span className={type === 3 ? "blue-btn" : "yellow-btn"}>
-                {" "}
-                Add To Cart
-              </span>
-            </button>
           </div>
         </div>
       </div>

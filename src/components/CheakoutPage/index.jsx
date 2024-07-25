@@ -30,9 +30,9 @@ export default function CheckoutPage() {
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/cart-products/", {
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
           headers: {
-            Authorization: ` ${token}`,
+            Authorization: `${token}`,
           },
         });
         const data = response.data;
@@ -48,9 +48,9 @@ export default function CheckoutPage() {
 
     const fetchUserAddresses = async () => {
       try {
-        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/get-address/", {
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/get-address/`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `${token}`,
           },
         });
         setAddresses(response.data.address);
@@ -61,9 +61,8 @@ export default function CheckoutPage() {
 
     const fetchCouponData = async () => {
       try {
-        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/cupons/");
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cupons/`);
         setCouponData(response.data);
-        console.log("Coupon data:", response.data);
       } catch (error) {
         console.error("Error fetching coupon data:", error);
       }
@@ -74,13 +73,10 @@ export default function CheckoutPage() {
     fetchCouponData();
   }, [token]);
 
-  console.log("all coupons", couponData);
-
   useEffect(() => {
     const calculatedTotal = total + shipping - discount;
     setSubtotal(calculatedTotal);
   }, [total, shipping, discount]);
-
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
@@ -91,28 +87,72 @@ export default function CheckoutPage() {
     }
   };
 
-  const handlePlaceOrder = async () => {
+  const initializeRazorpay = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+
+      script.onload = () => {
+        resolve(true);
+      };
+      script.onerror = () => {
+        resolve(false);
+      };
+
+      document.body.appendChild(script);
+    });
+  };
+  const makePayment = async () => {
+    const res = await initializeRazorpay();
+  
+    if (!res) {
+      alert("Razorpay SDK Failed to load");
+      return;
+    }
     if (!selectedAddress) {
       alert("Please select an address to place the order.");
       return;
     }
-
+  
     try {
-      const response = await axios.post(`https://isa-pointing-relax-potentially.trycloudflare.com/order/create/${selectedAddress}/`, {
+      // Make API call to create order
+      const orderResponse = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
         payment_method: paymentMethod,
-        coupon_code: couponCode, // Include coupon code in the request
+        coupon_code: couponCode,
       }, {
         headers: {
           Authorization: `${token}`,
         },
       });
-      console.log("Order created:", response.data);
-      navigate("/order-success");
+  
+  
+      const options = {
+        key: "rzp_test_m3k00iFqtte9HH", // Enter the Key ID generated from the Dashboard
+        name: "BepoCart Pvt limited",
+        currency: "INR",
+        amount: (subtotal * 100).toString(),
+        description: "Thank you for your order",
+        image: "https://manuarora.in/logo.png",
+        handler: async function (response) {
+          // Directly handle successful payment
+          alert("Payment successful!");
+          navigate("/order-success"); // Redirect to success page or show a success message
+        },
+        prefill: {
+          name: "Manu Arora",
+          email: "manuarorawork@gmail.com",
+          contact: "9999999999",
+        },
+      };
+  
+      const paymentObject = new window.Razorpay(options);
+      paymentObject.open();
     } catch (error) {
       console.error("Error creating order:", error);
+      alert("Order creation failed.");
     }
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target; 
     setCouponCode(value);
@@ -138,11 +178,9 @@ export default function CheckoutPage() {
     }
   };
 
-
-  console.log(couponCode, "coupon code data");
-  console.log(couponDiscount, "discount amount");
-
-
+  const handlePlaceOrder = () => {
+    makePayment();
+  };
 
   return (
     <Layout childrenClasses="pt-0 pb-0">
@@ -192,7 +230,7 @@ export default function CheckoutPage() {
                   <button
                     type="button"
                     className="w-[90px] h-[40px] black-btn rounded-md"
-                    onClick={applyCoupon} // Use applyCoupon directly without ||
+                    onClick={applyCoupon}
                   >
                     <span className="text-sm font-semibold">Apply</span>
                   </button>
@@ -212,7 +250,7 @@ export default function CheckoutPage() {
                             <div className="flex items-center space-x-3">
                               <div className="rounded-full overflow-hidden w-12 h-12">
                                 <img
-                                  src={`https://isa-pointing-relax-potentially.trycloudflare.com/${item.image}`}
+                                  src={`${import.meta.env.VITE_PUBLIC_URL}/${item.image}`}
                                   alt={item.name}
                                   className="w-full h-full object-cover"
                                 />

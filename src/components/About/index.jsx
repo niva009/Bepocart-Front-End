@@ -4,10 +4,8 @@ import BlogCard from "../Helpers/Cards/BlogCard";
 import Star from "../Helpers/icons/Star";
 import PageTitle from "../Helpers/PageTitle";
 import SimpleSlider from "../Helpers/SliderCom";
-import Layout from "../Partials/Layout";
-
-import blog from "../../data/blogs.json";
-import DataIteration from "../Helpers/DataIteration";
+import Layout from "../Partials/Layout";  
+import AboutBanner from '../../assets/banner-image.jpg';
 
 export default function About() {
   const settings = {
@@ -66,9 +64,7 @@ export default function About() {
             <div className="w-full min-h-[665px] lg:flex lg:space-x-12 items-center pb-10 lg:pb-0">
               <div className="md:w-[570px] w-full md:h-[560px] h-auto rounded overflow-hidden my-5 lg:my-0">
                 <img
-                  src={`${
-                    import.meta.env.VITE_PUBLIC_URL
-                  }/assets/images/about-banner.png`}
+                  src={AboutBanner}
                   alt="about"
                   className="w-full h"
                 />
@@ -139,11 +135,7 @@ export default function About() {
                   </div>
                   <div className="flex items-center space-x-2.5 mt-3">
                     <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
+                      <img src="/banner-image.jpg" alt="banner-image"
                       />
                     </div>
                     <div>
@@ -728,7 +720,7 @@ export default function About() {
 
             <div className="blogs-wrapper w-full">
               <div className="grid md:grid-cols-2 grid-cols-1 lg:gap-[30px] gap-5">
-                <DataIteration datas={blog.blogs} startLength={0} endLength={2}>
+                {/* <DataIteration datas={blog.blogs} startLength={0} endLength={2}>
                   {({ datas }) => (
                     <div
                       data-aos="fade-up"
@@ -738,7 +730,7 @@ export default function About() {
                       <BlogCard datas={datas} />
                     </div>
                   )}
-                </DataIteration>
+                </DataIteration> */}
               </div>
             </div>
           </div>

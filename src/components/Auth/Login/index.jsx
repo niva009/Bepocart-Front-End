@@ -1,9 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import InputCom from "../../Helpers/InputCom";
 import Thumbnail from "./Thumbnail";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import TextField from '@mui/material/TextField';
 
 export default function Login() {
   const [checked, setValue] = useState(false);
@@ -23,24 +24,24 @@ export default function Login() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  console.log(data,"data information")
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(""); 
-    axios
-      .post("https://isa-pointing-relax-potentially.trycloudflare.com/login/", data)
-      .then((response) => {
-        console.log("Response:", response.data);
-        const token = response.data.token; 
-        localStorage.setItem("token", token); 
-        setMessageType("success");
-        setMessage("Login successful!");
-        navigate("/"); 
-      })
-      .catch((error) => {
-        console.error("Error:", error.response ? error.response.data : error.message);
-        setMessageType("error");
-        setMessage("Login failed. Please check your credentials.");
-      });
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/login/`, data);
+      console.log("Response:", response.data);
+      const token = response.data.token; 
+      localStorage.setItem("token", token); 
+      setMessageType("success");
+      setMessage("Login successful!");
+      navigate("/"); 
+    } catch (error) {
+      console.error("Error:", error.response ? error.response.data : error.message);
+      setMessageType("error");
+      setMessage("Login failed. Please check your credentials.");
+    }
   };
 
   return (
@@ -76,25 +77,26 @@ export default function Login() {
               <form onSubmit={handleSubmit}>
                 <div className="input-area">
                   <div className="input-item mb-5">
-                    <InputCom
+                    <TextField
                       placeholder="Email"
+                      style={{width:"500px"}}
                       label="Email Address*"
                       name="email"
                       type="email"
-                      inputClasses="h-[50px]"
-                      inputHandler={handleChange}
-                      value={data.email}
+                      inputClasses="h-[50px]-w[100px]"
+                      onChange={handleChange}
                     />
                   </div>
                   <div className="input-item mb-5">
-                    <InputCom
+                    <TextField
                       placeholder="Password"
                       label="Password*"
+                      style={{width:"500px"}}
                       name="password"
                       type="password"
                       inputClasses="h-[50px]"
-                      inputHandler={handleChange}
-                      value={data.password}
+                      onChange={handleChange}
+  
                     />
                   </div>
                   <div className="forgot-password-area flex justify-between items-center mb-7">

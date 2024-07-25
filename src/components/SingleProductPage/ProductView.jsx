@@ -1,43 +1,76 @@
 import React, { useState, useEffect } from "react";
-import Star from "../Helpers/icons/Star";
-import Selectbox from "../Helpers/Selectbox";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { FormControl, Select, MenuItem, Rating } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
+import Star from "@mui/icons-material/Star";
 
-export default function ProductView({ className, reportHandler }) {
+export default function ProductView({ className }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [product, setProduct] = useState(null);
-  const [productImage, setProductImage] = useState([]);
-  const [src, setSrc] = useState('');
-  const [selectedSize, setSelectedSize] = useState('');
+  const [productImages, setProductImages] = useState([]);
+  const [src, setSrc] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
+  const [sizes, setSizes] = useState([]);
+  const [variants, setVariants] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedColorName, setSelectedColorName] = useState("");
+  const [selectedColorCode, setSelectedColorCode] = useState("");
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showWishlistSuccessMessage, setShowWishlistSuccessMessage] = useState(false);
+  const [errorWishlist, setErrorWishlist] = useState(null);
+  const [isReadMore, setIsReadMore] = useState(true);
+  const [review, setReview] = useState([]);
+
 
   const { id } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const productId = parseInt(id);
-    fetchProduct(productId);
+    fetchProduct(id);
   }, [id]);
+
+  useEffect(() => {
+    console.log("productImages updated:", productImages);
+  }, [productImages]);
 
   const fetchProduct = async (productId) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`http://127.0.0.1:8000/product/${productId}/`, {
-        headers: { 'Authorization': `${token}` },
-      });
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${import.meta.env.VITE_PUBLIC_URL}/product/${id}/`,
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
+
       setProduct(response.data.product);
-      setProductImage(response.data.images);
+      setProductImages(response.data.images);
+      setVariants(response.data.variants);
+
       if (response.data.images.length > 0) {
-        setSrc(`http://127.0.0.1:8000${response.data.images[0].image1}`);
+        const initialImage = response.data.images[0];
+        setSrc(`${import.meta.env.VITE_PUBLIC_URL}${initialImage.image1}`);
+        const initialSizes = response.data.variants
+          .filter(variant => variant.color === initialImage.id && variant.stock > 0)
+          .map(variant => variant.size);
+        setSizes(initialSizes);
+        setSelectedSize(initialSizes[0]);
+        setSelectedColor(initialImage.color);
+        setSelectedColorCode(initialImage.colorCode);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-        navigate('/login');
+        navigate("/login");
       } else {
         setError("Error fetching product");
       }
@@ -46,40 +79,231 @@ export default function ProductView({ className, reportHandler }) {
     }
   };
 
-  const changeImgHandler = (current) => setSrc(`http://127.0.0.1:8000${current}`);
+  const productId = product?.id
 
-  const increment = () => setQuantity((prev) => prev + 1);
+  console.log("product id informationn :",productId);
 
-  const decrement = () => quantity > 1 && setQuantity((prev) => prev - 1);
 
-  const handleSizeChange = (size) => setSelectedSize(size);
+  useEffect(() => {
+    const fetchRating = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/review/${productId}/`);
+        console.log(response);
+        setReview(response.data);
+      } catch (error) {
+        console.log("Error fetching review:", error);
+      }
+    };
 
-  const handleWishlistToggle = () => setWishlist((prevWishlist) => !prevWishlist);
+    fetchRating();
+  }, [productId]); 
 
-  const filteredImages = selectedSize
-    ? productImage.filter((img) => img.size.toString() === selectedSize)
-    : productImage;
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  console.log("RATING IN BIG VIEW",review);
+
+  const calculateAverageRating = () => {
+    if (review.length === 0) return 0;
+
+    const totalRating = review.reduce((sum, rateClass) => sum + rateClass.rating, 0);
+    return totalRating / review.length;
+  };
+
+  const averageRating = calculateAverageRating();
+
+
+  console.log("average rating",averageRating);
+
+  const AddToCart = async () => {
+    try {
+      if (id) {
+        const token = localStorage.getItem("token");
+        const response = await axios.post(
+          `${import.meta.env.VITE_PUBLIC_URL}/cart/${productId}/`,
+          {
+            quantity: quantity,
+            size: selectedSize,
+            color: selectedColor,
+          },
+          {
+            headers: { Authorization: `${token}` },
+          }
+        );
+        setShowSuccessMessage(true);
+        console.log(response);
+      } else {
+        console.log("ID not found");
+      }
+    } catch (error) {
+      console.log(error);
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        navigate("/login");
+      } else {
+        setError("Error adding to cart");
+      }
+    }
+  };
+
+  const changeImgHandler = (current, sizes, color, colorCode) => {
+    setSrc(`${import.meta.env.VITE_PUBLIC_URL}${current}`);
+    setSizes(sizes);
+    setSelectedSize(sizes[0]);
+    setSelectedColor(color);
+    setSelectedColorCode(colorCode);
+  };
+
+  const handleSizeChange = (event) => setSelectedSize(event.target.value);
+  const handleWishlistToggle = () => {
+    const token = localStorage.getItem("token");
+    
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+  
+    const body = {
+      product: id,
+    };
+  
+    axios.post(
+      `${import.meta.env.VITE_PUBLIC_URL}/add-wishlist/${productId}/`,
+      body,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    )
+      .then((response) => {
+        console.log(response.data);
+        // Optionally update state or UI based on response
+        setShowWishlistSuccessMessage(true);
+      })
+      .catch((error) => {
+        console.error("Error adding to wishlist", error);
+        setErrorWishlist(error?.response?.data?.message || "Error adding to wishlist")
+  
+      });
+  };
+  
+
+  const toggleReadMore = () => {setIsReadMore(!isReadMore)};
+
+  
+
+  const handleColorChange = (colorId) => {
+    const selectedImage = productImages.find(image => image.id === colorId);
+    if (selectedImage) {
+      setSrc(`${import.meta.env.VITE_PUBLIC_URL}${selectedImage.image1}`);
+      const filteredVariants = variants.filter(variant => variant.color === colorId && variant.stock > 0);
+      setSizes(filteredVariants.map(variant => variant.size));
+      setSelectedSize(filteredVariants[0]?.size || "");
+      setSelectedColor(selectedImage.color);
+    }
+  };
+  
+  
+
+  const PreviousButton = ({ onClick }) => (
+    <button
+      className="slick-prev"
+      onClick={onClick}
+      style={{ display: "block", left: "-40px" }}
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M15 18L9 12L15 6"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+
+  const NextButton = ({ onClick }) => (
+    <button
+      className="slick-next"
+      onClick={onClick}
+      style={{ display: "block", right: "-40px" }}
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M9 18L15 12L9 6"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    prevArrow: <PreviousButton />,
+    nextArrow: <NextButton />,
+  };
 
   return (
     <div className={`product-view w-full lg:flex justify-between ${className || ""}`}>
       <div data-aos="fade-right" className="lg:w-1/2 xl:mr-[70px] lg:mr-[50px]">
         <div className="w-full">
           <div className="w-full h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
-            <img src={src} alt="" className="object-contain" />
+            <img src={src} alt="Product" className="object-contain" />
             <div className="w-[80px] h-[80px] rounded-full bg-qyellow text-qblack flex justify-center items-center text-xl font-medium absolute left-[30px] top-[30px]">
               <span>{product?.discount}%</span>
             </div>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            {filteredImages.map((img) => (
-              <div onClick={() => changeImgHandler(img.image1)} key={img.id} className="w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer">
-                <img src={`http://127.0.0.1:8000${img.image1}`} alt="" className={`w-full h-full object-contain ${src !== `http://127.0.0.1:8000${img.image1}` ? "opacity-50" : ""}`} />
-              </div>
-            ))}
-          </div>
+          <Slider {...settings}>
+            {productImages.map((item) =>
+              Object.keys(item)
+                .filter((key) => key.startsWith("image"))
+                .map((imageKey) => (
+                  <div
+                    onClick={() =>
+                      changeImgHandler(
+                        item[imageKey],
+                        variants
+                          .filter(variant => variant.color === item.id && variant.stock > 0)
+                          .map(variant => variant.size),
+                        item.color,
+                        item.colorCode
+                      )
+                    }
+                    key={imageKey}
+                    className="w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer"
+                  >
+                    <img
+                      src={`${import.meta.env.VITE_PUBLIC_URL}${item[imageKey]}`}
+                      alt="Thumbnail"
+                      className={`w-full h-full object-contain ${
+                        src !==
+                        `${import.meta.env.VITE_PUBLIC_URL}${item[imageKey]}`
+                          ? "opacity-50"
+                          : ""
+                      }`}
+                    />
+                  </div>
+                ))
+            )}
+          </Slider>
         </div>
       </div>
 
@@ -87,80 +311,170 @@ export default function ProductView({ className, reportHandler }) {
         <div className="product-details w-full mt-10 lg:mt-0">
           {product && (
             <>
-              <span data-aos="fade-up" className="text-qgray text-xs font-normal uppercase tracking-wider mb-2 inline-block">
+              <span
+                data-aos="fade-up"
+                className="text-qgray text-xs font-normal uppercase tracking-wider mb-2 inline-block"
+              >
                 {product.categoryName}
               </span>
-              <p data-aos="fade-up" className="text-xl font-medium text-qblack mb-4">{product.name}</p>
-              <div data-aos="fade-up" className="flex space-x-[10px] items-center mb-6">
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((index) => (
-                    <Star key={index} />
+              <h1
+                data-aos="fade-up"
+                className="text-xl font-medium text-qblack mb-4"
+              >
+                {product.name}
+              </h1>
+              <div
+                data-aos="fade-up"
+                className="flex items-center mb-5"
+              >
+                  <div className="flex">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={index}
+                      className={
+                        index < averageRating
+                          ? "text-yellow-400"
+                          : "text-gray-400"
+                      }
+                    />
                   ))}
                 </div>
-                <span className="text-[13px] font-normal text-qblack">6 Reviews</span>
+                <span className="text-qgray text-xs font-normal ml-2">
+                  ({review.length} reviews)
+                </span>
               </div>
-              <div data-aos="fade-up" className="flex space-x-2 items-center mb-7">
-                <span className="text-sm font-500 text-qgray line-through mt-2">${product.price}</span>
-                <span className="text-2xl font-500 text-qred">${product.salePrice}</span>
-              </div>
-              <p data-aos="fade-up" className="text-qgray text-sm text-normal mb-[30px] leading-7">{product.short_description}</p>
-              <div data-aos="fade-up" className="colors mb-[30px]">
-                <span className="text-sm font-normal uppercase text-qgray mb-[14px] inline-block">COLOR</span>
-                <div className="flex space-x-4 items-center">
-                  {productImage.map((img) => (
-                    <div key={img.id}>
-                      {img.color && img.color !== "" && (
-                        <button onClick={() => changeImgHandler(img.image1)} type="button" style={{ "--tw-ring-color": `${img.color}` }} className="w-[20px] h-[20px] rounded-full focus:ring-2 ring-offset-2 flex justify-center items-center">
-                          <span style={{ background: `${img.color}` }} className="w-[20px] h-[20px] block rounded-full border"></span>
-                        </button>
-                      )}
-                    </div>
-                  ))}
+
+              <p
+                data-aos="fade-up"
+                className="text-qgray text-sm font-normal leading-7 mb-8"
+              >
+               {isReadMore ? product.description.slice(0, 100): product.description }
+      {product.description.length > 100 &&
+        <span onClick={toggleReadMore}>
+          {isReadMore ? '...read more' : ' ...show less'}
+        </span>
+      }
+              </p>
+
+              <div data-aos="fade-up" className="flex flex-col gap-y-5 mb-6">
+                <div className="flex items-center">
+                  <span className="text-qblack font-semibold text-lg">
+                    {product.currency} {product.salePrice} 
+                  </span>
+                  {product.original_price && (
+                    <span className="text-qgray line-through ml-2">
+                      {product.currency} {product.original_price}
+                    </span>
+                  )}
                 </div>
-              </div>
-              <div data-aos="fade-up" className="product-size mb-[30px]">
-                <span className="text-sm font-normal uppercase text-qgray mb-[14px] inline-block">SIZE</span>
-                <div className="w-full">
-                  <div className="border border-qgray-border h-[50px] flex justify-between items-center px-6 cursor-pointer">
-                    <Selectbox className="w-full" datas={product.size ? product.size.map(size => size.toString()) : []} onChange={handleSizeChange}>
-                      {({ item }) => (
-                        <>
-                          <div>
-                            <span className="text-[13px] text-qblack">{item}</span>
-                          </div>
-                          <div className="flex space-x-10 items-center">
-                            <span className="text-[13px] text-qblack">3”W x 3”D x 7”H</span>
-                            <span>
-                              <svg width="11" height="7" viewBox="0 0 11 7" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5.4 6.8L0 1.4L1.4 0L5.4 4L9.4 0L10.8 1.4L5.4 6.8Z" fill="#222222" />
-                              </svg>
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </Selectbox>
+
+                <div className="flex items-center">
+  <span className="text-qblack text-sm font-medium mr-3">
+    Color:
+  </span>
+  {productImages.map((image) => (
+    <div
+      key={image.id}
+      className={`w-6 h-6 border border-qgray-border rounded-full ${
+        selectedColor === image.color
+          ? "ring-2 ring-qblack"
+          : ""
+      }`}
+      style={{ backgroundColor: image.color }}
+    >
+      <span className="sr-only">{image.color}</span> {/* Optional: Include color name tooltip */}
+    </div>
+  ))}
+</div>
+
+
+                <div className="flex items-center">
+                  <span className="text-qblack text-sm font-medium mr-3">
+                    Size:
+                  </span>
+                  <FormControl variant="outlined" size="small">
+                    <Select
+                      value={selectedSize}
+                      onChange={handleSizeChange}
+                      displayEmpty
+                    >
+                      {sizes.map((size) => {
+                        return (
+                          <MenuItem
+                            key={size}
+                            value={size}
+                            disabled={!variants.find(variant => variant.size === size && variant.stock > 0)}
+                          >
+                            {size}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </div>
+
+                <div className="flex items-center">
+                  <span className="text-qblack text-sm font-medium mr-3">
+                    Quantity:
+                  </span>
+                  <div className="flex items-center border border-qgray-border">
+                    <button
+                      className="px-3 py-1 text-qblack"
+                      onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
+                    >
+                      -
+                    </button>
+                    <span className="px-4 py-1 border-l border-r border-qgray-border">
+                      {quantity}
+                    </span>
+                    <button
+                      className="px-3 py-1 text-qblack"
+                      onClick={() => setQuantity(quantity + 1)}
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
-              </div>
-              {/* <div data-aos="fade-up" className="quantity-card-wrapper w-full flex items-center h-[50px] space-x-[10px] mb-[30px]">
-                <div className="w-[120px] h-full px-[26px] flex items-center border border-qgray-border">
-                  <div className="flex justify-between items-center w-full">
-                    <button onClick={decrement} type="button" className="text-base text-qgray">-</button>
-                    <span className="text-qblack">{quantity}</span>
-                    <button onClick={increment} type="button" className="text-base text-qgray">+</button>
-                  </div>
+
+                <div className="flex items-center gap-x-5 mt-6">
+                  <button
+                    onClick={AddToCart}
+                    className="px-8 py-3 bg-qyellow text-qblack font-medium text-sm uppercase tracking-wider rounded-md"
+                  >
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={handleWishlistToggle}
+                    className="px-5 py-3 border border-qgray-border text-qblack font-medium text-sm uppercase tracking-wider rounded-md"
+                  >
+                    {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                  </button>
                 </div>
-              </div> */}
-              <div data-aos="fade-up" className="cart-btn w-full flex items-center mb-[30px]">
-                <button className="w-full text-white bg-qyellow font-700 text-[13px] py-[17px] uppercase border border-qyellow hover:bg-white hover:text-qyellow transition duration-[200ms] rounded-[4px]" onClick={() => reportHandler(product, quantity)}>
-                  Add to Cart
-                </button>
+
+                {showSuccessMessage && (
+                  <Stack sx={{ width: "100%" }} spacing={2}>
+                    <Alert
+                      severity="success"
+                      onClose={() => setShowSuccessMessage(false)}
+                    >
+                      Item added to cart successfully!
+                    </Alert>
+                  </Stack>
+                )}
               </div>
-              <div data-aos="fade-up" className="wishlist-btn w-full flex items-center mb-[30px]">
-                <button className="w-full text-white bg-qyellow font-700 text-[13px] py-[17px] uppercase border border-qyellow hover:bg-white hover:text-qyellow transition duration-[200ms] rounded-[4px]" onClick={handleWishlistToggle}>
-                Add to Wishlist
-                </button>
-              </div>
+              {showWishlistSuccessMessage || errorWishlist && (
+  <Stack sx={{ width: "100%" }} spacing={2}>
+    <Alert 
+      severity={errorWishlist ? "error" : "success"} 
+      onClose={() => { 
+        setShowWishlistSuccessMessage(false); 
+        setErrorWishlist(null);
+      }}
+    >
+      {errorWishlist ? errorWishlist : "Item added to Wishlist successfully!"}
+    </Alert>
+  </Stack>
+)}
             </>
           )}
         </div>

@@ -8,7 +8,7 @@ export default function AddressesTab() {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/get-address/", {
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/get-address/`, {
           headers: {
             Authorization: `${token}`,
           },
@@ -25,7 +25,7 @@ export default function AddressesTab() {
 
   const handleDeleteAddress = async (id) => {
     try {
-      const response = await axios.delete(`http://127.0.0.1:8000/delete-address/${id}/`, {
+      const response = await axios.delete(`${import.meta.env.VITE_PUBLIC_URL}/delete-address/${id}/`, {
         headers: {
           Authorization: `${token}`,
         },

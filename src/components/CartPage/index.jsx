@@ -8,6 +8,8 @@ import ProductsTable from "./ProductsTable";
 import axios from "axios";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { responsiveFontSizes } from "@mui/material";
+import AddressDetails from "./AddressDetails";
 
 export default function CardPage({ cart = true }) {
   const [cartProducts, setCartProducts] = useState([]);
@@ -17,17 +19,20 @@ export default function CardPage({ cart = true }) {
   const [shipping, setShipping] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
+  const [open, setOpen] = useState(false);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCartProducts = async () => {
       try {
-        const response = await axios.get('https://isa-pointing-relax-potentially.trycloudflare.com/cart-products/', {
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
           headers: {
             Authorization: `${token}`,
           },
         });
+        console.log(response.data,"response data from cart");
+
         const data = response.data;
         setCartProducts(data.data);
         setSubtotal(data.Subtotal ?? 0);
@@ -47,7 +52,7 @@ export default function CardPage({ cart = true }) {
 
     const fetchUserAddresses = async () => {
       try {
-        const response = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/get-address/", {
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/get-address/`, {
           headers: {
             Authorization: `${token}`,
           },
@@ -56,6 +61,7 @@ export default function CardPage({ cart = true }) {
         console.log("User addresses:", response.data.address);
       } catch (error) {
         console.error("Error fetching user addresses:", error);
+      
       }
     };
 
@@ -74,6 +80,9 @@ export default function CardPage({ cart = true }) {
       alert("Please select an address before proceeding to checkout.");
     }
   };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   console.log("Selected Address Id:", selectedAddressId);
 
@@ -132,7 +141,7 @@ export default function CardPage({ cart = true }) {
                             </div>
                           ))}
                           {/* Add new address button */}
-                          <button className="text-sm text-qblack underline">
+                          <button onClick={handleOpen} className="text-sm text-qblack underline">
                             Add New Address
                           </button>
                         </div>
@@ -173,13 +182,6 @@ export default function CardPage({ cart = true }) {
                       <li>
                         <div className="flex justify-between items-center">
                           <div className="flex space-x-2.5 items-center">
-                            {/* <div className="input-radio">
-                              <input
-                                type="radio"
-                                name="price"
-                                className="accent-pink-500"
-                              />
-                            </div> */}
                             <span className="text-[13px] text-normal text-green-500">
                               Discount
                             </span>
@@ -192,13 +194,6 @@ export default function CardPage({ cart = true }) {
                       <li>
                         <div className="flex justify-between items-center">
                           <div className="flex space-x-2.5 items-center">
-                            {/* <div className="input-radio">
-                              <input
-                                type="radio"
-                                name="price"
-                                className="accent-pink-500"
-                              />
-                            </div> */}
                             <span className="text-[13px] text-normal text-green-500">
                               Shipping Charge
                             </span>
@@ -208,7 +203,6 @@ export default function CardPage({ cart = true }) {
                           </span>
                         </div>
                       </li>
-
                     </ul>
                   </div>
                   <div className="total mb-6">
@@ -230,6 +224,7 @@ export default function CardPage({ cart = true }) {
           </div>
         </div>
       )}
+      <AddressDetails open={open} handleClose={handleClose} />
     </Layout>
   );
 }

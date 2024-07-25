@@ -69,12 +69,12 @@ export default function HomeTwo() {
         ads={[`${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-2.4.png`]}
         className="products-ads-section mb-[60px]"
       />
-      <SectionStyleFour
+      {/* <SectionStyleFour
         products={products}
         sectionTitle="Popular Sales"
         seeMoreUrl="/all-products"
         className="category-products mb-[60px]"
-      />
+      /> */}
     </LayoutHomeTwo>
   );
 }

@@ -23,7 +23,8 @@ import TrackingOrder from "./components/TrackingOrder";
 import Wishlist from "./components/Wishlist";
 import HomeThree from "./components/HomeThree";
 import OrderSuccess from "./components/Success/odrer-success.jsx";
-// import SearchResults from "./components/SearchResult";
+import OrderDetails from "./components/Auth/Profile/tabs/OrderDetails.jsx";
+import Category from "./components/Category.jsx";
 
 
 
@@ -31,9 +32,9 @@ import OrderSuccess from "./components/Success/odrer-success.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <HomeThree /> },
-  { path: "/category/:id", element: <AllProductPage /> },
+  { path: "/category/:id", element: <Category /> },
   { path: "/single-product/:id", element: <SingleProductPage /> },
-  // { path: "/search-results/", element: <SearchResults /> },
+  { path: "/all-products/", element: <AllProductPage /> },
   { path: "/order-success/", element: <OrderSuccess /> },
   { path: "/cart", element: <CardPage /> },
   { path: "/checkout/:id/", element: <CheakoutPage /> },
@@ -52,8 +53,9 @@ const router = createBrowserRouter([
   { path: "/signup", element: <Signup /> },
   { path: "/profile", element: <Profile /> },
   { path: "/become-saller", element: <BecomeSaller /> },
-  { path: "/privacy-policy", element: <PrivacyPolicy /> },
+  { path: "/be-coin", element: <PrivacyPolicy /> },
   { path: "/terms-condition", element: <TermsCondition /> },
+  { path: "/orderDetails/:id", element: <OrderDetails /> },
   { path: "*", element: <FourZeroFour /> },
 ]);
 

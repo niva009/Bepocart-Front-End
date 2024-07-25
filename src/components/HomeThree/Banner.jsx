@@ -10,7 +10,7 @@ export default function Banner({ className }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('https://isa-pointing-relax-potentially.trycloudflare.com/banners/');
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/banners/`)
         setSliderData(response.data.banner); 
         console.log("Data:", response.data.banner); 
       } catch (error) {
@@ -20,6 +20,8 @@ export default function Banner({ className }) {
     fetchData();
   }, []);
 
+
+  console.log(sliderData,"slider images");
   const settings = {
     dots: false,
     infinite: true,
@@ -54,7 +56,7 @@ export default function Banner({ className }) {
                 <div
                   className="w-full h-full relative"
                   style={{
-                    backgroundImage: `url(https://isa-pointing-relax-potentially.trycloudflare.com/${item.image})`,
+                    backgroundImage: `url(${import.meta.env.VITE_PUBLIC_URL}${item.image})`,
                     backgroundRepeat: "no-repeat",
                     backgroundSize: "cover",
                   }}
@@ -62,9 +64,9 @@ export default function Banner({ className }) {
                   <div className="container-x mx-auto flex items-center  h-full">
                     <div className="w-full h-full xl:flex items-center pt-20 xl:pt-0">
                       <div className="xl:w-[626px] w-full">
-                        <p className="md:text-[34px] text-[20px] font-medium text-white mb-[7px]">
+                        {/* <p className="md:text-[34px] text-[20px] font-medium text-white mb-[7px]">
                           VR BOX 3D Glass
-                        </p>
+                        </p> */}
                         <h1 className="md:text-[66px] text-[40px]  font-bold text-black md:leading-[80px] leading-[40px] mb-[44px]">
                           {/* {item.name} */}
                         </h1>
@@ -76,12 +78,11 @@ export default function Banner({ className }) {
                                 className || ""
                               }`}
                             >
-                              <div className="flex space-x-1 items-center transition-all duration-300 ease-in-out relative z-10">
-                                <span className="text-sm font-600 tracking-wide leading-7 mr-2">
-                                  Shop Now
-                                </span>
-                                
-                              </div>
+                            <div className="flex space-x-1 items-center transition-all duration-300 ease-in-out relative z-10">
+  <Link to="/all-products" className="text-sm font-600 tracking-wide leading-7 mr-2">
+    Shop Now
+  </Link>
+</div>
                               <div
                                 style={{
                                   transition: `transform 0.25s ease-in-out`,

@@ -71,7 +71,7 @@ export default function Home() {
           sectionHeight="sm:h-[295px] h-full"
           className="products-ads-section mb-[60px]"
         />
-        <SectionStyleOne
+        {/* <SectionStyleOne
           categoryBackground={`${
             import.meta.env.VITE_PUBLIC_URL
           }/assets/images/section-category-2.jpg`}
@@ -81,7 +81,7 @@ export default function Home() {
           sectionTitle="Popular Sales"
           seeMoreUrl="/all-products"
           className="category-products mb-[60px]"
-        />
+        /> */}
         <ProductsAds
           ads={[`${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-3.png`]}
           className="products-ads-section mb-[60px]"

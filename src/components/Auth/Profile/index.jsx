@@ -22,12 +22,16 @@ import ProfileTab from "./tabs/ProfileTab";
 import ReviewTab from "./tabs/ReviewTab";
 import SupportTab from "./tabs/SupportTab";
 import WishlistTab from "./tabs/WishlistTab";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [switchDashboard, setSwitchDashboard] = useState(false);
   const location = useLocation();
   const getHashContent = location.hash.split("#");
   const [active, setActive] = useState("dashboard");
+
+  const navigate = useNavigate();
+
   useEffect(() => {
     setActive(
       getHashContent && getHashContent.length > 1
@@ -35,6 +39,13 @@ export default function Profile() {
         : "dashboard"
     );
   }, [getHashContent]);
+
+  const LogOut = () => {
+  
+    localStorage.removeItem('token'); 
+    navigate('/');
+  };
+
   return (
     <Layout childrenClasses="pt-0 pb-0">
       <div className="profile-page-wrapper w-full">
@@ -51,20 +62,6 @@ export default function Profile() {
                 <h1 className="text-[22px] font-bold text-qblack">
                   Your Dashboard
                 </h1>
-                <div className="switch-dashboard flex space-x-3 items-center">
-                  <p className="text-qgray text-base">Switch Dashboard</p>
-                  <button
-                    onClick={() => setSwitchDashboard(!switchDashboard)}
-                    type="button"
-                    className="w-[73px] h-[31px] border border-[#D9D9D9] rounded-full relative "
-                  >
-                    <div
-                      className={`w-[23px] h-[23px] bg-qblack rounded-full absolute top-[3px] transition-all duration-300 ease-in-out ${
-                        switchDashboard ? "left-[44px]" : "left-[4px]"
-                      }`}
-                    ></div>
-                  </button>
-                </div>
               </div>
               <div className="profile-wrapper w-full mt-8 flex space-x-10">
                 <div className="w-[236px] min-h-[600px] border-r border-[rgba(0, 0, 0, 0.1)]">
@@ -88,7 +85,7 @@ export default function Profile() {
                             <IcoPeople />
                           </span>
                           <span className=" font-normal text-base">
-                            Parsonal Info
+                            Personal Info
                           </span>
                         </div>
                       </Link>
@@ -141,18 +138,6 @@ export default function Profile() {
                       </Link>
                     </div>
                     <div className="item group">
-                      <Link to="/profile#review">
-                        <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
-                          <span>
-                            <IcoReviewHand />
-                          </span>
-                          <span className=" font-normal text-base">
-                            Reviews
-                          </span>
-                        </div>
-                      </Link>
-                    </div>
-                    <div className="item group">
                       <Link to="/profile#password">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
                           <span>
@@ -177,16 +162,15 @@ export default function Profile() {
                       </Link>
                     </div>
                     <div className="item group">
-                      <Link to="/profile#profile">
+            
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
                           <span>
                             <IcoLogout />
                           </span>
-                          <span className=" font-normal text-base">
-                            Logoout
+                          <span onClick={LogOut} className=" font-normal text-base">
+                            Log out
                           </span>
                         </div>
-                      </Link>
                     </div>
                   </div>
                 </div>

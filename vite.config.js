@@ -44,6 +44,6 @@ const pwaConfig = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  basename: "/",
+  base: '/',  // Add this line
   plugins: [react(), VitePWA(pwaConfig), tailwind()],
 });

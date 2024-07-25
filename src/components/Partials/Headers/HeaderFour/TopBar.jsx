@@ -31,7 +31,7 @@ export default function TopBar({ className }) {
                 <li>
                   <Link to="/faq">
                     <span className="text-xs leading-6 text-qblack font-500">
-                      Support
+                      Suppoffff
                     </span>
                   </Link>
                 </li>

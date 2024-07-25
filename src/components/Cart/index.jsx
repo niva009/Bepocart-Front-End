@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function Cart({ className, type }) {
   const [cartProducts, setCartProducts] = useState([]);
@@ -7,7 +8,7 @@ export default function Cart({ className, type }) {
     const fetchCartProducts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch('http://127.0.0.1:8000/cart-products/', {
+        const response = await fetch(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
           headers: {
             Authorization: `${token}`,
           },
@@ -25,6 +26,20 @@ export default function Cart({ className, type }) {
 
     fetchCartProducts();
   }, []); // Empty dependency array ensures useEffect runs only once
+
+  const handleDeleteProduct = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${import.meta.env.VITE_PUBLIC_URL}/cart-delete/${id}/`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      setCartProducts(prevProducts => prevProducts.filter(product => product.id !== id));
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
 
   return (
     <>
@@ -66,6 +81,7 @@ export default function Cart({ className, type }) {
                       fill="none"
                       className="inline fill-current text-[#AAAAAA] hover:text-qred"
                       xmlns="http://www.w3.org/2000/svg"
+                      onClick={() => handleDeleteProduct(product.id)}
                     >
                       <path d="M7.76 0.24C7.44 -0.08 6.96 -0.08 6.64 0.24L4 2.88L1.36 0.24C1.04 -0.08 0.56 -0.08 0.24 0.24C-0.08 0.56 -0.08 1.04 0.24 1.36L2.88 4L0.24 6.64C-0.08 6.96 -0.08 7.44 0.24 7.76C0.56 8.08 1.04 8.08 1.36 7.76L4 5.12L6.64 7.76C6.96 8.08 7.44 8.08 7.76 7.76C8.08 7.44 8.08 6.96 7.76 6.64L5.12 4L7.76 1.36C8.08 1.04 8.08 0.56 7.76 0.24Z" />
                     </svg>
@@ -77,26 +93,7 @@ export default function Cart({ className, type }) {
           <div className="w-full px-4 mt-[20px] mb-[12px]">
             <div className="h-[1px] bg-[#F0F1F3]"></div>
           </div>
-          <div className="product-actions px-4 mb-[30px]">
-            <div className="total-equation flex justify-between items-center mb-[28px]">
-              <span className="text-[15px] font-500 text-qblack">Subtotal</span>
-              <span className="text-[15px] font-500 text-qred">$365</span> {/* Calculate subtotal dynamically */}
-            </div>
-            <div className="product-action-btn">
-              <a href="#">
-                <div className="gray-btn w-full h-[50px] mb-[10px]">
-                  <span>View Cart</span>
-                </div>
-              </a>
-              <a href="#">
-                <div className="w-full h-[50px]">
-                  <div className={type === 3 ? "blue-btn" : "yellow-btn"}>
-                    <span className="text-sm">Checkout Now</span>
-                  </div>
-                </div>
-              </a>
-            </div>
-          </div>
+
           <div className="w-full px-4 mt-[20px]">
             <div className="h-[1px] bg-[#F0F1F3]"></div>
           </div>

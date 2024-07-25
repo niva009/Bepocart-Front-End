@@ -44,12 +44,12 @@ function Index() {
         ads={[`${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-4.png`]}
         className="products-ads-section mb-[60px]"
       />
-      <SectionStyleFour
+      {/* <SectionStyleFour
         products={products.slice(16, 28)}
         sectionTitle="Popular Sales"
         seeMoreUrl="/all-products"
         className="mb-[60px]"
-      />
+      /> */}
     </LayoutHomeFour>
   );
 }

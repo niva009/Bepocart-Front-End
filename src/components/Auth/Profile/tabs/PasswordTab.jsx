@@ -1,40 +1,61 @@
 import React, { useState } from "react";
 import PasswordSvg from "./PasswordSvg";
+import axios from 'axios'
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function PasswordTab() {
-  const [oldPass, setOldPass] = useState("hide-password");
-  const [newPass, setNewPass] = useState("hide-password");
-  const [confirmPass, setConfirmPass] = useState("hide-password");
-  const showPassword = (value) => {
-    const password = document.getElementById(`${value}`);
-    if (value && value === "old_password") {
-      if (password.type === "password") {
-        password.type = "text";
-        setOldPass("show-password");
-      } else {
-        password.type = "password";
-        setOldPass("hide-password");
-      }
-    }
-    if (value && value === "new_password") {
-      if (password.type === "password") {
-        password.type = "text";
-        setNewPass("show-password");
-      } else {
-        password.type = "password";
-        setNewPass("hide-password");
-      }
-    }
-    if (value && value === "confirm_password") {
-      if (password.type === "password") {
-        password.type = "text";
-        setConfirmPass("show-password");
-      } else {
-        password.type = "password";
-        setConfirmPass("hide-password");
-      }
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+
+
+  const [oldPassVisibility, setOldPassVisibility] = useState("password");
+  const [newPassVisibility, setNewPassVisibility] = useState("password");
+  const [confirmPassVisibility, setConfirmPassVisibility] = useState("password");
+
+  const togglePasswordVisibility = (field) => {
+    if (field === "old") {
+      setOldPassVisibility(oldPassVisibility === "password" ? "text" : "password");
+    } else if (field === "new") {
+      setNewPassVisibility(newPassVisibility === "password" ? "text" : "password");
+    } else if (field === "confirm") {
+      setConfirmPassVisibility(confirmPassVisibility === "password" ? "text" : "password");
     }
   };
+
+  const updatePassword = async () => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_PUBLIC_URL}/reset-password/`,
+        {
+          old_password: oldPassword,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        },
+        {
+          headers: {
+            Authorization: `${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if(!response){
+      console.log("error, updateing password")
+      }else{
+      alert("password reset successfully")
+      toast.success("Password Reset Successfully !",)
+      position: toast.POSITION.TOP_RIGHT;
+      }
+    } catch (error) {
+       toast.error(`Password Reset fail ${error} !`);
+      position: toast.POSITION.TOP_RIGHT,
+      alert("password reset failed");
+    }
+  };
+
+
+
   return (
     <div className="changePasswordTab w-full">
       <div className="w-full flex xl:flex-row flex-col-reverse space-x-5 xl:items-center">
@@ -48,16 +69,18 @@ export default function PasswordTab() {
             </label>
             <div className="input-wrapper border border-[#E8E8E8] w-full  h-[58px] overflow-hidden relative ">
               <input
-                placeholder="● ● ● ● ● ●"
-                className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
-                type="password"
-                id="old_password"
+                        placeholder="Enter old password"
+                        className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
+                        type={oldPassVisibility}
+                        id="old_password"
+                        value={oldPassword}
+                        onChange={(e) => setOldPassword(e.target.value)}
               />
               <div
                 className="absolute right-6 bottom-[17px] z-10 cursor-pointer"
-                onClick={() => showPassword("old_password")}
+                onClick={() => togglePasswordVisibility("old")}
               >
-                {oldPass === "show-password" ? (
+                {setOldPassVisibility === "password" ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
@@ -115,20 +138,21 @@ export default function PasswordTab() {
               className="input-label text-qgray text-sm block mb-2.5"
               htmlFor="old_password"
             >
-              Password*
+             New Password*
             </label>
             <div className="input-wrapper border border-[#E8E8E8] w-full  h-[58px] overflow-hidden relative ">
-              <input
-                placeholder="● ● ● ● ● ●"
-                className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
-                type="password"
-                id="new_password"
+            <input
+                        placeholder="Enter New Password"
+                        className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
+                        type={newPassVisibility}
+                        id="new_password"
+                        onChange={(e) => setNewPassword(e.target.value)}
               />
               <div
                 className="absolute right-6 bottom-[17px] z-10 cursor-pointer"
-                onClick={() => showPassword("new_password")}
+                onClick={() => togglePasswordVisibility("new")}
               >
-                {newPass === "show-password" ? (
+                {newPassVisibility === "password" ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
@@ -189,17 +213,18 @@ export default function PasswordTab() {
               Re-enter Password*
             </label>
             <div className="input-wrapper border border-[#E8E8E8] w-full  h-[58px] overflow-hidden relative ">
-              <input
-                placeholder="● ● ● ● ● ●"
-                className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
-                type="password"
-                id="confirm_password"
+            <input
+                        placeholder="Re-enterPassword"
+                        className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
+                        type={confirmPassVisibility}
+                        id="confirm_password"
+                        onChange={(e) => setConfirmPassword(e.target.value)}
               />
               <div
                 className="absolute right-6 bottom-[17px] z-10 cursor-pointer"
-                onClick={() => showPassword("confirm_password")}
+                onClick={() => togglePasswordVisibility("confirm")}
               >
-                {confirmPass === "show-password" ? (
+                {confirmPassVisibility === "password" ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-6 w-6"
@@ -255,7 +280,7 @@ export default function PasswordTab() {
           <div className="w-full mt-[30px] flex justify-start">
             <div className="sm:flex sm:space-x-[30px] items-center">
               <div className="w-[180px] h-[50px]">
-                <button type="button" className="yellow-btn">
+                <button type="button" onClick={updatePassword} className="yellow-btn">
                   <div className="w-full text-sm font-semibold">
                     Upldate Password
                   </div>
@@ -273,6 +298,7 @@ export default function PasswordTab() {
           <PasswordSvg />
         </div>
       </div>
+       <ToastContainer />
     </div>
   );
 }

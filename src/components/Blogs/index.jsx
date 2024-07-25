@@ -1,10 +1,27 @@
-import blog from "../../data/blogs.json";
 import BlogCard from "../Helpers/Cards/BlogCard";
-import DataIteration from "../Helpers/DataIteration";
 import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Blogs() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/blog/`);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching blog data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(data, "data information in blog page");
+
   return (
     <Layout childrenClasses="pt-0 pb-0">
       <div className="blogs-wrapper w-full-width">
@@ -23,21 +40,15 @@ export default function Blogs() {
         <div className="container-x mx-auto">
           <div className="w-full">
             <div className="grid md:grid-cols-2 grid-cols-1 lg:gap-[30px] gap-5">
-              <DataIteration
-                datas={blog.blogs}
-                startLength={0}
-                endLength={blog.blogs.length}
-              >
-                {({ datas }) => (
-                  <div
-                    data-aos="fade-up"
-                    key={datas.id}
-                    className="item w-full"
-                  >
-                    <BlogCard datas={datas} />
-                  </div>
-                )}
-              </DataIteration>
+              {data.map((blog) => (
+                <div
+                  data-aos="fade-up"
+                  key={blog.id}
+                  className="item w-full"
+                >
+                  <BlogCard datas={blog} />
+                </div>
+              ))}
             </div>
           </div>
         </div>

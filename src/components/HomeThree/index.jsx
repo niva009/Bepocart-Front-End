@@ -10,9 +10,12 @@ import SectionStyleTwo from "../Helpers/SectionStyleTwo";
 import ViewMoreTitle from "../Helpers/ViewMoreTitle";
 import CampaignCountDown from "./CampaignCountDown";
 import SectionStyleFour from "../Helpers/SectionStyleFour";
-import offerBanner1 from "../../assets/ads-1.png";
-import offerBanner2 from "../../assets/ads-2.png";
+import offerBanner1 from "../../assets/ads-1.jpg";
+import offerBanner2 from "../../assets/ads-2.jpg";
 import flashsale from "../../assets/flash-sale-ads.png";
+import 'font-awesome/css/font-awesome.min.css';
+import './Home.css';
+
 
 export default function HomeThree() {
   const [products, setProducts] = useState([]);
@@ -20,14 +23,21 @@ export default function HomeThree() {
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [banners, setBanners] = useState([]);
   const [offerProduct, setOfferProducts] = useState([]);
+  const [DiscountProducts, setDiscountProducts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/products/");
+        const productsResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/products/`, {
+          params: {
+            limit: 10
+          }
+        });
+        console.log("Products response:", productsResponse.data);
         const { products } = productsResponse.data;
         const brands = products.map(product => product.brand);
-        setProducts(products);
+         const limitedProducts = products.slice(0, 15);
+        setProducts(limitedProducts);
         setBrands(brands);
       } catch (error) {
         console.error("Error fetching all products:", error);
@@ -35,28 +45,36 @@ export default function HomeThree() {
 
       try {
         const token = localStorage.getItem('token');
-        const recommendedResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/recently-viewed/", {
+        const recommendedResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/recommended/`, {
           headers: {
             'Authorization': `${token}`,
           },
         });
+        console.log("Recommended response:", recommendedResponse);
         setRecommendedProducts(recommendedResponse.data.data);
       } catch (error) {
         console.error("Error fetching recommended products:", error);
       }
 
       try {
-        // Fetch banners data
-        const bannersResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/offer-banner/");
+        const bannersResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/offer-banner/`);
+        console.log("Banners response:", bannersResponse.data);
         setBanners(bannersResponse.data.banner);
       } catch (error) {
         console.error("Error fetching banners:", error);
       }
 
       try {
-        // Fetch offer products
-        const offerProductResponse = await axios.get("https://isa-pointing-relax-potentially.trycloudflare.com/buy-1-get-1-free/");
+        const offerProductResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/buy-1-get-1-free/`);
+        console.log("Offer products response:", offerProductResponse.data);
         setOfferProducts(offerProductResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching offer products:", error);
+      }
+      try {
+        const DiscountProducts = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/offers/`);
+        console.log("Discount products response:", DiscountProducts.data);
+        setDiscountProducts(DiscountProducts.data.data);
       } catch (error) {
         console.error("Error fetching offer products:", error);
       }
@@ -64,6 +82,9 @@ export default function HomeThree() {
 
     fetchData();
   }, []);
+
+  console.log("Discount products...:",DiscountProducts);  
+  console.log(products,"product information")
 
   return (
     <>
@@ -113,27 +134,36 @@ export default function HomeThree() {
           ]}
           className="products-ads-section mb-[60px]"
         />;
-        <SectionStyleOneHmThree
+        {/* <SectionStyleOneHmThree
           type={3}
           categoryBackground={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/section-category-2.jpg`}
-          products={products.slice(12)}
+          products={products}
           brands={brands}
           categoryTitle="Electronics"
           sectionTitle="Popular Sales"
           seeMoreUrl="/all-products"
           className="category-products mb-[60px]"
-        />
+        /> */}
         <CampaignCountDown
           className="mb-[60px]"
           lastDate="2023-10-04 4:00:00"
         />
         <SectionStyleFour
-          products={products}
-          sectionTitle="Popular Sales"
+           type={3}
+          products={DiscountProducts}
+          sectionTitle="Discount Products"
           seeMoreUrl="/all-products"
           className="category-products mb-[60px]"
         />
       </LayoutHomeThree>
+      <a
+        href="https://wa.me/8167845851?text=Hello,%20I%20am%20interested%20in%20your%20products!"
+        className="whatsapp_float"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <i className="fa fa-whatsapp whatsapp-icon"></i>
+      </a>
     </>
   );
 }

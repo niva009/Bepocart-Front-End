@@ -18,9 +18,9 @@ export default function SectionStyleOneHmThree({
           <div className="grid xl:grid-cols-5 lg:grid-cols-5 sm:grid-cols-2 grid-cols-1 xl:gap-[30px] gap-5">
             <DataIteration
               datas={products}
-              startLength={0}
+              startLength={1}
               endLength={productLength}
-            >
+            > 
               {({ datas }) => (
                 <div key={datas.id} className="item">
                   <ProductCardStyleOne type={type} datas={datas} />

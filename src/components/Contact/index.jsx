@@ -58,10 +58,10 @@ export default function Contact() {
                     Phone
                   </p>
                   <p className="text-[15px] text-black leading-[30px] text-center">
-                    +(323) 9847 3847 383
+                  +91 6235 084 759
                   </p>
                   <p className="text-[15px] text-black leading-[30px] text-center">
-                    +(434) 5466 5467 443
+                  +91 6235 402 223
                   </p>
                 </div>
                 <div className="xl:w-1/2 w-full h-[196px] flex flex-col item justify-center bg-[#D3EFFF] p-5">
@@ -105,10 +105,7 @@ export default function Contact() {
                     Email
                   </p>
                   <p className="text-[15px] text-black leading-[30px] text-center">
-                    Demoemail@gmail.com
-                  </p>
-                  <p className="text-[15px] text-black leading-[30px] text-center">
-                    rafiqulislamsuvobd@gmail.com
+                  contact@bepocart.com
                   </p>
                 </div>
               </div>
@@ -135,15 +132,14 @@ export default function Contact() {
                       Address
                     </h1>
                     <p className="text-[15px] text-qblack leading-[30px]">
-                      4517 Washington Ave. Manchester, Road 2342, <br />
-                      Kentucky 39495
+                    Michael export and import pvt ltd, GV Ayyer Road, Willingdon Island, Kochi, Kerala, India, PIN 682003
                     </p>
                   </div>
                 </div>
                 <div className="w-full h-[206px] mt-5">
                   <iframe
                     title="newWork"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.94539481518!2d-74.26675559025064!3d40.69739290398433!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2sbd!4v1656755618576!5m2!1sen!2sbd"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d18946.330272910836!2d76.29112065941256!3d9.95365870847632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b086d564d473f53%3A0x60e0fd26efe1a430!2sKerala%20Transport%20Company-%20Shipping%20%26%20Clearing!5e1!3m2!1sen!2sin!4v1720067354647!5m2!1sen!2sin"
                     style={{ border: "0", width: "100%", height: "100%" }}
                     allowFullScreen=""
                     loading="lazy"

@@ -10,10 +10,10 @@ export default function BrandSection({ className, sectionTitle, type }) {
   const [brands, setBrands] = useState([]);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/subcategorys/")
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategorys/`)
       .then(response => {
         setBrands(response.data.data);
-      })
+      })  
       .catch(error => {
         console.error("There was an error fetching the brands!", error);
       });
@@ -69,7 +69,7 @@ export default function BrandSection({ className, sectionTitle, type }) {
 
         <Slider {...settings} className="brand-slider">
           {brands.map((brand) => (
-            <Link to={`/category/${brand.id}/`}>
+            <Link to={`/category/${brand.slug}/`}>
               <div key={brand.id} className="item">
                 <div className="w-full h-[130px] bg-white border border-primarygray flex justify-center items-center rounded-full overflow-hidden">
                   <img

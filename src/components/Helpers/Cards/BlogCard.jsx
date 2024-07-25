@@ -9,8 +9,8 @@ export default function BlogCard({ className, datas }) {
     >
       <div className="img w-full h-[340px]">
         <img
-          src={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/${
-            datas.picture
+          src={`${import.meta.env.VITE_PUBLIC_URL}/${
+            datas.image
           }`}
           alt="blog"
           className="w-full h-full object-cover"
@@ -72,7 +72,7 @@ export default function BlogCard({ className, datas }) {
             </h1>
           </Link>
           <p className="text-qgraytwo text-[15px] leading-[30px] line-clamp-2 mb-3">
-            {datas.article}
+            {datas.content}
           </p>
           {/* view more btn */}
           <a href="#">

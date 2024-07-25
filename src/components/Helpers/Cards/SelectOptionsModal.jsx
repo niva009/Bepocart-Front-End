@@ -1,59 +1,72 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import './modal-styles.css'; // Import the styles
+import './modal-styles.css';
+import axios from 'axios'
 
-Modal.setAppElement('#root'); // Ensure this matches your app root element
+Modal.setAppElement('#root'); // Ensure to set this to your app's root element
 
-export default function SelectOptionsModal({ isOpen, onRequestClose, onAddToCart }) {
+export default function SelectOptionsModal({ isOpen, onRequestClose, onAddToCart, product, productId }) {
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
 
+
+
+  console.log(productId,"product id information thattttttt")
+
   const handleAddToCart = () => {
-    onAddToCart(selectedColor, selectedSize);
-    onRequestClose(); // Close the modal after adding to cart
+    if (selectedColor && selectedSize) {
+      onAddToCart(selectedColor, selectedSize);
+      onRequestClose();
+    } else {
+      alert('Please select a color and size.');
+    }
   };
 
   return (
     <Modal
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      contentLabel="Select Options"
-      className="modal-content"
+      className="modal"
       overlayClassName="modal-overlay"
     >
-      <h2 className="modal-title">Select Color and Size</h2>
-      <div className="modal-body">
-        <div className="modal-field">
-          <label className="modal-label">Color:</label>
-          <select
-            className="modal-select"
-            value={selectedColor}
-            onChange={(e) => setSelectedColor(e.target.value)}
-          >
-            <option value="">Select Color</option>
-            <option value="Red">Red</option>
-            <option value="Blue">Blue</option>
-            <option value="Green">Green</option>
-          </select>
+      <h2>Select Options</h2>
+      <p>Product ID: {productId}</p>
+      {product && (
+        <div>
+          <div className="product-image">
+            <img src={`${import.meta.env.VITE_PUBLIC_URL}/${product.image}`} alt={product.name} />
+          </div>
+          <h3>{product.name}</h3>
+          <p>{product.short_description}</p>
+          <div className="options">
+            <div className="color-options">
+              <h4>Select Color</h4>
+              {product.images.map(image => (
+                <button
+                  key={image.id}
+                  style={{ backgroundColor: image.color }}
+                  className={selectedColor === image.id ? 'selected' : ''}
+                  onClick={() => setSelectedColor(image.id)}
+                >
+                  {image.color_name}
+                </button>
+              ))}
+            </div>
+            <div className="size-options">
+              <h4>Select Size</h4>
+              {product.variants.map(variant => (
+                <button
+                  key={variant.id}
+                  className={selectedSize === variant.size ? 'selected' : ''}
+                  onClick={() => setSelectedSize(variant.size)}
+                >
+                  {variant.size}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="modal-field">
-          <label className="modal-label">Size:</label>
-          <select
-            className="modal-select"
-            value={selectedSize}
-            onChange={(e) => setSelectedSize(e.target.value)}
-          >
-            <option value="">Select Size</option>
-            <option value="S">Small</option>
-            <option value="M">Medium</option>
-            <option value="L">Large</option>
-          </select>
-        </div>
-      </div>
-      <div className="modal-footer">
-        <button className="modal-button" onClick={handleAddToCart}>Add to Cart</button>
-        <button className="modal-button modal-button-cancel" onClick={onRequestClose}>Cancel</button>
-      </div>
+      )}
     </Modal>
   );
 }

@@ -5,35 +5,43 @@ import ProductCardStyleOne from "../Helpers/Cards/ProductCardStyleOne";
 import Layout from "../Partials/Layout";
 import ProductView from "./ProductView";
 import Reviews from "./Reviews";
-import SallerInfo from "./SallerInfo";
 import axios from "axios";
+import ReletedProducts from "../Helpers/ReletedProducts";
+import DataIteration from "../Helpers/DataIteration";
 
 export default function SingleProductPage() {
+  
   const { id } = useParams();
-  const [products, setProducts] = useState([]);
+
+  const [products, setProducts] = useState("");
   const [tab, setTab] = useState("des");
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [review, setReview] = useState([]);
   const [message, setMessage] = useState("");
   const [reviewLoading, setLoading] = useState(false);
   const reviewElement = useRef(null);
   const [report, setReport] = useState(false);
   const [comments, setComments] = useState([]);
+  const [productId,setProductId] = useState();
+  const [categoryId, setCategoryId] = useState();
+  const [ releatedproducts, setReleatedproducts] = useState([])
+  const [categoryData, setCategoryData] = useState([])
 
   useEffect(() => {
-    const productId = parseInt(id);
-    fetchProduct(productId);
+    fetchProduct(id);
   }, [id]);
 
+  console.log(id,"id data")
+  
   const fetchProduct = async (id) => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/related-products/${id}/`);
-      setProducts(response.data.data); // Update state with fetched products array
-      console.log("Data received from API:", response.data.data); // Log received data
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/product/${id}/`);
+      setProducts(response.data); // Update state with fetched products array
+      setProductId(response.data.product.id)
+      setCategoryId(response.data.product.mainCategory)
+      console.log("Data received from API:", response.data.images); 
     } catch (error) {
       console.error("Error fetching product:", error);
     } finally {
@@ -41,38 +49,97 @@ export default function SingleProductPage() {
     }
   };
 
-  const reviewAction = () => {
-    setLoading(true);
-    setTimeout(() => {
-      if (name && message && rating) {
-        setComments((prev) => [
-          {
-            id: Math.random(),
-            author: name,
-            comments: message,
-            review: rating,
-          },
-          ...prev,
-        ]);
-        setLoading(false);
-        setName("");
-        setEmail("");
-        setPhone("");
-        setMessage("");
-        setRating(0);
-        setHover(0);
-        window.scrollTo({
-          top: -reviewElement.current.getBoundingClientRect().top,
-          left: 0,
-          behavior: "smooth",
+
+
+
+
+  console.log("product are presenet here ", products);
+  console.log("category id .....",categoryId);
+
+
+  useEffect(() => {
+    if (categoryId) {
+      axios.get(`${import.meta.env.VITE_PUBLIC_URL}/products/`)
+        .then(response => {
+
+          const filteredProducts = response.data.products.filter(product => product.category === categoryId);
+          setCategoryData(filteredProducts);
+        })
+        .catch(error => {
+          console.error("There was an error fetching the products!", error);
         });
+    }
+  }, [categoryId]);
+
+
+
+  console.log("category data",categoryData.mainCategory);
+
+
+  useEffect(() =>{
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/category/${categoryId}/products/`)
+    .then((response) =>{
+      console.log("response from releated products:",response)
+      setReleatedproducts(response.data.products);
+    })
+    .catch((error) =>{
+      console.log(error,"error fetching releated products");
+    })
+  },[categoryId])
+
+  console.log("releated product data...",releatedproducts);
+
+
+  const reviewAction = () => {
+    const token = localStorage.getItem("token");
+  
+    axios.post(
+      `${import.meta.env.VITE_PUBLIC_URL}/product-review/${productId}/`,
+      {
+        rating: rating,
+        review_text: message
+      },
+      {
+        headers: {
+          'Authorization': `${token}`
+        }
       }
-      setLoading(false);
-    }, 2000);
+    )
+    .then(response => {
+      // Handle the response here if needed
+      console.log(response.data);
+    })
+    .catch(error => {
+      // Handle errors here
+      console.error("Error submitting review:", error);
+    });
   };
+  
+
+  console.log("product id:",productId);
+
+useEffect(() =>{
+
+  if(productId){
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/review/${productId}/`)
+
+    .then((response) =>{     
+      setComments(response.data)
+      console.log(response);
+    })
+  
+    .catch((error) =>{
+      console.log(error.message)
+    })
+  }
+},[productId])
+
+
+console.log("comments of product :",comments);
+
 
   return (
-    <>
+  <>
       <Layout childrenClasses="pt-0 pb-0">
         <div className="single-product-wrapper w-full">
           <div className="product-view-main-wrapper bg-white pt-[30px] w-full">
@@ -119,17 +186,6 @@ export default function SingleProductPage() {
                       Reviews
                     </span>
                   </li>
-                  <li>
-                    <span
-                      onClick={() => setTab("info")}
-                      className={`py-[15px] sm:text-[15px] text-sm sm:block border-b font-medium cursor-pointer ${tab === "info"
-                          ? "border-qyellow text-qblack "
-                          : "border-transparent text-qgray"
-                        }`}
-                    >
-                      Seller Info
-                    </span>
-                  </li>
                 </ul>
               </div>
               <div className="w-full h-[1px] bg-[#E8E8E8] absolute left-0 sm:top-[50px] top-[36px] -z-10"></div>
@@ -139,42 +195,19 @@ export default function SingleProductPage() {
                 {tab === "des" && (
                   <div data-aos="fade-up" className="w-full tab-content-item">
                     <h6 className="text-[18px] font-medium text-qblack mb-2">
-                      Introduction
+                      short -Description
                     </h6>
-                    <p className="text-[15px] text-qgray text-normal mb-10">
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. Lorem Ipsum has been the industry's
-                      standard dummy text ever since the 1500s, when an unknown
-                      printer took a galley of type and scrambled it to make a
-                      type specimen book. It has survived not only five
-                      centuries but also the on leap into electronic
-                      typesetting, remaining essentially unchanged. It wasn’t
-                      popularised in the 1960s with the release of Letraset
-                      sheets containing Lorem Ipsum passages, andei more
-                      recently with desktop publishing software like Aldus
-                      PageMaker including versions of Lorem Ipsum to make a type
-                      specimen book.
+                    <p className="text-[15px] text-qgray text-normal mb-1
+                    ">
+                    {products.product?.description}
                     </p>
                     <div>
                       <h6 className="text-[18px] text-medium mb-4">
-                        Features :
+                        Product-Info 
                       </h6>
-                      <ul className="list-disc ml-[15px]">
-                        <li className="font-normal text-qgray leading-9">
-                          slim body with metal cover
-                        </li>
-                        <li className="font-normal text-qgray leading-9">
-                          latest Intel Core i5-1135G7 import.metaor (4 cores / 8
-                          threads)
-                        </li>
-                        <li className="font-normal text-qgray leading-9">
-                          8GB DDR4 RAM and fast 512GB PCIe SSD
-                        </li>
-                        <li className="font-normal text-qgray leading-9">
-                          NVIDIA GeForce MX350 2GB GDDR5 graphics card backlit
-                          keyboard, touchpad with gesture support
-                        </li>
-                      </ul>
+                      <p className="text-[15px] text-qgray text-normal mb-10">
+                    {products.product?.short_description}
+                    </p>
                     </div>
                   </div>
                 )}
@@ -188,14 +221,8 @@ export default function SingleProductPage() {
                       <Reviews
                         reviewLoading={reviewLoading}
                         reviewAction={reviewAction}
-                        comments={comments.slice(0, 2)}
-                        name={name}
-                        nameHandler={(e) => setName(e.target.value)}
-                        email={email}
-                        emailHandler={(e) => setEmail(e.target.value)}
-                        phone={phone}
-                        phoneHandler={(e) => setPhone(e.target.value)}
-                        message={message}
+                        comments={comments}
+                        message={message} 
                         messageHandler={(e) => setMessage(e.target.value)}
                         rating={rating}
                         ratingHandler={setRating}
@@ -203,11 +230,6 @@ export default function SingleProductPage() {
                         hoverHandler={setHover}
                       />
                     </div>
-                  </div>
-                )}
-                {tab === "info" && (
-                  <div data-aos="fade-up" className="w-full tab-content-item">
-                    <SallerInfo product={products} />
                   </div>
                 )}
               </div>
@@ -220,17 +242,18 @@ export default function SingleProductPage() {
                 <h1 className="sm:text-3xl text-xl font-600 text-qblacktext leading-none mb-[30px]">
                   Related Product
                 </h1>
-                <div
-                  data-aos="fade-up"
-                  className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 xl:gap-[30px] gap-5"
-                >
-                  {products.map((product) => (
-                    <div key={product.id} className="item">
-                      <ProductCardStyleOne datas={product} />
-                    </div>
-                  ))}
-
+                <div class = "grid xl:grid-cols-5 lg:grid-cols-5 sm:grid-cols-2 grid-cols-1 xl:gap-[30px] gap-5">    
+                <DataIteration
+              datas={releatedproducts}
+              startLength={1}
+            > 
+              {({ datas }) => (
+                <div key={datas.id} className="item">
+                  <ProductCardStyleOne datas={datas} />
                 </div>
+              )}
+            </DataIteration>
+            </div>
               </div>
             </div>
           </div>

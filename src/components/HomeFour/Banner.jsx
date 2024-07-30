@@ -166,7 +166,7 @@ export default function Banner({ className }) {
                       Free Return
                     </p>
                     <p className="text-sm text-qgray text-white">
-                      Get Return within 30 days
+                      {/* Get Return within 30 days */}
                     </p>
                   </div>
                 </div>

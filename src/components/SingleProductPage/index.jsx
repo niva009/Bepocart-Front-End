@@ -149,7 +149,7 @@ console.log("comments of product :",comments);
                 <BreadcrumbCom
                   paths={[
                     { name: "home", path: "/" },
-                    { name: "single product", path: "/single-product" },
+                    { name: "single product", path: "/all-products/" },
                   ]}
                 />
               </div>

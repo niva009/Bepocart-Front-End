@@ -149,7 +149,7 @@ export default function Profile() {
                         </div>
                       </Link>
                     </div>
-                    <div className="item group">
+                    {/* <div className="item group">
                       <Link to="/profile#support">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
                           <span>
@@ -160,7 +160,7 @@ export default function Profile() {
                           </span>
                         </div>
                       </Link>
-                    </div>
+                    </div> */}
                     <div className="item group">
             
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">

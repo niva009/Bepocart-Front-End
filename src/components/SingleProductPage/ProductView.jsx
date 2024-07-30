@@ -4,7 +4,7 @@ import axios from "axios";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { FormControl, Select, MenuItem, Rating } from "@mui/material";
+import { FormControl, Select, MenuItem } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import Star from "@mui/icons-material/Star";
@@ -14,21 +14,18 @@ export default function ProductView({ className }) {
   const [error, setError] = useState(null);
   const [product, setProduct] = useState(null);
   const [productImages, setProductImages] = useState([]);
-  const [src, setSrc] = useState("");
+  const [src, setSrc] = useState(""); // The main image source
   const [selectedSize, setSelectedSize] = useState("");
   const [sizes, setSizes] = useState([]);
   const [variants, setVariants] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
-  const [selectedColorName, setSelectedColorName] = useState("");
-  const [selectedColorCode, setSelectedColorCode] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showWishlistSuccessMessage, setShowWishlistSuccessMessage] = useState(false);
   const [errorWishlist, setErrorWishlist] = useState(null);
   const [isReadMore, setIsReadMore] = useState(true);
   const [review, setReview] = useState([]);
-
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -37,11 +34,7 @@ export default function ProductView({ className }) {
     fetchProduct(id);
   }, [id]);
 
-  useEffect(() => {
-    console.log("productImages updated:", productImages);
-  }, [productImages]);
-
-  const fetchProduct = async (productId) => {
+  const fetchProduct = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
@@ -51,22 +44,17 @@ export default function ProductView({ className }) {
           headers: { Authorization: `${token}` },
         }
       );
-
-      setProduct(response.data.product);
+      const productData = response.data.product;
+      setProduct(productData);
       setProductImages(response.data.images);
       setVariants(response.data.variants);
-
-      if (response.data.images.length > 0) {
-        const initialImage = response.data.images[0];
-        setSrc(`${initialImage.image1}`);
-        const initialSizes = response.data.variants
-          .filter(variant => variant.color === initialImage.id && variant.stock > 0)
-          .map(variant => variant.size);
-        setSizes(initialSizes);
-        setSelectedSize(initialSizes[0]);
-        setSelectedColor(initialImage.color);
-        setSelectedColorCode(initialImage.colorCode);
-      }
+      setSrc(productData.image || ""); // Set initial image to product.image
+      setSelectedColor(response.data.images[0]?.color || "");
+      const initialSizes = response.data.variants
+        .filter(variant => variant.color === response.data.images[0].id && variant.stock > 0)
+        .map(variant => variant.size);
+      setSizes(initialSizes);
+      setSelectedSize(initialSizes[0]);
     } catch (error) {
       console.error("Error fetching products:", error);
       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -79,16 +67,12 @@ export default function ProductView({ className }) {
     }
   };
 
-  const productId = product?.id
-
-  console.log("product id informationn :",productId);
-
+  const productId = product?.id;
 
   useEffect(() => {
     const fetchRating = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/review/${productId}/`);
-        console.log(response);
         setReview(response.data);
       } catch (error) {
         console.log("Error fetching review:", error);
@@ -96,10 +80,7 @@ export default function ProductView({ className }) {
     };
 
     fetchRating();
-  }, [productId]); 
-
-
-  console.log("RATING IN BIG VIEW",review);
+  }, [productId]);
 
   const calculateAverageRating = () => {
     if (review.length === 0) return 0;
@@ -109,9 +90,6 @@ export default function ProductView({ className }) {
   };
 
   const averageRating = calculateAverageRating();
-
-
-  console.log("average rating",averageRating);
 
   const AddToCart = async () => {
     try {
@@ -129,7 +107,6 @@ export default function ProductView({ className }) {
           }
         );
         setShowSuccessMessage(true);
-        console.log(response);
       } else {
         console.log("ID not found");
       }
@@ -143,27 +120,27 @@ export default function ProductView({ className }) {
     }
   };
 
-  const changeImgHandler = (current, sizes, color, colorCode) => {
+  const changeImgHandler = (current, sizes, color) => {
     setSrc(`${current}`);
     setSizes(sizes);
     setSelectedSize(sizes[0]);
     setSelectedColor(color);
-    setSelectedColorCode(colorCode);
   };
 
   const handleSizeChange = (event) => setSelectedSize(event.target.value);
+
   const handleWishlistToggle = () => {
     const token = localStorage.getItem("token");
-    
+
     if (!token) {
       navigate("/login");
       return;
     }
-  
+
     const body = {
       product: id,
     };
-  
+
     axios.post(
       `${import.meta.env.VITE_PUBLIC_URL}/add-wishlist/${productId}/`,
       body,
@@ -174,34 +151,28 @@ export default function ProductView({ className }) {
       }
     )
       .then((response) => {
-        console.log(response.data);
-        // Optionally update state or UI based on response
         setShowWishlistSuccessMessage(true);
       })
       .catch((error) => {
         console.error("Error adding to wishlist", error);
         setErrorWishlist(error?.response?.data?.message || "Error adding to wishlist")
-  
       });
   };
-  
 
-  const toggleReadMore = () => {setIsReadMore(!isReadMore)};
-
-  
+  const toggleReadMore = () => {
+    setIsReadMore(!isReadMore)
+  };
 
   const handleColorChange = (colorId) => {
     const selectedImage = productImages.find(image => image.id === colorId);
     if (selectedImage) {
-      setSrc(`${selectedImage.image1}`);
+      setSrc(selectedImage.image1);
       const filteredVariants = variants.filter(variant => variant.color === colorId && variant.stock > 0);
       setSizes(filteredVariants.map(variant => variant.size));
       setSelectedSize(filteredVariants[0]?.size || "");
       setSelectedColor(selectedImage.color);
     }
   };
-  
-  
 
   const PreviousButton = ({ onClick }) => (
     <button
@@ -283,8 +254,7 @@ export default function ProductView({ className }) {
                         variants
                           .filter(variant => variant.color === item.id && variant.stock > 0)
                           .map(variant => variant.size),
-                        item.color,
-                        item.colorCode
+                        item.color
                       )
                     }
                     key={imageKey}
@@ -293,12 +263,7 @@ export default function ProductView({ className }) {
                     <img
                       src={`${item[imageKey]}`}
                       alt="Thumbnail"
-                      className={`w-full h-full object-contain ${
-                        src !==
-                        `${import.meta.env.VITE_PUBLIC_URL}${item[imageKey]}`
-                          ? "opacity-50"
-                          : ""
-                      }`}
+                      className={`w-full h-full object-contain ${src === item[imageKey] ? "opacity-50" : ""}`}
                     />
                   </div>
                 ))
@@ -306,176 +271,103 @@ export default function ProductView({ className }) {
           </Slider>
         </div>
       </div>
-
-      <div className="flex-1">
-        <div className="product-details w-full mt-10 lg:mt-0">
-          {product && (
-            <>
-              <span
-                data-aos="fade-up"
-                className="text-qgray text-xs font-normal uppercase tracking-wider mb-2 inline-block"
-              >
-                {product.categoryName}
+      <div className="lg:w-1/2">
+        <div data-aos="fade-up" className="w-full mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <div>
+              <span className="text-qgray text-xs">{product?.sku}</span>
+            </div>
+            <div className="flex">
+              {[...Array(Math.floor(averageRating))].map((_, i) => (
+                <Star key={i} color="primary" />
+              ))}
+              {averageRating % 1 !== 0 && <Star color="primary" half />}
+            </div>
+          </div>
+          <h1 className="text-xl font-bold text-qblack mb-2">{product?.name}</h1>
+          <p className="text-qgray text-sm mb-4">
+            {isReadMore ? product?.description?.slice(0, 100) : product?.description}
+            {product?.description?.length > 100 && (
+              <span onClick={toggleReadMore} className="text-blue-500 cursor-pointer">
+                {isReadMore ? "...Read more" : " Show less"}
               </span>
-              <h1
-                data-aos="fade-up"
-                className="text-xl font-medium text-qblack mb-4"
+            )}
+          </p>
+          <div className="mb-4">
+            <h4 className="text-base font-bold text-qblack mb-2">Color</h4>
+            <div className="flex space-x-2">
+              {productImages.map((image) => (
+                <div
+                  key={image.id}
+                  className={`w-6 h-6 rounded-full cursor-pointer ${selectedColor === image.color ? "border border-qblack" : ""
+                    }`}
+                  onClick={() => handleColorChange(image.id)}
+                  style={{ backgroundColor: image.color }}
+                >
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mb-4">
+            <FormControl fullWidth>
+              <Select value={selectedSize} onChange={handleSizeChange}>
+                {sizes.map((size) => (
+                  <MenuItem key={size} value={size}>
+                    {size}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </div>
+          <div className="mb-4">
+            <h4 className="text-base font-bold text-qblack mb-2">Quantity</h4>
+            <div className="flex items-center space-x-4">
+              <button
+                className="w-8 h-8 border border-qgray text-qblack flex justify-center items-center"
+                onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
               >
-                {product.name}
-              </h1>
-              <div
-                data-aos="fade-up"
-                className="flex items-center mb-5"
+                -
+              </button>
+              <span>{quantity}</span>
+              <button
+                className="w-8 h-8 border border-qgray text-qblack flex justify-center items-center"
+                onClick={() => setQuantity(quantity + 1)}
               >
-                  <div className="flex">
-                  {[...Array(5)].map((_, index) => (
-                    <Star
-                      key={index}
-                      className={
-                        index < averageRating
-                          ? "text-yellow-400"
-                          : "text-gray-400"
-                      }
-                    />
-                  ))}
-                </div>
-                <span className="text-qgray text-xs font-normal ml-2">
-                  ({review.length} reviews)
-                </span>
-              </div>
-
-              <p
-                data-aos="fade-up"
-                className="text-qgray text-sm font-normal leading-7 mb-8"
-              >
-               {isReadMore ? product.description.slice(0, 100): product.description }
-      {product.description.length > 100 &&
-        <span onClick={toggleReadMore}>
-          {isReadMore ? '...read more' : ' ...show less'}
-        </span>
-      }
-              </p>
-
-              <div data-aos="fade-up" className="flex flex-col gap-y-5 mb-6">
-                <div className="flex items-center">
-                  <span className="text-qblack font-semibold text-lg">
-                  ₹ {product.currency} {product.salePrice} 
-                  </span>
-                  {product.original_price && (
-                    <span className="text-qgray line-through ml-2">
-                      {product.currency} ₹{product.original_price}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center">
-  <span className="text-qblack text-sm font-medium mr-3">
-    Color:
-  </span>
-  {productImages.map((image) => (
-    <div
-      key={image.id}
-      className={`w-6 h-6 border border-qgray-border rounded-full ${
-        selectedColor === image.color
-          ? "ring-2 ring-qblack"
-          : ""
-      }`}
-      style={{ backgroundColor: image.color }}
-    >
-      <span className="sr-only">{image.color}</span> {/* Optional: Include color name tooltip */}
-    </div>
-  ))}
-</div>
-
-
-                <div className="flex items-center">
-                  <span className="text-qblack text-sm font-medium mr-3">
-                    Size:
-                  </span>
-                  <FormControl variant="outlined" size="small">
-                    <Select
-                      value={selectedSize}
-                      onChange={handleSizeChange}
-                      displayEmpty
-                    >
-                      {sizes.map((size) => {
-                        return (
-                          <MenuItem
-                            key={size}
-                            value={size}
-                            disabled={!variants.find(variant => variant.size === size && variant.stock > 0)}
-                          >
-                            {size}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </div>
-
-                <div className="flex items-center">
-                  <span className="text-qblack text-sm font-medium mr-3">
-                    Quantity:
-                  </span>
-                  <div className="flex items-center border border-qgray-border">
-                    <button
-                      className="px-3 py-1 text-qblack"
-                      onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
-                    >
-                      -
-                    </button>
-                    <span className="px-4 py-1 border-l border-r border-qgray-border">
-                      {quantity}
-                    </span>
-                    <button
-                      className="px-3 py-1 text-qblack"
-                      onClick={() => setQuantity(quantity + 1)}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-x-5 mt-6">
-                  <button
-                    onClick={AddToCart}
-                    className="px-8 py-3 bg-qyellow text-qblack font-medium text-sm uppercase tracking-wider rounded-md"
-                  >
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={handleWishlistToggle}
-                    className="px-5 py-3 border border-qgray-border text-qblack font-medium text-sm uppercase tracking-wider rounded-md"
-                  >
-                    {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-                  </button>
-                </div>
-
-                {showSuccessMessage && (
-                  <Stack sx={{ width: "100%" }} spacing={2}>
-                    <Alert
-                      severity="success"
-                      onClose={() => setShowSuccessMessage(false)}
-                    >
-                      Item added to cart successfully!
-                    </Alert>
-                  </Stack>
-                )}
-              </div>
-              {showWishlistSuccessMessage || errorWishlist && (
-  <Stack sx={{ width: "100%" }} spacing={2}>
-    <Alert 
-      severity={errorWishlist ? "error" : "success"} 
-      onClose={() => { 
-        setShowWishlistSuccessMessage(false); 
-        setErrorWishlist(null);
-      }}
-    >
-      {errorWishlist ? errorWishlist : "Item added to Wishlist successfully!"}
-    </Alert>
-  </Stack>
-)}
-            </>
+                +
+              </button>
+            </div>
+          </div>
+          <div className="mb-4">
+            <button
+              className="w-full bg-qyellow text-qblack py-3 text-lg font-medium"
+              onClick={AddToCart}
+            >
+              Add to Cart
+            </button>
+          </div>
+          <div>
+            <button
+              className={`w-full py-3 text-lg font-medium ${wishlist ? "bg-qgray" : "bg-qblack text-qwhite"
+                }`}
+              onClick={handleWishlistToggle}
+            >
+              {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+            </button>
+          </div>
+          {showSuccessMessage && (
+            <Stack sx={{ width: "100%" }} spacing={2}>
+              <Alert severity="success">Product added to cart successfully!</Alert>
+            </Stack>
+          )}
+          {showWishlistSuccessMessage && (
+            <Stack sx={{ width: "100%" }} spacing={2}>
+              <Alert severity="success">Product added to wishlist successfully!</Alert>
+            </Stack>
+          )}
+          {errorWishlist && (
+            <Stack sx={{ width: "100%" }} spacing={2}>
+              <Alert severity="error">{errorWishlist}</Alert>
+            </Stack>
           )}
         </div>
       </div>

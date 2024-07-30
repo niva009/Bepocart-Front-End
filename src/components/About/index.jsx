@@ -601,7 +601,7 @@ export default function About() {
                     Free Return
                   </p>
                   <p className="text-sm text-qblack">
-                    Get Return within 30 days
+                    {/* Get Return within 30 days */}
                   </p>
                 </div>
               </div>

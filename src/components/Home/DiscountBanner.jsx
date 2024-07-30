@@ -103,7 +103,7 @@ export default function DiscountBanner({ className, type }) {
                     Free Return
                   </p>
                   <p className="text-sm text-qgray">
-                    Get Return within 30 days
+                    {/* Get Return within 30 days */}
                   </p>
                 </div>
               </div>

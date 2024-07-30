@@ -25,38 +25,51 @@ import HomeThree from "./components/HomeThree";
 import OrderSuccess from "./components/Success/odrer-success.jsx";
 import OrderDetails from "./components/Auth/Profile/tabs/OrderDetails.jsx";
 import Category from "./components/Category.jsx";
+import ForgetPassword from "./components/Auth/Login/Forget-password.jsx";
+import OtpVeriFication from "./components/Auth/Login/otp-verification.jsx";
+import PasswordCreation from "./components/Auth/Login/password-creation.jsx";
+import ScrollTop from "./components/Partials/Headers/HeaderOne/ScrollToTop.jsx"
+
 
 
 
 
 
 const router = createBrowserRouter([
-  { path: "/", element: <HomeThree /> },
-  { path: "/category/:id", element: <Category /> },
-  { path: "/single-product/:id", element: <SingleProductPage /> },
-  { path: "/all-products/", element: <AllProductPage /> },
-  { path: "/order-success/", element: <OrderSuccess /> },
-  { path: "/cart", element: <CardPage /> },
-  { path: "/checkout/:id/", element: <CheakoutPage /> },
-  { path: "/wishlist", element: <Wishlist /> },
-  { path: "/flash-sale", element: <FlashSale /> },
-  { path: "/saller-page", element: <SallerPage /> },
-  { path: "/products-compaire", element: <ProductsCompaire /> },
-  { path: "/sallers", element: <Sallers /> },
-  { path: "/about", element: <About /> },
-  { path: "/blogs", element: <Blogs /> },
-  { path: "/blogs/blog", element: <Blog /> },
-  { path: "/tracking-order", element: <TrackingOrder /> },
-  { path: "/contact", element: <Contact /> },
-  { path: "/faq", element: <Faq /> },
-  { path: "/login", element: <Login /> },
-  { path: "/signup", element: <Signup /> },
-  { path: "/profile", element: <Profile /> },
-  { path: "/become-saller", element: <BecomeSaller /> },
-  { path: "/be-coin", element: <PrivacyPolicy /> },
-  { path: "/terms-condition", element: <TermsCondition /> },
-  { path: "/orderDetails/:id", element: <OrderDetails /> },
-  { path: "*", element: <FourZeroFour /> },
+  {
+    element: <ScrollTop />,
+    children: [
+      { path: "/", element: <HomeThree /> },
+      { path: "/category/:id", element: <Category /> },
+      { path: "/single-product/:id", element: <SingleProductPage /> },
+      { path: "/all-products/", element: <AllProductPage /> },
+      { path: "/order-success/", element: <OrderSuccess /> },
+      { path: "/cart", element: <CardPage /> },
+      { path: "/checkout/:id/", element: <CheakoutPage /> },
+      { path: "/wishlist", element: <Wishlist /> },
+      { path: "/flash-sale", element: <FlashSale /> },
+      { path: "/saller-page", element: <SallerPage /> },
+      { path: "/products-compaire", element: <ProductsCompaire /> },
+      { path: "/sallers", element: <Sallers /> },
+      { path: "/about", element: <About /> },
+      { path: "/blogs", element: <Blogs /> },
+      { path: "/blogs/blog", element: <Blog /> },
+      { path: "/tracking-order", element: <TrackingOrder /> },
+      { path: "/contact", element: <Contact /> },
+      { path: "/faq", element: <Faq /> },
+      { path: "/login", element: <Login /> },
+      { path: "/signup", element: <Signup /> },
+      { path: "/profile", element: <Profile /> },
+      { path: "/become-saller", element: <BecomeSaller /> },
+      { path: "/be-coin", element: <PrivacyPolicy /> },
+      { path: "/terms-condition", element: <TermsCondition /> },
+      { path: "/orderDetails/:id", element: <OrderDetails /> },
+      { path: "/forgot-password", element: <ForgetPassword /> },
+      { path: "/otp-verification/:id", element: <OtpVeriFication /> },
+      { path: "/new-password/:id", element: <PasswordCreation /> },
+      { path: "*", element: <FourZeroFour /> },
+    ],
+  },
 ]);
 
 function Routers() {

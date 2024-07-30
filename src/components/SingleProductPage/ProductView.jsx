@@ -58,7 +58,7 @@ export default function ProductView({ className }) {
 
       if (response.data.images.length > 0) {
         const initialImage = response.data.images[0];
-        setSrc(`${import.meta.env.VITE_PUBLIC_URL}${initialImage.image1}`);
+        setSrc(`${initialImage.image1}`);
         const initialSizes = response.data.variants
           .filter(variant => variant.color === initialImage.id && variant.stock > 0)
           .map(variant => variant.size);
@@ -144,7 +144,7 @@ export default function ProductView({ className }) {
   };
 
   const changeImgHandler = (current, sizes, color, colorCode) => {
-    setSrc(`${import.meta.env.VITE_PUBLIC_URL}${current}`);
+    setSrc(`${current}`);
     setSizes(sizes);
     setSelectedSize(sizes[0]);
     setSelectedColor(color);
@@ -193,7 +193,7 @@ export default function ProductView({ className }) {
   const handleColorChange = (colorId) => {
     const selectedImage = productImages.find(image => image.id === colorId);
     if (selectedImage) {
-      setSrc(`${import.meta.env.VITE_PUBLIC_URL}${selectedImage.image1}`);
+      setSrc(`${selectedImage.image1}`);
       const filteredVariants = variants.filter(variant => variant.color === colorId && variant.stock > 0);
       setSizes(filteredVariants.map(variant => variant.size));
       setSelectedSize(filteredVariants[0]?.size || "");
@@ -291,7 +291,7 @@ export default function ProductView({ className }) {
                     className="w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer"
                   >
                     <img
-                      src={`${import.meta.env.VITE_PUBLIC_URL}${item[imageKey]}`}
+                      src={`${item[imageKey]}`}
                       alt="Thumbnail"
                       className={`w-full h-full object-contain ${
                         src !==
@@ -359,11 +359,11 @@ export default function ProductView({ className }) {
               <div data-aos="fade-up" className="flex flex-col gap-y-5 mb-6">
                 <div className="flex items-center">
                   <span className="text-qblack font-semibold text-lg">
-                    {product.currency} {product.salePrice} 
+                  ₹ {product.currency} {product.salePrice} 
                   </span>
                   {product.original_price && (
                     <span className="text-qgray line-through ml-2">
-                      {product.currency} {product.original_price}
+                      {product.currency} ₹{product.original_price}
                     </span>
                   )}
                 </div>

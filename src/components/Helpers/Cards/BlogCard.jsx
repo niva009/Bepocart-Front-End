@@ -9,7 +9,7 @@ export default function BlogCard({ className, datas }) {
     >
       <div className="img w-full h-[340px]">
         <img
-          src={`${import.meta.env.VITE_PUBLIC_URL}/${
+          src={`${
             datas.image
           }`}
           alt="blog"

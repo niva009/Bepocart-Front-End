@@ -9,6 +9,7 @@ import Logo from '../../../../assets/bepocart.png';
 import BepoCoin from '../../../../assets/bepocoin.png'
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { RiLoginBoxLine } from "react-icons/ri";
 export default function Middlebar({ className, type }) {
 
 const[coinCount, setCoinCount] =useState([]);
@@ -168,6 +169,13 @@ const token = localStorage.getItem('token');
                   <span>
                     <ThinPeople />
                   </span>
+                </Link>
+              </div>
+              <div>
+                <Link to="/login">
+                <span>
+                <RiLoginBoxLine  style={{width:"50px", height:"22px"}}/>
+                </span>
                 </Link>
               </div>
             </div>

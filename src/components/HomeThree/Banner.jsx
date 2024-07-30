@@ -56,7 +56,7 @@ export default function Banner({ className }) {
                 <div
                   className="w-full h-full relative"
                   style={{
-                    backgroundImage: `url(${import.meta.env.VITE_PUBLIC_URL}${item.image})`,
+                    backgroundImage: `url(${item.image})`,
                     backgroundRepeat: "no-repeat",
                     backgroundSize: "cover",
                   }}

@@ -9,6 +9,7 @@ import axios from "axios";
 import ReletedProducts from "../Helpers/ReletedProducts";
 import DataIteration from "../Helpers/DataIteration";
 
+
 export default function SingleProductPage() {
   
   const { id } = useParams();
@@ -32,7 +33,7 @@ export default function SingleProductPage() {
     fetchProduct(id);
   }, [id]);
 
-  console.log(id,"id data")
+  // console.log(id,"id data")
   
   const fetchProduct = async (id) => {
     setLoading(true);
@@ -53,7 +54,7 @@ export default function SingleProductPage() {
 
 
 
-  console.log("product are presenet here ", products);
+  // console.log("product are presenet here ", products);
   console.log("category id .....",categoryId);
 
 

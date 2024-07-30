@@ -19,6 +19,10 @@ export default function BrandSection({ className, sectionTitle, type }) {
       });
   }, []);
 
+
+
+  console.log("brand information",brands);
+
   const settings = {
     infinite: true,
     speed: 500,
@@ -73,7 +77,7 @@ export default function BrandSection({ className, sectionTitle, type }) {
               <div key={brand.id} className="item">
                 <div className="w-full h-[130px] bg-white border border-primarygray flex justify-center items-center rounded-full overflow-hidden">
                   <img
-                    src={`${import.meta.env.VITE_PUBLIC_URL}${brand.image}`}
+                    src={`${brand.image}`}
                     alt={`${brand.name} logo`}
                     className="max-w-full max-h-full object-contain"
                   />

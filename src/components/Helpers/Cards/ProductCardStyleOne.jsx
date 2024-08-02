@@ -13,6 +13,10 @@ export default function ProductCardStyleOne({ datas, type }) {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isWishlisted, setIsWishlisted] = useState(false); // New state to track wishlist status
 
+
+
+
+
   const available =
     (datas.cam_product_sale /
       (datas.cam_product_available + datas.cam_product_sale)) *
@@ -71,7 +75,7 @@ export default function ProductCardStyleOne({ datas, type }) {
     <div className="product-card-one w-full h-full bg-white relative group overflow-hidden" style={{ boxShadow: "0px 15px 64px 0px rgba(0, 0, 0, 0.05)" }}>
       <div className="product-card-img w-full h-[200px]"
         style={{
-          background: `url(${datas.image}) no-repeat center`,
+          background: `url(${import.meta.env.VITE_PUBLIC_URL}/${datas.image}) no-repeat center`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

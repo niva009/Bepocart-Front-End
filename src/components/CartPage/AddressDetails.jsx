@@ -7,10 +7,10 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
+import logo from "../../assets/bepocart.png";
 
 const style = {
   position: 'absolute',
@@ -33,8 +33,10 @@ export default function AddressDetails({ open, handleClose }) {
     phone: "",
     city: "",
     state: "",
-    pinCode: "",
+    pincode: "",
+    note:"",
   });
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,12 +46,28 @@ export default function AddressDetails({ open, handleClose }) {
     }));
   };
 
+  console.log("value", value);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    axios.post(`${import.meta.env.VITE_PUBLIC_URL}/add-address/`, value, {
-      headers: { Authorization: localStorage.getItem("token") }
-    })
+    const token = localStorage.getItem('token');
+    axios.post(
+      `${import.meta.env.VITE_PUBLIC_URL}/add-address/`,
+      {
+        address: value.address,
+        email: value.email,
+        phone: value.phone,
+        city: value.city,
+        state: value.state,
+        pincode: value.pinCode,
+        note:value.note,
+      },
+      {
+        headers: {
+          'Authorization': `${token}`,
+        },
+      }
+    )
     .then(response => {
       // Handle successful response
       console.log(response);
@@ -81,8 +99,8 @@ export default function AddressDetails({ open, handleClose }) {
                   alignItems: 'center',
                 }}
               >
-                <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                  <LockOutlinedIcon />
+                <Avatar sx={{ m: 1, bgcolor: '#b5ff05' }}>
+                  <img src={logo} alt='logo'></img>
                 </Avatar>
                 <Typography component="h1" variant="h5">
                   Add New Address
@@ -150,6 +168,15 @@ export default function AddressDetails({ open, handleClose }) {
                         onChange={handleChange}
                         name="pinCode"
                         label="Pin Code"
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        onChange={handleChange}
+                        name="note"
+                        label="note"
                       />
                     </Grid>
                   </Grid>

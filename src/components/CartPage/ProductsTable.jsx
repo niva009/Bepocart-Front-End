@@ -64,6 +64,7 @@ export default function ProductsTable({ className }) {
         },
       });
       if (response.status === 200) {
+        window.location.reload();
         setCartProducts(prevProducts => prevProducts.map(product =>
           product.id === id ? { ...product, quantity: product.quantity + 1 } : product
         ));
@@ -84,6 +85,7 @@ export default function ProductsTable({ className }) {
         },
       });
       if (response.status === 200) {
+        window.location.reload();
         setCartProducts(prevProducts => prevProducts.map(product =>
           product.id === id ? { ...product, quantity: product.quantity - 1 } : product
         ));

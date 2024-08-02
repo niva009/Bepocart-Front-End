@@ -112,7 +112,7 @@ export default function HomeThree() {
           type={3}
           products={products}
           brands={brands}
-          categoryTitle="Mobile & Tablet"
+          categoryTitle="latest products"
           sectionTitle="New Arrivals"
           seeMoreUrl="/all-products"
           className="category-products mb-[60px]"

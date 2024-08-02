@@ -261,7 +261,7 @@ export default function ProductView({ className }) {
                     className="w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer"
                   >
                     <img
-                      src={`${item[imageKey]}`}
+                      src={`${import.meta.env.VITE_PUBLIC_URL}/${item[imageKey]}`}
                       alt="Thumbnail"
                       className={`w-full h-full object-contain ${src === item[imageKey] ? "opacity-50" : ""}`}
                     />
@@ -277,12 +277,32 @@ export default function ProductView({ className }) {
             <div>
               <span className="text-qgray text-xs">{product?.sku}</span>
             </div>
-            <div className="flex">
+            {/* <div className="flex">
               {[...Array(Math.floor(averageRating))].map((_, i) => (
                 <Star key={i} color="primary" />
               ))}
               {averageRating % 1 !== 0 && <Star color="primary" half />}
-            </div>
+            </div> */}
+                        <div
+                data-aos="fade-up"
+                className="flex items-center mb-5"
+              >
+                  <div className="flex">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={index}
+                      className={
+                        index < averageRating
+                          ? "text-yellow-400"
+                          : "text-gray-400"
+                      }
+                    />
+                  ))}
+                </div>
+                <span className="text-qgray text-xs font-normal ml-2">
+                  ({review.length} reviews)
+                </span>
+              </div>
           </div>
           <h1 className="text-xl font-bold text-qblack mb-2">{product?.name}</h1>
           <p className="text-qgray text-sm mb-4">
@@ -293,6 +313,18 @@ export default function ProductView({ className }) {
               </span>
             )}
           </p>
+
+          <div className="flex items-center">
+  {product?.price && (
+    <span className="text-qgray line-through mr-2">
+      ₹ {product.price}
+    </span>
+  )}
+  <span className="text-qblack font-semibold text-xl">
+    ₹ {product?.salePrice ? product.salePrice : ''}
+  </span>
+</div>
+
           <div className="mb-4">
             <h4 className="text-base font-bold text-qblack mb-2">Color</h4>
             <div className="flex space-x-2">
@@ -346,13 +378,14 @@ export default function ProductView({ className }) {
             </button>
           </div>
           <div>
-            <button
-              className={`w-full py-3 text-lg font-medium ${wishlist ? "bg-qgray" : "bg-qblack text-qwhite"
-                }`}
-              onClick={handleWishlistToggle}
-            >
-              {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-            </button>
+<button
+  className={`w-full py-3 text-lg font-medium ${wishlist ? "bg-qgray text-qwhite" : "bg-qblack text-white"}`}
+  onClick={handleWishlistToggle}
+>
+  {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+</button>
+
+
           </div>
           {showSuccessMessage && (
             <Stack sx={{ width: "100%" }} spacing={2}>

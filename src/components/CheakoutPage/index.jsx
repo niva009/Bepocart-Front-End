@@ -250,7 +250,7 @@ export default function CheckoutPage() {
                             <div className="flex items-center space-x-3">
                               <div className="rounded-full overflow-hidden w-12 h-12">
                                 <img
-                                  src={`${import.meta.env.VITE_PUBLIC_URL}/${item.image}`}
+                                  src={`${item.image}`}
                                   alt={item.name}
                                   className="w-full h-full object-cover"
                                 />

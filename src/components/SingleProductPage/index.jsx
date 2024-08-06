@@ -14,6 +14,7 @@ export default function SingleProductPage() {
   
   const { id } = useParams();
 
+
   const [products, setProducts] = useState("");
   const [tab, setTab] = useState("des");
   const [rating, setRating] = useState(0);

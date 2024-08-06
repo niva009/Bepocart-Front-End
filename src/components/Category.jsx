@@ -23,7 +23,7 @@ export default function Category() {
   useEffect(() => {
     if (id) {
       setLoading(true);
-      axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategory/${id}/`)
+      axios.get(`${import.meta.env.VITE_PUBLIC_URL}/category/${id}/products/`)
         .then((response) => {
           const products = response.data.products;
           setProducts(products);

@@ -24,13 +24,11 @@ export default function ProductsTable({ className }) {
   const fetchWishlist = async () => {
     try {
       const token = localStorage.getItem('token');
-      console.log("token   :",token)
       const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/wishlist/`, {
         headers: {
           'Authorization': `${token}`
         }
       });
-      console.log("Wishlist Data:", response.data.data);
       setWishlist(response.data.data);
     } catch (error) {
       console.error("Error fetching wishlist:", error);
@@ -45,11 +43,11 @@ export default function ProductsTable({ className }) {
           'Authorization': `${token}`
         }
       });
-      const updatedWishlist = wishlist.filter(item => item.id !== itemId);
-      setWishlist(updatedWishlist);
-      console.log(`Item with ID ${itemId} deleted successfully`);
+      setWishlist(wishlist.filter(item => item.id !== itemId));
+      toast.success(`Item with ID ${itemId} deleted successfully`);
     } catch (error) {
       console.error(`Error deleting item with ID ${itemId}:`, error);
+      toast.error(`Error deleting item: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -58,7 +56,7 @@ export default function ProductsTable({ className }) {
       const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/product/${itemId}/`);
       setProductDetails(response.data);
       setSelectedColor(response.data.images[0]?.color || "");
-      setSelectedSize(response.data.variants[0]?.size || "");
+      setSelectedSize(response.data.images[0]?.stock_info[0]?.size || "");
       setSelectedWishlistItemId(wishlistItemId); // Save wishlist item ID
       setIsModalOpen(true);
     } catch (error) {
@@ -76,11 +74,9 @@ export default function ProductsTable({ className }) {
           'Authorization': `${localStorage.getItem('token')}`
         }
       });
-      console.log(`Item with ID ${productId} added to cart successfully:`, response.data);
-      setIsModalOpen(false);
       toast.success("Item added to cart successfully!");
-      // Remove the item from the wishlist
-      handleDeleteItem(wishlistItemId); 
+      setIsModalOpen(false);
+      handleDeleteItem(wishlistItemId); // Remove the item from the wishlist
     } catch (error) {
       console.error(`Error adding item with ID ${productId} to cart:`, error);
       toast.error(`Error adding item to cart: ${error.response?.data?.message || error.message}`);
@@ -89,10 +85,8 @@ export default function ProductsTable({ className }) {
 
   const availableSizes = () => {
     if (!productDetails || !selectedColor) return [];
-    const colorId = productDetails.images.find(image => image.color === selectedColor)?.id;
-    return productDetails.variants.filter(
-      variant => variant.color === colorId && variant.stock > 0
-    );
+    const colorImage = productDetails.images.find(image => image.color === selectedColor);
+    return colorImage ? colorImage.stock_info.filter(stock => stock.stock > 0) : [];
   };
 
   return (
@@ -102,9 +96,7 @@ export default function ProductsTable({ className }) {
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <tbody>
             <tr className="text-[13px] font-medium text-black bg-[#F6F6F6] whitespace-nowrap px-2 border-b default-border-bottom uppercase">
-              <td className="py-4 pl-10 block whitespace-nowrap w-[380px]">
-                Product
-              </td>
+              <td className="py-4 pl-10 block whitespace-nowrap w-[380px]">Product</td>
               <td className="py-4 whitespace-nowrap text-center">Category</td>
               <td className="py-4 whitespace-nowrap text-center">Price</td>
               <td className="py-4 whitespace-nowrap text-center w-[114px] block">Actions</td>
@@ -191,7 +183,7 @@ export default function ProductsTable({ className }) {
                 className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 {availableSizes().map((variant) => (
-                  <option key={variant.id} value={variant.size}>
+                  <option key={variant.size} value={variant.size}>
                     {variant.size}
                   </option>
                 ))}
@@ -205,7 +197,7 @@ export default function ProductsTable({ className }) {
                 Cancel
               </button>
               <button
-                onClick={() => addToCart(productDetails?.product?.id, selectedWishlistItemId)} // Pass wishlist item ID
+                onClick={() => addToCart(productDetails.product.id, selectedWishlistItemId)} // Pass wishlist item ID
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >
                 Add to Cart

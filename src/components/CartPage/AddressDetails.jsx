@@ -59,7 +59,7 @@ export default function AddressDetails({ open, handleClose }) {
         phone: value.phone,
         city: value.city,
         state: value.state,
-        pincode: value.pinCode,
+        pincode: value.pincode,
         note:value.note,
       },
       {
@@ -166,7 +166,7 @@ export default function AddressDetails({ open, handleClose }) {
                         required
                         fullWidth
                         onChange={handleChange}
-                        name="pinCode"
+                        name="pincode"
                         label="Pin Code"
                       />
                     </Grid>

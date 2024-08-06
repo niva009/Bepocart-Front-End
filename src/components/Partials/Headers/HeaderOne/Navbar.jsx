@@ -24,6 +24,9 @@ export default function Navbar({ className, type }) {
     fetchCategories();
   }, []);
 
+
+
+
   useEffect(() => {
     if (categoryToggle) {
       const getItems = categories.length;
@@ -34,6 +37,9 @@ export default function Navbar({ className, type }) {
       setSize(`0px`);
     }
   }, [categoryToggle, categories]);
+
+
+  console.log("categories in main page", categories);
 
   return (
     <div

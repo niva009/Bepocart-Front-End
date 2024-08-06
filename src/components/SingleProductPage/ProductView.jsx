@@ -38,23 +38,24 @@ export default function ProductView({ className }) {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `${import.meta.env.VITE_PUBLIC_URL}/product/${id}/`,
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/product/${id}/`, {
+        headers: { Authorization: `${token}` },
+      });
       const productData = response.data.product;
       setProduct(productData);
       setProductImages(response.data.images);
-      setVariants(response.data.variants);
+      setVariants(response.data.images.flatMap(image => image.stock_info));
       setSrc(productData.image || ""); // Set initial image to product.image
       setSelectedColor(response.data.images[0]?.color || "");
-      const initialSizes = response.data.variants
-        .filter(variant => variant.color === response.data.images[0].id && variant.stock > 0)
+  
+      // Initialize sizes for the first color
+      const initialColorId = response.data.images[0]?.id;
+      const initialSizes = response.data.images
+        .find(image => image.id === initialColorId)
+        ?.stock_info.filter(variant => variant.stock > 0)
         .map(variant => variant.size);
-      setSizes(initialSizes);
-      setSelectedSize(initialSizes[0]);
+      setSizes(initialSizes || []);
+      setSelectedSize(initialSizes[0] || "");
     } catch (error) {
       console.error("Error fetching products:", error);
       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
@@ -66,8 +67,10 @@ export default function ProductView({ className }) {
       setLoading(false);
     }
   };
+  
 
   const productId = product?.id;
+  console.log("initial image.....:",src);
 
   useEffect(() => {
     const fetchRating = async () => {
@@ -81,6 +84,7 @@ export default function ProductView({ className }) {
 
     fetchRating();
   }, [productId]);
+
 
   const calculateAverageRating = () => {
     if (review.length === 0) return 0;
@@ -167,12 +171,13 @@ export default function ProductView({ className }) {
     const selectedImage = productImages.find(image => image.id === colorId);
     if (selectedImage) {
       setSrc(selectedImage.image1);
-      const filteredVariants = variants.filter(variant => variant.color === colorId && variant.stock > 0);
+      const filteredVariants = selectedImage.stock_info.filter(variant => variant.stock > 0);
       setSizes(filteredVariants.map(variant => variant.size));
       setSelectedSize(filteredVariants[0]?.size || "");
       setSelectedColor(selectedImage.color);
     }
   };
+  
 
   const PreviousButton = ({ onClick }) => (
     <button
@@ -237,7 +242,7 @@ export default function ProductView({ className }) {
       <div data-aos="fade-right" className="lg:w-1/2 xl:mr-[70px] lg:mr-[50px]">
         <div className="w-full">
           <div className="w-full h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
-            <img src={src} alt="Product" className="object-contain" />
+          <img src={`${src}`} alt="Product" className="object-contain" />
             <div className="w-[80px] h-[80px] rounded-full bg-qyellow text-qblack flex justify-center items-center text-xl font-medium absolute left-[30px] top-[30px]">
               <span>{product?.discount}%</span>
             </div>
@@ -261,7 +266,7 @@ export default function ProductView({ className }) {
                     className="w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer"
                   >
                     <img
-                      src={`${import.meta.env.VITE_PUBLIC_URL}/${item[imageKey]}`}
+                      src={`${item[imageKey]}`}
                       alt="Thumbnail"
                       className={`w-full h-full object-contain ${src === item[imageKey] ? "opacity-50" : ""}`}
                     />
@@ -325,32 +330,39 @@ export default function ProductView({ className }) {
   </span>
 </div>
 
-          <div className="mb-4">
-            <h4 className="text-base font-bold text-qblack mb-2">Color</h4>
-            <div className="flex space-x-2">
-              {productImages.map((image) => (
-                <div
-                  key={image.id}
-                  className={`w-6 h-6 rounded-full cursor-pointer ${selectedColor === image.color ? "border border-qblack" : ""
-                    }`}
-                  onClick={() => handleColorChange(image.id)}
-                  style={{ backgroundColor: image.color }}
-                >
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="mb-4">
-            <FormControl fullWidth>
-              <Select value={selectedSize} onChange={handleSizeChange}>
-                {sizes.map((size) => (
-                  <MenuItem key={size} value={size}>
-                    {size}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
+<div className="mb-4">
+  <h4 className="text-base font-bold text-qblack mb-2">Color</h4>
+  <div className="flex flex-wrap space-x-2">
+    {productImages.map((image) => (
+      <button
+        key={image.id}
+        className={`px-4 py-2 rounded border ${
+          selectedColor === image.color ? "border-qblack text-qblack font-semibold" : "border-qgray text-qblack"
+        }`}
+        onClick={() => handleColorChange(image.id)}
+      >
+        {image.color}
+      </button>
+    ))}
+  </div>
+</div>
+
+
+          {product?.type !== "single" && sizes.length > 0 && (
+  <div className="mb-4">
+    <FormControl fullWidth>
+      <Select value={selectedSize} onChange={handleSizeChange}>
+        {sizes.map((size) => (
+          <MenuItem key={size} value={size}>
+            {size}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </div>
+)}
+
+
           <div className="mb-4">
             <h4 className="text-base font-bold text-qblack mb-2">Quantity</h4>
             <div className="flex items-center space-x-4">

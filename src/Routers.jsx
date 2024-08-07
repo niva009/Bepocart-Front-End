@@ -25,10 +25,12 @@ import HomeThree from "./components/HomeThree";
 import OrderSuccess from "./components/Success/odrer-success.jsx";
 import OrderDetails from "./components/Auth/Profile/tabs/OrderDetails.jsx";
 import Category from "./components/Category.jsx";
+import MainCategory from "./components/Main-category.jsx"
 import ForgetPassword from "./components/Auth/Login/Forget-password.jsx";
 import OtpVeriFication from "./components/Auth/Login/otp-verification.jsx";
 import PasswordCreation from "./components/Auth/Login/password-creation.jsx";
 import ScrollTop from "./components/Partials/Headers/HeaderOne/ScrollToTop.jsx"
+
 
 
 
@@ -41,6 +43,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomeThree /> },
       { path: "/category/:id", element: <Category /> },
+      { path: "/main-category/:id", element: < MainCategory/> },
       { path: "/single-product/:id", element: <SingleProductPage /> },
       { path: "/all-products/", element: <AllProductPage /> },
       { path: "/order-success/", element: <OrderSuccess /> },

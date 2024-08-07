@@ -102,6 +102,7 @@ export default function CheckoutPage() {
       document.body.appendChild(script);
     });
   };
+
   const makePayment = async () => {
     const res = await initializeRazorpay();
   
@@ -124,7 +125,6 @@ export default function CheckoutPage() {
           Authorization: `${token}`,
         },
       });
-  
   
       const options = {
         key: "rzp_test_m3k00iFqtte9HH", // Enter the Key ID generated from the Dashboard
@@ -152,9 +152,30 @@ export default function CheckoutPage() {
       alert("Order creation failed.");
     }
   };
-  
+
+  const handlePlaceOrder = async () => {
+    if (paymentMethod === "COD") {
+      try {
+        await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
+          payment_method: paymentMethod,
+          coupon_code: couponCode,
+        }, {
+          headers: {
+            Authorization: `${token}`,
+          },
+        });
+        navigate("/order-success");
+      } catch (error) {
+        console.error("Error creating COD order:", error);
+        alert("Order creation failed.");
+      }
+    } else {
+      makePayment();
+    }
+  };
+
   const handleChange = (e) => {
-    const { name, value } = e.target; 
+    const { name, value } = e.target;
     setCouponCode(value);
   };
 
@@ -176,10 +197,6 @@ export default function CheckoutPage() {
     } else {
       setCouponError("Please enter a coupon code");
     }
-  };
-
-  const handlePlaceOrder = () => {
-    makePayment();
   };
 
   return (

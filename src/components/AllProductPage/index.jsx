@@ -3,11 +3,12 @@ import BreadcrumbCom from '../BreadcrumbCom';
 import ProductCardStyleOne from '../Helpers/Cards/ProductCardStyleOne';
 import DataIteration from '../Helpers/DataIteration';
 import Layout from '../Partials/Layout';
-import ProductsFilter from './ProductsFilter';
 import { FormControl, NativeSelect } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import './Pagination.css'; // Import the CSS file for pagination styles
+
+const PRODUCTS_PER_PAGE = 15;
 
 export default function AllProductPage() {
   const location = useLocation();
@@ -41,21 +42,19 @@ export default function AllProductPage() {
     sizeFit: false,
   });
 
-
-
-  useEffect(() =>{
-
-    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategory/`)
-  })
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategory/`);
+  }, []);
 
   const [sortedProducts, setSortedProducts] = useState(searchResult);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filterToggle, setToggle] = useState(false);
   const [price, setPrice] = useState({ min: 0, max: 200000 });
-  const [category, setCategory] = useState(null); // State to store a single category
+  const [category, setCategory] = useState(null);
   const [filteredResult, setFilteredResult] = useState([]);
   const [showProducts, setShowProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     setSortedProducts(searchResult);
@@ -73,22 +72,25 @@ export default function AllProductPage() {
     setFilteredResult(result);
   };
 
-  const fetchLowToHigh = () => {
-    const response = axios.get(`${import.meta.env.VITE_PUBLIC_URL}/low-products/${category}`)
-    sortedProducts(response.data)
-  };
-
-  const fetchHighToLow = async() => {
-    try{
-      const response = axios.get(`${import.meta.env.VITE_PUBLIC_URL}/high-products/${category}`)
-    sortedProducts(response.data)
-    }
-    catch{
-      console.log(error,"error high-to-low");
+  const fetchLowToHigh = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/low-products/${category}`);
+      setSortedProducts(response.data);
+      setCurrentPage(1); // Reset to first page on sort
+    } catch (error) {
+      console.error("Error fetching low-to-high products:", error);
     }
   };
 
-  /////////////////////////////useEffect for show all product information ///////////////////
+  const fetchHighToLow = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/high-products/${category}`);
+      setSortedProducts(response.data);
+      setCurrentPage(1); // Reset to first page on sort
+    } catch (error) {
+      console.error("Error fetching high-to-low products:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchAllProducts = async () => {
@@ -107,8 +109,20 @@ export default function AllProductPage() {
     fetchAllProducts();
   }, []);
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
-  console.log("all product in527545354",showProducts.products);
+  const getTotalPages = (products) => {
+    return Math.ceil(products.length / PRODUCTS_PER_PAGE);
+  };
+
+  const getPaginatedProducts = (products) => {
+    const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    return products.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+  };
+
+  const paginatedProducts = sortedProducts.length > 0 ? getPaginatedProducts(sortedProducts) : getPaginatedProducts(showProducts);
 
   return (
     <Layout>
@@ -129,7 +143,7 @@ export default function AllProductPage() {
               <div className="products-sorting w-full bg-white md:h-[70px] flex md:flex-row flex-col md:space-y-0 space-y-5 md:justify-between md:items-center p-[30px] mb-[40px]">
                 <div>
                   <p className="font-400 text-[13px]">
-                    <span className="text-qgray"> Showing</span> 1–16 of {sortedProducts.length} results
+                    <span className="text-qgray"> Showing</span> 1–15 of {sortedProducts.length || showProducts.length} results
                   </p>
                 </div>
                 <div className="flex space-x-3 items-center">
@@ -178,27 +192,23 @@ export default function AllProductPage() {
                 </button>
               </div>
               <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 xl:gap-[30px] gap-5 mb-[40px]">
-  {sortedProducts.length > 0 ? (
-    <DataIteration datas={sortedProducts}>
-      {({ datas }) => (
-        <div data-aos="fade-up" key={datas.id}>
-          <ProductCardStyleOne datas={datas} />
-        </div>
-      )}
-    </DataIteration>
-  ) : showProducts.length > 0 ? (
-    <DataIteration datas={showProducts}>
-      {({ datas }) => (
-        <div data-aos="fade-up" key={datas.id}>
-          <ProductCardStyleOne datas={datas} />
-        </div>
-      )}
-    </DataIteration>
-  ) : (
-    <p>No products found</p>
-  )}
-</div>
-
+                {paginatedProducts.length > 0 ? (
+                  <DataIteration datas={paginatedProducts}>
+                    {({ datas }) => (
+                      <div data-aos="fade-up" key={datas.id}>
+                        <ProductCardStyleOne datas={datas} />
+                      </div>
+                    )}
+                  </DataIteration>
+                ) : (
+                  <p>No products found</p>
+                )}
+              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={getTotalPages(sortedProducts.length > 0 ? sortedProducts : showProducts)}
+                onPageChange={handlePageChange}
+              />
             </div>
           </div>
         </div>
@@ -206,3 +216,25 @@ export default function AllProductPage() {
     </Layout>
   );
 }
+
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+  const pageNumbers = [];
+
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  return (
+    <div className="pagination">
+      {pageNumbers.map(number => (
+        <button
+          key={number}
+          onClick={() => onPageChange(number)}
+          className={`page-number ${number === currentPage ? 'active' : ''}`}
+        >
+          {number}
+        </button>
+      ))}
+    </div>
+  );
+};

@@ -8,11 +8,15 @@ import './modal-styles.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
-export default function ProductCardStyleOne({ datas, type }) {
+export default function   ProductCardStyleOne({ datas, type }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isWishlisted, setIsWishlisted] = useState(false); // New state to track wishlist status
 
+
+
+
+  console.log(datas,  "datas information");
 
 
 
@@ -69,6 +73,8 @@ export default function ProductCardStyleOne({ datas, type }) {
       toast.error("An error occurred. Please try again.");
     }
   };
+
+  console.log("prduct for sale price", selectedProduct);
 
   return (
   

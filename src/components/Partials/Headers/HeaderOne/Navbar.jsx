@@ -96,7 +96,7 @@ export default function Navbar({ className, type }) {
                   <ul className="categories-list">
                     {categories.map((category) => (
                       <li className="category-item" key={category.id}>
-                        <Link to={`/category/${category.slug}`}>
+                        <Link to={`/main-category/${category.slug}/`}>
                           <div
                             className={`flex justify-between items-center px-5 h-10 bg-white transition-all duration-300 ease-in-out cursor-pointer text-qblack ${type === 3
                                 ? "hover:bg-qh3-blue hover:text-white"

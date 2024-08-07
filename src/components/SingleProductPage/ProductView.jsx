@@ -311,7 +311,7 @@ export default function ProductView({ className }) {
           </div>
           <h1 className="text-xl font-bold text-qblack mb-2">{product?.name}</h1>
           <p className="text-qgray text-sm mb-4">
-            {isReadMore ? product?.description?.slice(0, 100) : product?.description}
+            {isReadMore ? product?.description?.slice(0, 100) : product?.short_description}
             {product?.description?.length > 100 && (
               <span onClick={toggleReadMore} className="text-blue-500 cursor-pointer">
                 {isReadMore ? "...Read more" : " Show less"}

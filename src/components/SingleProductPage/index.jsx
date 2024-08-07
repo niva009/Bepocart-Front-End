@@ -197,7 +197,7 @@ console.log("comments of product :",comments);
                 {tab === "des" && (
                   <div data-aos="fade-up" className="w-full tab-content-item">
                     <h6 className="text-[18px] font-medium text-qblack mb-2">
-                      short -Description
+                      Description
                     </h6>
                     <p className="text-[15px] text-qgray text-normal mb-1
                     ">

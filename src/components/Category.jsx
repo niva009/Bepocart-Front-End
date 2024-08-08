@@ -42,13 +42,7 @@ export default function Category() {
 
   console.log(category, "category information");
 
-  const checkboxHandler = (e) => {
-    const { name } = e.target;
-    setFilter((prevState) => ({
-      ...prevState,
-      [name]: !prevState[name],
-    }));
-  };
+
 
   const filterStorage = (value) => {
     setStorage(value);
@@ -65,7 +59,7 @@ export default function Category() {
   const fetchLowToHigh = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/low-products/${category}/`);
-      setProducts(response.data.data);
+      setProducts(response.data);
     } catch (error) {
       console.error('Error fetching low to high products:', error);
       setError(error?.response?.data?.message || 'An error occurred while fetching low to high products');
@@ -83,10 +77,11 @@ export default function Category() {
   };
 
   const handleFilteredResult = (result) => {
-    setFilteredResult(result);
+    setProducts(result);
   };
 
-  const displayProducts = filteredResult.length > 0 ? filteredResult : products;
+  console.log("filtered product data",filteredResult);
+
 
   return (
     <Layout>
@@ -98,12 +93,10 @@ export default function Category() {
               <ProductsFilter
                 filterToggle={filterToggle}
                 filterToggleHandler={() => setToggle(!filterToggle)}
-                checkboxHandler={checkboxHandler}
                 PriceFilter={price}
                 volumeHandler={(value) => setPrice({ min: value[0], max: value[1] })}
                 storage={storage}
                 category={category}
-                filterstorage={filterStorage}
                 className="mb-[30px]"
                 onFilteredResult={handleFilteredResult}
               />
@@ -119,7 +112,7 @@ export default function Category() {
               <div className="products-sorting w-full bg-white md:h-[70px] flex md:flex-row flex-col md:space-y-0 space-y-5 md:justify-between md:items-center p-[30px] mb-[40px]">
                 <div>
                   <p className="font-400 text-[13px]">
-                    <span className="text-qgray">Showing</span> 1–{displayProducts.length} of {displayProducts.length} results
+                    <span className="text-qgray">Showing</span> 1–{products.length} of {products.length} results
                   </p>
                 </div>
                 <div className="flex space-x-3 items-center">
@@ -166,8 +159,8 @@ export default function Category() {
                   <p>Loading...</p>
                 ) : error ? (
                   <p>{error}</p>
-                ) : displayProducts.length > 0 ? (
-                  <DataIteration datas={displayProducts}>
+                ) : products.length > 0 ? (
+                  <DataIteration datas={products}>
                     {({ datas }) => (
                       <div data-aos="fade-up" key={datas.id}>
                         <ProductCardStyleOne datas={datas} />

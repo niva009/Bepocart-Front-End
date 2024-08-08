@@ -36,6 +36,7 @@ export default function CheckoutPage() {
           },
         });
         const data = response.data;
+        window.location.reload();
         setCartItems(data.data);
         setSubtotal(data.Subtotal ?? 0);
         setShipping(data.Shipping ?? 0);

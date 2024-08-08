@@ -56,6 +56,9 @@ export default function AllProductPage() {
   const [showProducts, setShowProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+
+console.log("sorted resulttttttttt",sortedProducts);
+
   useEffect(() => {
     setSortedProducts(searchResult);
   }, [searchResult]);

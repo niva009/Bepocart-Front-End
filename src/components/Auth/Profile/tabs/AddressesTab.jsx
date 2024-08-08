@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import AddressDetails from "../../../CartPage/AddressDetails";
 
 export default function AddressesTab() {
   const [addresses, setAddresses] = useState([]);
+  const [open, setOpen] = useState(false); // Initialize `open` state
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -40,6 +42,10 @@ export default function AddressesTab() {
       console.error(`Error deleting address with id ${id}:`, error);
     }
   };
+
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   return (
     <>
@@ -140,10 +146,11 @@ export default function AddressesTab() {
         )}
       </div>
       <div className="w-[180px] h-[50px] mt-4">
-        <button type="button" className="yellow-btn">
+        <button type="button" className="yellow-btn" onClick={handleOpen} >
           <div className="w-full text-sm font-semibold">Add New Address</div>
         </button>
       </div>
+      <AddressDetails open={open} handleClose={handleClose} />
     </>
   );
 }

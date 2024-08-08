@@ -7,45 +7,60 @@ import TextField from '@mui/material/TextField';
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
 export default function Signup() {
+
   const [checked, setValue] = useState(false);
+  const navigate = useNavigate();
+
   const rememberMe = () => {
     setValue(!checked);
   };
-  const [register, setRegister] = useState({});
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setRegister({ ...register, [name]: value });
-  };
+  const validationSchema = yup.object({
+    first_name: yup.string().required("First name required"),
+    last_name: yup.string().required("Last name required"),
+    email: yup.string().email("Enter a valid email").required("Email required"),
+    place: yup.string().required("Place name is required"),
+    phone: yup.string().matches(/^[0-9]{10}$/, 'Phone number should be 10 digits').required('Phone number is required'),
+    zip_code: yup.string().matches(/^[0-9]{6}$/, 'Pin Code should be 6 digits').required("Zip code is required"),
+    password: yup.string().required("Password is required"),
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
-    axios.post(`${import.meta.env.VITE_PUBLIC_URL}/register/`, {
-      first_name: register.first_name,
-      last_name: register.last_name,
-      place: register.place,
-      phone: register.phone,
-      email: register.email,
-      zip_code: register.zip_code,
-      password: register.password,
-    })
-    .then((response) => {
-      console.log(response,"response dataaaaa");
-      if (response.status === 201) {
-        toast.success("Registration completed successfully");
-        navigate('/login'); // Redirect to login page upon successful registration
-      }
-    })
-    .catch((error) => {
-      toast.error("Registration failed");
-      console.error("Error during registration", error);
-    });
-  };
-
-  console.log("register information", register);
+  const formik = useFormik({
+    initialValues: {
+      first_name: '',
+      last_name: '',
+      email: '',
+      place: '',
+      phone: '',
+      zip_code: '',
+      password: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      const token = localStorage.getItem('token');
+      axios.post(
+        `${import.meta.env.VITE_PUBLIC_URL}/register/`,
+        values,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        }
+      )
+      .then(response => {
+        toast.success('Account created successfully!');
+        navigate('/login');
+      })
+      .catch(error => {
+        toast.error('An error occurred while creating the account');
+        console.error(error);
+      });
+    },
+  });
 
   return (
     <Layout childrenClasses="pt-0 pb-0">
@@ -75,7 +90,7 @@ export default function Signup() {
                     </svg>
                   </div>
                 </div>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={formik.handleSubmit}>
                   <div className="input-area">
                     <div className="flex sm:flex-row flex-col space-y-5 sm:space-y-0 sm:space-x-5 mb-5">
                       <TextField
@@ -83,7 +98,10 @@ export default function Signup() {
                         label="First Name*"
                         name="first_name"
                         type="text"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        value={formik.values.first_name}
+                        error={formik.touched.first_name && Boolean(formik.errors.first_name)}
+                        helperText={formik.touched.first_name && formik.errors.first_name}
                         style={{ height: '70px', width: '100%' }}
                       />
                       <TextField
@@ -91,7 +109,10 @@ export default function Signup() {
                         label="Last Name*"
                         name="last_name"
                         type="text"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        value={formik.values.last_name}
+                        error={formik.touched.last_name && Boolean(formik.errors.last_name)}
+                        helperText={formik.touched.last_name && formik.errors.last_name}
                         style={{ height: '70px', width: '100%' }}
                       />
                     </div>
@@ -101,7 +122,10 @@ export default function Signup() {
                         label="Email Address*"
                         name="email"
                         type="email"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        value={formik.values.email}
+                        error={formik.touched.email && Boolean(formik.errors.email)}
+                        helperText={formik.touched.email && formik.errors.email}
                         style={{ height: '70px', width: '100%' }}
                       />
                       <TextField
@@ -109,7 +133,10 @@ export default function Signup() {
                         label="Phone*"
                         name="phone"
                         type="text"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        value={formik.values.phone}
+                        error={formik.touched.phone && Boolean(formik.errors.phone)}
+                        helperText={formik.touched.phone && formik.errors.phone}
                         style={{ height: '70px', width: '100%' }}
                       />
                     </div>
@@ -119,14 +146,20 @@ export default function Signup() {
                         label="Place"
                         name="place"
                         type="text"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        value={formik.values.place}
+                        error={formik.touched.place && Boolean(formik.errors.place)}
+                        helperText={formik.touched.place && formik.errors.place}
                         style={{ height: '70px', width: '100%' }}
                       />
                       <TextField
                         label="Postcode / ZIP*"
                         name="zip_code"
+                        onChange={formik.handleChange}
+                        value={formik.values.zip_code}
+                        error={formik.touched.zip_code && Boolean(formik.errors.zip_code)}
+                        helperText={formik.touched.zip_code && formik.errors.zip_code}
                         type="text"
-                        onChange={handleChange}
                         style={{ height: '70px', width: '100%' }}
                         placeholder="00000"
                       />
@@ -135,8 +168,11 @@ export default function Signup() {
                       <TextField
                         label="Password*"
                         name="password"
-                        type="text"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
+                        error={formik.touched.password && Boolean(formik.errors.password)}
+                        helperText={formik.touched.password && formik.errors.password}
+                        type="password"
                         style={{ height: '70px', width: '100%' }}
                         placeholder="password"
                       />

@@ -25,6 +25,7 @@ import HomeThree from "./components/HomeThree";
 import OrderSuccess from "./components/Success/odrer-success.jsx";
 import OrderDetails from "./components/Auth/Profile/tabs/OrderDetails.jsx";
 import Category from "./components/Category.jsx";
+import OfferProducts from "./components/OfferProducts.jsx";
 import MainCategory from "./components/Main-category.jsx"
 import ForgetPassword from "./components/Auth/Login/Forget-password.jsx";
 import OtpVeriFication from "./components/Auth/Login/otp-verification.jsx";
@@ -43,6 +44,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomeThree /> },
       { path: "/category/:id", element: <Category /> },
+      { path: "/offer-products/", element: <OfferProducts /> },
       { path: "/main-category/:id", element: < MainCategory/> },
       { path: "/single-product/:id", element: <SingleProductPage /> },
       { path: "/all-products/", element: <AllProductPage /> },

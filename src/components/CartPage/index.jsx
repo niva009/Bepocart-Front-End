@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import BreadcrumbCom from "../BreadcrumbCom";
 import EmptyCardError from "../EmptyCardError";
 import InputCom from "../Helpers/InputCom";
@@ -10,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { responsiveFontSizes } from "@mui/material";
 import AddressDetails from "./AddressDetails";
+import { Link } from "react-router-dom"
 
 export default function CardPage({ cart = true }) {
   const [cartProducts, setCartProducts] = useState([]);
@@ -23,52 +23,53 @@ export default function CardPage({ cart = true }) {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
+  const fetchCartProducts = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      console.log(response.data,"response data from cart");
+
+      const data = response.data;
+      setCartProducts(data.data);
+      setSubtotal(data.Subtotal ?? 0);
+      setShipping(data.Shipping ?? 0);
+      setDiscount(data.Discount ?? 0);
+      setTotal(data.TotalPrice ?? 0);
+
+      console.log("Total:", data.Subtotal);
+      console.log("Discount:", data.Discount);
+      console.log("Shipping Charge:", data.Shipping);
+      console.log("Sub total:", data.TotalPrice);
+    } catch (error) {
+      console.error('Error fetching cart products:', error);
+    }
+  };
+
+  const fetchUserAddresses = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/get-address/`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      setAddresses(response.data.address);
+      console.log("User addresses:", response.data.address);
+    } catch (error) {
+      console.error("Error fetching user addresses:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchCartProducts = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
-          headers: {
-            Authorization: `${token}`,
-          },
-        });
-        console.log(response.data,"response data from cart");
-
-        const data = response.data;
-        setCartProducts(data.data);
-        setSubtotal(data.Subtotal ?? 0);
-        setShipping(data.Shipping ?? 0);
-        setDiscount(data.Discount ?? 0);
-        setTotal(data.TotalPrice ?? 0);
-
-        console.log("Total:", data.Subtotal);
-        console.log("Discount:", data.Discount);
-        console.log("Shipping Charge:", data.Shipping);
-        console.log("Sub total:", data.TotalPrice);
-
-      } catch (error) {
-        console.error('Error fetching cart products:', error);
-      }
-    };
-
-    const fetchUserAddresses = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/get-address/`, {
-          headers: {
-            Authorization: `${token}`,
-          },
-        });
-        setAddresses(response.data.address);
-        console.log("User addresses:", response.data.address);
-      } catch (error) {
-        console.error("Error fetching user addresses:", error);
-      
-      }
-    };
-
     fetchCartProducts();
     fetchUserAddresses();
   }, [token]);
 
+  const handleQuantityChange = () => {
+    fetchCartProducts();
+  };
   const handleSelectAddress = (addressId) => {
     setSelectedAddressId(addressId);
   };
@@ -113,7 +114,7 @@ export default function CardPage({ cart = true }) {
           </div>
           <div className="w-full mt-[23px]">
             <div className="container-x mx-auto">
-              <ProductsTable className="mb-[30px]" cartProducts={cartProducts} />
+              <ProductsTable className="mb-[30px]" cartProducts={cartProducts}  onQuantityChange={handleQuantityChange}/>
               <div className="w-full sm:flex justify-between">
                 <div className="discount-code sm:w-[1000px] w-full mb-5 sm:mb-0 h-[50px] flex">
                   <div className="lg:w-1/2 w-full">

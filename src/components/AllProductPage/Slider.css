@@ -1,0 +1,38 @@
+.range-slider {
+  --range-slider-thumb-size: 16px;
+  --range-slider-thumb-color: #4caf50;
+  --range-slider-thumb-border: 2px solid #fff;
+  --range-slider-track-height: 8px;
+  --range-slider-track-color: #ddd;
+  --range-slider-track-active-color: #4caf50;
+  --range-slider-thumb-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --range-slider-thumb-hover-color: #66bb6a;
+  --range-slider-thumb-focus-color: #4caf50;
+}
+
+.range-slider .thumb {
+  width: var(--range-slider-thumb-size);
+  height: var(--range-slider-thumb-size);
+  background: var(--range-slider-thumb-color);
+  border: var(--range-slider-thumb-border);
+  border-radius: 50%;
+  box-shadow: var(--range-slider-thumb-shadow);
+  transition: background 0.3s;
+}
+
+.range-slider .thumb:hover {
+  background: var(--range-slider-thumb-hover-color);
+}
+
+.range-slider .thumb:focus {
+  background: var(--range-slider-thumb-focus-color);
+}
+
+.range-slider .track {
+  height: var(--range-slider-track-height);
+  background: var(--range-slider-track-color);
+}
+
+.range-slider .track.active {
+  background: var(--range-slider-track-active-color);
+}

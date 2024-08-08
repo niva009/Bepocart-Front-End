@@ -9,8 +9,10 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import axios from 'axios';
-import logo from "../../assets/bepocart.png";
+import logo from '../../assets/bepocart.png';
 
 const style = {
   position: 'absolute',
@@ -26,58 +28,51 @@ const style = {
 
 const defaultTheme = createTheme();
 
+const validationSchema = yup.object({
+  address: yup.string().required('Address is required'),
+  email: yup.string().email('Enter a valid email').required('Email is required'),
+  phone: yup.string().matches(/^[0-9]{10}$/, 'Phone number should be 10 digits').required('Phone number is required'),
+  city: yup.string().required('City is required'),
+  state: yup.string().required('State is required'),
+  pincode: yup.string().matches(/^[0-9]{6}$/, 'Pin Code should be 6 digits').required('Pin Code is required'),
+  note: yup.string()
+});
+
 export default function AddressDetails({ open, handleClose }) {
-  const [value, setValue] = React.useState({
-    address: "",
-    email: "",
-    phone: "",
-    city: "",
-    state: "",
-    pincode: "",
-    note:"",
+  const formik = useFormik({
+    initialValues: {
+      address: '',
+      email: '',
+      phone: '',
+      city: '',
+      state: '',
+      pincode: '',
+      note: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      const token = localStorage.getItem('token');
+      axios.post(
+        `${import.meta.env.VITE_PUBLIC_URL}/add-address/`,
+        values,
+        {
+          headers: {
+            'Authorization': `${token}`,
+          },
+        }
+      )
+      .then(response => {
+        // Handle successful response
+        console.log(response);
+        handleClose(); // Close the modal on successful submission
+        window.location.reload();
+      })
+      .catch(error => {
+        // Handle error
+        console.error(error);
+      });
+    },
   });
-
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setValue((prevValue) => ({
-      ...prevValue,
-      [name]: value,
-    }));
-  };
-
-  console.log("value", value);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
-    axios.post(
-      `${import.meta.env.VITE_PUBLIC_URL}/add-address/`,
-      {
-        address: value.address,
-        email: value.email,
-        phone: value.phone,
-        city: value.city,
-        state: value.state,
-        pincode: value.pincode,
-        note:value.note,
-      },
-      {
-        headers: {
-          'Authorization': `${token}`,
-        },
-      }
-    )
-    .then(response => {
-      // Handle successful response
-      console.log(response);
-      handleClose(); // Close the modal on successful submission
-    })
-    .catch(error => {
-      // Handle error
-      console.error(error);
-    });
-  };
 
   return (
     <div>
@@ -100,12 +95,12 @@ export default function AddressDetails({ open, handleClose }) {
                 }}
               >
                 <Avatar sx={{ m: 1, bgcolor: '#b5ff05' }}>
-                  <img src={logo} alt='logo'></img>
+                  <img src={logo} alt='logo' />
                 </Avatar>
                 <Typography component="h1" variant="h5">
                   Add New Address
                 </Typography>
-                <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
@@ -115,7 +110,11 @@ export default function AddressDetails({ open, handleClose }) {
                         fullWidth
                         id="PhoneNumber"
                         label="Phone"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.phone}
+                        error={formik.touched.phone && Boolean(formik.errors.phone)}
+                        helperText={formik.touched.phone && formik.errors.phone}
                         autoFocus
                       />
                     </Grid>
@@ -126,7 +125,11 @@ export default function AddressDetails({ open, handleClose }) {
                         id="email"
                         label="Email"
                         name="email"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.email}
+                        error={formik.touched.email && Boolean(formik.errors.email)}
+                        helperText={formik.touched.email && formik.errors.email}
                       />
                     </Grid>
                     <Grid item xs={12}>
@@ -134,9 +137,13 @@ export default function AddressDetails({ open, handleClose }) {
                         required
                         fullWidth
                         name="address"
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.address}
                         label="Address"
                         id="address"
+                        error={formik.touched.address && Boolean(formik.errors.address)}
+                        helperText={formik.touched.address && formik.errors.address}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -144,9 +151,13 @@ export default function AddressDetails({ open, handleClose }) {
                         name="city"
                         required
                         fullWidth
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.city}
                         id="city"
                         label="City"
+                        error={formik.touched.city && Boolean(formik.errors.city)}
+                        helperText={formik.touched.city && formik.errors.city}
                         autoFocus
                       />
                     </Grid>
@@ -155,9 +166,13 @@ export default function AddressDetails({ open, handleClose }) {
                         name="state"
                         required
                         fullWidth
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.state}
                         id="state"
                         label="State"
+                        error={formik.touched.state && Boolean(formik.errors.state)}
+                        helperText={formik.touched.state && formik.errors.state}
                         autoFocus
                       />
                     </Grid>
@@ -165,18 +180,26 @@ export default function AddressDetails({ open, handleClose }) {
                       <TextField
                         required
                         fullWidth
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.pincode}
                         name="pincode"
                         label="Pin Code"
+                        error={formik.touched.pincode && Boolean(formik.errors.pincode)}
+                        helperText={formik.touched.pincode && formik.errors.pincode}
                       />
                     </Grid>
                     <Grid item xs={12}>
                       <TextField
                         required
                         fullWidth
-                        onChange={handleChange}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.note}
                         name="note"
-                        label="note"
+                        label="Note"
+                        error={formik.touched.note && Boolean(formik.errors.note)}
+                        helperText={formik.touched.note && formik.errors.note}
                       />
                     </Grid>
                   </Grid>

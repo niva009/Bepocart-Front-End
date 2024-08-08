@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-export default function ProductsTable({ className }) {
+export default function ProductsTable({ className , onQuantityChange}) {
   const [cartProducts, setCartProducts] = useState([]);
   const [offer, setOffer] = useState([]);
 
@@ -18,6 +18,8 @@ export default function ProductsTable({ className }) {
         console.log("error fetching offer products", error);
       });
   }, []);
+
+
 
   useEffect(() => {
     const fetchCartProducts = async () => {
@@ -64,7 +66,7 @@ export default function ProductsTable({ className }) {
         },
       });
       if (response.status === 200) {
-        window.location.reload();
+        onQuantityChange();
         setCartProducts(prevProducts => prevProducts.map(product =>
           product.id === id ? { ...product, quantity: product.quantity + 1 } : product
         ));
@@ -85,7 +87,7 @@ export default function ProductsTable({ className }) {
         },
       });
       if (response.status === 200) {
-        window.location.reload();
+        onQuantityChange();
         setCartProducts(prevProducts => prevProducts.map(product =>
           product.id === id ? { ...product, quantity: product.quantity - 1 } : product
         ));
@@ -115,6 +117,8 @@ export default function ProductsTable({ className }) {
   console.log("cart data......:", cartProducts);
   console.log("offer getting details  ", offer);
 
+  var offerName = ""
+
   const offerCategory = offer[0];
 
   console.log("offerCategory-information", offerCategory);
@@ -124,108 +128,21 @@ export default function ProductsTable({ className }) {
   console.log("offerCategory:", offerCategory);
   console.log("is_active:", offerCategory?.is_active);
   console.log("get_option:", offerCategory?.get_option);
+  console.log("methord",offerCategory?.method);
 
-  let totalPrice = 0;
-  let offerName = "";
-  let freeQuantity = 0;
-  let discountAllowedProducts = []; // Array to store products with discount_product === "Discount Allowed"
-  
-  // Check if offerCategory is active
-  if (offerCategory?.is_active === true) {
+
+
+  if (offerCategory?.is_active === false) {
     if (offerCategory?.get_option === 1) {
       offerName = "BUY-ONE-GET-ONE";
     } else if (offerCategory?.get_option === 2) {
       offerName = "BUY-TWO-GET-ONE";
     }
+  } 
 
-    cartProducts.forEach((product, index) => {
-      const price = parseFloat(product?.salePrice);
-      const quantity = parseInt(product?.quantity);
-
-      if (!isNaN(price) && !isNaN(quantity)) {
-        totalPrice += price * quantity;
-        console.log(`Product at index ${index}: has_offer=${product?.has_offer}, discount_product=${product?.discount_product}`);
-      } else {
-        console.warn(`Invalid data at index ${index}: price=${product?.salePrice}, quantity=${product?.quantity}`);
-      }
-    });
-  } else {
-    if (offerCategory?.get_option === 1) {
-      offerName = "BUY-ONE-GET-ONE";
-    } else if (offerCategory?.get_option === 2) {
-      offerName = "BUY-TWO-GET-ONE";
-    }
-
-    console.log("Offer Name:", offerName);
-
-    if (offerName === "BUY-ONE-GET-ONE") {
-      cartProducts.forEach((product, index) => {
-        const price = parseFloat(product?.salePrice);
-        const quantity = parseInt(product?.quantity);
-
-        if (!isNaN(price) && !isNaN(quantity)) {
-          console.log(`Product at index ${index}: has_offer=${product?.has_offer}, discount_product=${product?.discount_product}`);
-          
-          if (product.has_offer === "Offer Applied" && product.discount_product === "normal") {
-            totalPrice += price * quantity;
-          } else if (product.has_offer === "Offer Not Applicable" && product.discount_product === "Discount Allowed") {
-            totalPrice += price * quantity;
-          } else if (product.discount_product === "Discount Allowed") {
-            discountAllowedProducts.push({ price, quantity, index });
-          }
-
-          if (product.has_offer === "Offer Applied") {
-            freeQuantity += quantity;
-          }
-        } else {
-          console.warn(`Invalid data at index ${index}: price=${product?.salePrice}, quantity=${product?.quantity}`);
-        }
-      });
-    } else {
-      cartProducts.forEach((product, index) => {
-        const price = parseFloat(product?.salePrice);
-        const quantity = parseInt(product?.quantity);
-
-        if (!isNaN(price) && !isNaN(quantity)) {
-          console.log(`Product at index ${index}: has_offer=${product?.has_offer}, discount_product=${product?.discount_product}`);
-          
-          if (product.has_offer === "Offer Applied" && product.discount_product === "normal") {
-            totalPrice += price * quantity;
-          } else if (product.has_offer === "Offer Not Applicable" && product.discount_product === "Discount Allowd") {
-            totalPrice += price * quantity;
-          } else if (product.has_offer === "Offer Applied" && product.discount_product === "normal"  || product.discount_product === "Discount Allowd") {
-                
-            
-
-          }
-
-          if (product.has_offer === "Offer Applied") {
-            freeQuantity += quantity;
-          }
-        } else {
-          console.warn(`Invalid data at index ${index}: price=${product?.salePrice}, quantity=${product?.quantity}`);
-        }
-      });
-    }
-  }
-  // Output results
-  console.log("Total Price:", totalPrice);
-  console.log("Free Quantity:", freeQuantity);
-  // console.log("Discount Allowed Products:", discountAllowedProducts);
-
+  console.log("offername.....:",offerName)
   return (
     <div className={`w-full ${className || ''}`}>
-      {hasOfferProducts && (
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <select className="px-4 py-2 rounded bg-gray-200">
-              <option value="option1">Option 1</option>
-              <option value="option2">Option 2</option>
-            </select>
-          </div>
-          <p style={{ color: "green", fontWeight: "bold" }}>Offer Available</p>
-        </div>
-      )}
       <div className="relative w-full overflow-x-auto border border-[#EDEDED]">
         <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <tbody>

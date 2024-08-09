@@ -126,10 +126,21 @@ export default function ProductView({ className }) {
 
   const changeImgHandler = (current, sizes, color) => {
     setSrc(`${current}`);
-    setSizes(sizes);
-    setSelectedSize(sizes[0]);
+  
+    if (product?.type !== "single") {
+      // For multiple types, update the sizes and selected size
+      setSizes(sizes);
+      setSelectedSize(sizes[0] || ""); // Set the first available size as the default
+    } else {
+      // Clear sizes for single type
+      setSizes([]);
+      setSelectedSize("");
+    }
+  
+    // Always update the selected color
     setSelectedColor(color);
   };
+  
 
   const handleSizeChange = (event) => setSelectedSize(event.target.value);
 
@@ -169,14 +180,22 @@ export default function ProductView({ className }) {
 
   const handleColorChange = (colorId) => {
     const selectedImage = productImages.find(image => image.id === colorId);
+  
     if (selectedImage) {
       setSrc(selectedImage.image1);
-      const filteredVariants = selectedImage.stock_info.filter(variant => variant.stock > 0);
-      setSizes(filteredVariants.map(variant => variant.size));
-      setSelectedSize(filteredVariants[0]?.size || "");
       setSelectedColor(selectedImage.color);
+  
+      if (product?.type !== "single") {
+        const filteredVariants = selectedImage.stock_info.filter(variant => variant.stock > 0);
+        setSizes(filteredVariants.map(variant => variant.size));
+        setSelectedSize(filteredVariants[0]?.size || "");
+      } else {
+        setSizes([]); // Clear sizes if product type is "single"
+        setSelectedSize(""); // Clear selected size
+      }
     }
   };
+  
   
 
   const PreviousButton = ({ onClick }) => (
@@ -248,32 +267,34 @@ export default function ProductView({ className }) {
             </div>
           </div>
           <Slider {...settings}>
-            {productImages.map((item) =>
-              Object.keys(item)
-                .filter((key) => key.startsWith("image"))
-                .map((imageKey) => (
-                  <div
-                    onClick={() =>
-                      changeImgHandler(
-                        item[imageKey],
-                        variants
-                          .filter(variant => variant.color === item.id && variant.stock > 0)
-                          .map(variant => variant.size),
-                        item.color
-                      )
-                    }
-                    key={imageKey}
-                    className="w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer"
-                  >
-                    <img
-                      src={`${item[imageKey]}`}
-                      alt="Thumbnail"
-                      className={`w-full h-full object-contain ${src === item[imageKey] ? "opacity-50" : ""}`}
-                    />
-                  </div>
-                ))
-            )}
-          </Slider>
+  {productImages.map((item) =>
+    Object.keys(item)
+      .filter((key) => key.startsWith("image"))
+      .map((imageKey) => (
+        <div
+          onClick={() =>
+            changeImgHandler(
+              item[imageKey],
+              product?.type !== "single"
+                ? item.stock_info.filter(variant => variant.stock > 0).map(variant => variant.size)
+                : [],
+              item.color
+            )
+          }
+          key={imageKey}
+          className="w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer"
+        >
+          <img
+            src={`${item[imageKey]}`}
+            alt="Thumbnail"
+            className={`w-full h-full object-contain ${src === item[imageKey] ? "opacity-50" : ""}`}
+          />
+        </div>
+      ))
+  )}
+</Slider>
+
+
         </div>
       </div>
       <div className="lg:w-1/2">

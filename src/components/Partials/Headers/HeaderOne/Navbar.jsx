@@ -25,6 +25,8 @@ export default function Navbar({ className, type }) {
   }, []);
 
 
+  console.log("category information...:",categories)
+
 
 
   useEffect(() => {

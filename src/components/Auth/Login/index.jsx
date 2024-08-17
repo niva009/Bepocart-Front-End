@@ -41,6 +41,7 @@ export default function Login() {
     }
   };
 
+
   return (
     <div className="login-page-wrapper w-full py-10">
       <div className="container-x mx-auto">
@@ -154,6 +155,9 @@ export default function Login() {
                           </button>
                         </div>
                       </div>
+
+                    
+
                       <div className="signup-area flex justify-center">
                         <p className="text-base text-qgraytwo font-normal">
                           Don’t have an account?

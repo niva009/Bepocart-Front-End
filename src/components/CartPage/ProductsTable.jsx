@@ -132,14 +132,12 @@ export default function ProductsTable({ className , onQuantityChange}) {
 
 
 
-  if (offerCategory?.is_active === false) {
     if (offerCategory?.get_option === 1) {
       offerName = "BUY-ONE-GET-ONE";
     } else if (offerCategory?.get_option === 2) {
       offerName = "BUY-TWO-GET-ONE";
     }
-  } 
-
+    
   console.log("offername.....:",offerName)
   return (
     <div className={`w-full ${className || ''}`}>
@@ -174,9 +172,9 @@ export default function ProductsTable({ className , onQuantityChange}) {
                       <p className="font-medium text-[15px] text-qblack">
                         {product.name}
                       </p>
-                      {product.offer_type !== null && (
+                      {product.has_offer == "Offer Applied" && (
                         <p style={{ paddingTop: "30px", color: "green", fontWeight: "bold" }}>
-                          {product.offer_type} Offer Available
+                          {offerName} Offer Available
                         </p>
                       )}
                     </div>

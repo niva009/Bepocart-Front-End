@@ -26,6 +26,7 @@ export default function ProductView({ className }) {
   const [errorWishlist, setErrorWishlist] = useState(null);
   const [isReadMore, setIsReadMore] = useState(true);
   const [review, setReview] = useState([]);
+  const [stock,setStock] = useState([]);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ export default function ProductView({ className }) {
   useEffect(() => {
     fetchProduct(id);
   }, [id]);
-
+  
   const fetchProduct = async () => {
     setLoading(true);
     try {
@@ -42,22 +43,36 @@ export default function ProductView({ className }) {
         headers: { Authorization: `${token}` },
       });
       const productData = response.data.product;
-      setProduct(productData);
-      setProductImages(response.data.images);
-      setVariants(response.data.images.flatMap(image => image.stock_info));
-      setSrc(productData.image || ""); // Set initial image to product.image
-      setSelectedColor(response.data.images[0]?.color || "");
+      const productImages = response.data.images;
   
-      // Initialize sizes for the first color
-      const initialColorId = response.data.images[0]?.id;
-      const initialSizes = response.data.images
-        .find(image => image.id === initialColorId)
-        ?.stock_info.filter(variant => variant.stock > 0)
+      setProduct(productData);
+      setProductImages(productImages);
+      setSrc(productData.image || ""); // Set initial image to product.image
+  
+      // Set initial color and sizes based on available stock
+      const initialColorId = productImages[0]?.id;
+      const initialStockInfo = productImages.find(image => image.id === initialColorId)?.stock_info || [];
+  
+      const availableSizes = initialStockInfo
+        .filter(variant => variant.stock > 0)
         .map(variant => variant.size);
-      setSizes(initialSizes || []);
-      setSelectedSize(initialSizes[0] || "");
+  
+      const initialStock = initialStockInfo.filter(variant => variant.stock > 0);
+  
+      setVariants(initialStockInfo);
+      setSelectedColor(productImages[0]?.color || "");
+      setSizes(availableSizes);
+      setSelectedSize(availableSizes[0] || "");
+      setStock(initialStock);
+  
+      // Check if the selected size has any stock
+      if (availableSizes.length === 0) {
+        setError("Out of stock");
+      } else {
+        setError("");
+      }
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error("Error fetching product:", error);
       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
         navigate("/login");
       } else {
@@ -126,6 +141,9 @@ export default function ProductView({ className }) {
 
   const changeImgHandler = (current, sizes, color) => {
     setSrc(`${current}`);
+    const changedImage = productImages.find(image => image.color === color);
+    const choosedImage = changedImage.stock_info.filter(variant => variant.stock);
+    setStock(choosedImage);
   
     if (product?.type !== "single") {
       // For multiple types, update the sizes and selected size
@@ -188,6 +206,7 @@ export default function ProductView({ className }) {
       if (product?.type !== "single") {
         const filteredVariants = selectedImage.stock_info.filter(variant => variant.stock > 0);
         setSizes(filteredVariants.map(variant => variant.size));
+        setStock(filteredVariants.map(variant => variant.stock));
         setSelectedSize(filteredVariants[0]?.size || "");
       } else {
         setSizes([]); // Clear sizes if product type is "single"
@@ -196,6 +215,11 @@ export default function ProductView({ className }) {
     }
   };
   
+
+  console.log("stock data..:",stock);
+  console.log('your handsome:', stock.length === 0)
+
+  const isOutOfStock = stock === 0 || stock.length === 0
   
 
   const PreviousButton = ({ onClick }) => (
@@ -255,6 +279,7 @@ export default function ProductView({ className }) {
     prevArrow: <PreviousButton />,
     nextArrow: <NextButton />,
   };
+
 
   return (
     <div className={`product-view w-full lg:flex justify-between ${className || ""}`}>
@@ -383,8 +408,7 @@ export default function ProductView({ className }) {
   </div>
 )}
 
-
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <h4 className="text-base font-bold text-qblack mb-2">Quantity</h4>
             <div className="flex items-center space-x-4">
               <button
@@ -401,14 +425,19 @@ export default function ProductView({ className }) {
                 +
               </button>
             </div>
-          </div>
+          </div> */}
           <div className="mb-4">
-            <button
-              className="w-full bg-qyellow text-qblack py-3 text-lg font-medium"
-              onClick={AddToCart}
-            >
-              Add to Cart
-            </button>
+
+            <div className="mb-4">
+            {isOutOfStock && <p style={{ color:"red",fontWeight:"bold",fontSize:"25px", padding:"20px 0px"}} className="out-of-stock-message">Out of stock.</p>}
+            </div>
+<button
+  className="w-full bg-qyellow text-qblack py-3 text-lg font-medium"
+  onClick={AddToCart}
+  disabled = {isOutOfStock}
+>
+  Add to Cart
+</button>
           </div>
           <div>
 <button

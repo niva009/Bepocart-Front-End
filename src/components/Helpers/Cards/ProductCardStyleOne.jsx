@@ -26,38 +26,53 @@ export default function   ProductCardStyleOne({ datas, type }) {
       (datas.cam_product_available + datas.cam_product_sale)) *
     100;
 
-  const addToWishlist = async (productId, event) => {
-    event.preventDefault(); // Prevent the default anchor behavior
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error("Please login to add products to your wishlist.");
-        return;
-      }
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_PUBLIC_URL}/add-wishlist/${productId}/`,
-        {},
-        {
-          headers: {
-            'Authorization': `${token}`,
-            'Content-Type': 'application/json',
-          },
+    const addToWishlist = async (productId, event) => {
+      event.preventDefault(); // Prevent the default anchor behavior
+    
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          toast.error("Please login to add products to your wishlist.", {
+            position: 'top-right', // Set the position directly as a string
+          });
+          return;
         }
-      );
+    
+        const response = await axios.post(
+          `${import.meta.env.VITE_PUBLIC_URL}/add-wishlist/${productId}/`,
+          {},
+          {
+            headers: {
+              'Authorization': `${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+    
+        if (response.status === 201) {
+          setIsWishlisted(true); // Update wishlist status
 
-      if (response.status === 201) {
-        setIsWishlisted(true); // Update wishlist status
-      } else if(response.status === 400) {
-        toast.error("Product already in wishlist",{
-          position: toast.POSITION.TOP_RIGHT,
-        });
+        } else if (response.status === 400) {
+          toast.error("Product already in wishlist", {
+            position: 'top-right', // Set the position directly as a string
+          });
+        }
+      } catch (error) {
+        console.error("Error adding product to wishlist:", error);
+    
+        if (error?.response?.status === 400) {
+          toast.error("Product already in wishlist", {
+            position: 'top-right', // Set the position directly as a string
+          });
+        } else {
+          toast.error("Error adding product to wishlist", {
+            position: 'top-right', // Set the position directly as a string
+          });
+        }
       }
-    } catch (error) {
-      console.error("Error adding product to wishlist:", error);
-      toast.error("Product already in wishlist");
-    }
-  };
+    };
+    
 
   const handleAddToCart = async (productId) => {
     try {

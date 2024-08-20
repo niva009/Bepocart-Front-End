@@ -18,6 +18,7 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
+  const [ offer, setOffer] = useState("");
 
   const token = localStorage.getItem("token");
   const { id } = useParams();
@@ -87,6 +88,15 @@ export default function CheckoutPage() {
     }
   };
 
+useEffect(() =>{
+ 
+ const offerProduct = cartItems.some((element) => element.has_offer === "Offer Applied")
+ setOffer (offerProduct)
+},[cartItems]);
+
+console.log("offer...:",offer);
+
+
   const initializeRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -116,8 +126,7 @@ export default function CheckoutPage() {
     }
   
     try {
-      // Make API call to create order
-      const orderResponse = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
+     await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
         payment_method: paymentMethod,
         coupon_code: couponCode,
       }, {
@@ -243,14 +252,18 @@ export default function CheckoutPage() {
                     placeholder="Discount Code"
                     name='couponCode'
                     onChange={handleChange}
+                    disabled = {offer === true}
                   />
                   <button
                     type="button"
                     className="w-[90px] h-[40px] black-btn rounded-md"
                     onClick={applyCoupon}
+                    disabled = {offer === true}
                   >
                     <span className="text-sm font-semibold">Apply</span>
                   </button>
+
+                  {offer && <p>Coupon codes cannot be applied to products with an active offer. Please enjoy the current discount! </p>}
                 </div>
               </div>
 

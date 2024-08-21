@@ -10,6 +10,8 @@ import BepoCoin from '../../../../assets/bepocoin.png'
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { RiLoginBoxLine } from "react-icons/ri";
+
+
 export default function Middlebar({ className, type }) {
 
 const[coinCount, setCoinCount] =useState([]);

@@ -52,12 +52,21 @@ export default function ProductView({ className }) {
       // Set initial color and sizes based on available stock
       const initialColorId = productImages[0]?.id;
       const initialStockInfo = productImages.find(image => image.id === initialColorId)?.stock_info || [];
+      let availableSizes = [];
+      let initialStock = [];
   
-      const availableSizes = initialStockInfo
-        .filter(variant => variant.stock > 0)
-        .map(variant => variant.size);
+      if (productData.type === "single") {
+        // If the product type is "single," directly use the stock from the image
+        initialStock = productImages[0]?.stock || 0;
+        setSizes([]); // Clear sizes for single product type
+      } else {
+        // For other product types, filter the stock_info array
+        availableSizes = initialStockInfo
+          .filter(variant => variant.stock > 0)
+          .map(variant => variant.size);
   
-      const initialStock = initialStockInfo.filter(variant => variant.stock > 0);
+        initialStock = initialStockInfo.filter(variant => variant.stock > 0);
+      }
   
       setVariants(initialStockInfo);
       setSelectedColor(productImages[0]?.color || "");
@@ -66,7 +75,7 @@ export default function ProductView({ className }) {
       setStock(initialStock);
   
       // Check if the selected size has any stock
-      if (availableSizes.length === 0) {
+      if (productData.type !== "single" && availableSizes.length === 0) {
         setError("Out of stock");
       } else {
         setError("");
@@ -82,6 +91,7 @@ export default function ProductView({ className }) {
       setLoading(false);
     }
   };
+  
   
 
   const productId = product?.id;
@@ -141,22 +151,29 @@ export default function ProductView({ className }) {
 
   const changeImgHandler = (current, sizes, color) => {
     setSrc(`${current}`);
+  
+    // Find the image based on the selected color
     const changedImage = productImages.find(image => image.color === color);
-    const choosedImage = changedImage.stock_info.filter(variant => variant.stock);
-    setStock(choosedImage);
   
-    if (product?.type !== "single") {
-      // For multiple types, update the sizes and selected size
-      setSizes(sizes);
-      setSelectedSize(sizes[0] || ""); // Set the first available size as the default
-    } else {
-      // Clear sizes for single type
-      setSizes([]);
-      setSelectedSize("");
+    if (changedImage) {
+      const stockAvailable = changedImage.stock;
+  
+      // Update sizes and stock for multi-type products
+      if (product?.type !== "single") {
+        setSizes(sizes);
+        setSelectedSize(sizes[0] || ""); // Set the first available size as the default
+        const choosedImage = changedImage.stock_info.filter(variant => variant.stock);
+        setStock(choosedImage);
+      } else {
+        // Clear sizes for single type and set stock based on the image's stock
+        setSizes([]);
+        setSelectedSize("");
+        setStock(stockAvailable); // Set stock to the single variant's stock
+      }
+  
+      // Always update the selected color
+      setSelectedColor(color);
     }
-  
-    // Always update the selected color
-    setSelectedColor(color);
   };
   
 
@@ -202,6 +219,7 @@ export default function ProductView({ className }) {
     if (selectedImage) {
       setSrc(selectedImage.image1);
       setSelectedColor(selectedImage.color);
+      const stockAvailable = selectedImage.stock
   
       if (product?.type !== "single") {
         const filteredVariants = selectedImage.stock_info.filter(variant => variant.stock > 0);
@@ -211,6 +229,7 @@ export default function ProductView({ className }) {
       } else {
         setSizes([]); // Clear sizes if product type is "single"
         setSelectedSize(""); // Clear selected size
+        setStock(stockAvailable)
       }
     }
   };

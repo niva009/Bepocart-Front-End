@@ -3,9 +3,68 @@ import ThinBag from "../../../Helpers/icons/ThinBag";
 import Middlebar from "./Middlebar";
 import Navbar from "./Navbar";
 import Logo from '../../../../assets/bepocart.png';
+import axios from "axios";
+import { useState, useEffect } from "react";
+import BepoCoin from './../../../../assets/bepocoin.png'
+
 
 
 export default function HeaderOne({ className, drawerAction, type = 1 }) {
+
+
+  const [wishlistTotal, setWishlistTotal] = useState(0);
+  const[cartTotal, setCartTotal] = useState(0);
+  const[coinCount, setCoinCount] = useState("");
+
+  const token = localStorage.getItem("token")
+
+
+  useEffect(() => {
+    const fetchWishlistAndCart = async () => {
+      setLoading(true);
+      try {
+        // Fetch Wishlist
+        const wishlistResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/wishlist/`, {
+          headers: {
+            'Authorization': `${token}`
+          }
+        });
+        setWishlistTotal(wishlistResponse.data.data.length);
+        
+        // Fetch Cart Products
+        const cartResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
+          headers: { 'Authorization': `${token}` }
+        });
+        setCartTotal(cartResponse.data.data.length);
+  
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error?.response?.data?.message || 'An error occurred while fetching the wishlist and cart');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchWishlistAndCart();
+  }, [token]);
+
+  useEffect(() =>{
+    const token = localStorage.getItem("token");
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/coin/`,{
+
+      headers:{
+        'Authorization': `${token}`,
+      }
+    })
+    .then((response) =>{
+      setCoinCount(response.data.data)
+    })
+    .catch((error) =>{
+      console.log(error,"error fetching coin");
+    })
+  },[])
+
+  const totalAmount = Array.isArray(coinCount)? coinCount.reduce((sum,current) => sum+(current.amount || 0), 0):0;
   return (
     <header className={` ${className || ""} header-section-wrapper relative`}>
       <Middlebar
@@ -36,10 +95,7 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
                 <img
                   width="152"
                   height="36"
-                  src={`${
-                    import.meta.env.VITE_PUBLIC_URL
-                  }/assets/images/logo-3.svg`}
-                  alt="logo"
+                  src={Logo}
                 />
               </Link>
             ) : type === 4 ? (
@@ -64,6 +120,14 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
               </Link>
             )}
           </div>
+          <div className="compaire relative flex items-center">
+            <Link to="/be-coin">
+  <p style={{color:"#e0c031", fontWeight:'bold'}} className="mr-2">Becoin</p>
+</Link>
+  <img style={{ width: '50px', height: '50px'}} src={BepoCoin} alt="Coin" />
+  <p className="mr-2">{totalAmount}</p>
+</div>
+      
           <div className="cart relative cursor-pointer">
             <Link to="/cart">
               <span>
@@ -72,10 +136,10 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
             </Link>
             <span
               className={`w-[18px] h-[18px] rounded-full  absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] ${
-                type === 3 ? "bg-qh3-blue text-white" : "bg-qyellow text-qblack"
+                type === 3 ? "bg-qh3-blue text-white" : "bg-blue text-qblack"
               }`}
             >
-              15
+              {cartTotal}
             </span>
           </div>
         </div>

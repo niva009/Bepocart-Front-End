@@ -5,12 +5,44 @@ import ThinLove from "../../../Helpers/icons/ThinLove";
 import ThinPeople from "../../../Helpers/icons/ThinPeople";
 import SearchBox from "../../../Helpers/SearchBox";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
 
 export default function Middlebar({ className }) {
-  // const [toggleCart, setToggle] = useState(false);
-  // const cartHandler = () => {
-  //   setToggle(!toggleCart);
-  // };
+
+  const [wishlistTotal, setWishlistTotal] = useState(0);
+  const[cartTotal, setCartTotal] = useState(0);
+
+
+  useEffect(() => {
+    const fetchWishlistAndCart = async () => {
+      setLoading(true);
+      try {
+        // Fetch Wishlist
+        const wishlistResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/wishlist/`, {
+          headers: {
+            'Authorization': `${token}`
+          }
+        });
+        setWishlistTotal(wishlistResponse.data.data.length);
+        
+        // Fetch Cart Products
+        const cartResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
+          headers: { 'Authorization': `${token}` }
+        });
+        setCartTotal(cartResponse.data.data.length);
+  
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error?.response?.data?.message || 'An error occurred while fetching the wishlist and cart');
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchWishlistAndCart();
+  }, [token]);
+
   return (
     <div className={`w-full h-[86px] bg-white ${className}`}>
       <div className="container-x mx-auto h-full">
@@ -23,7 +55,7 @@ export default function Middlebar({ className }) {
                   height="36"
                   src={`${
                     import.meta.env.VITE_PUBLIC_URL
-                  }/assets/images/logo-4.svg`}
+                  }/assets/images/logo-5.svg`}
                   alt="logo"
                 />
               </Link>
@@ -38,7 +70,7 @@ export default function Middlebar({ className }) {
                     <Compair />
                   </span>
                 </Link>
-                <span className="w-[18px] h-[18px] rounded-full bg-qh4-pink absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] text-qblack">
+                <span className="w-[18px] h-[18px] rounded-full bg-qh5-bwhite absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] text-qblack">
                   2
                 </span>
               </div>
@@ -48,7 +80,7 @@ export default function Middlebar({ className }) {
                     <ThinLove />
                   </span>
                 </Link>
-                <span className="w-[18px] h-[18px] rounded-full bg-qh4-pink absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] text-qblack">
+                <span className="w-[18px] h-[18px] rounded-full bg-qh5-bwhite absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] text-qblack">
                   1
                 </span>
               </div>
@@ -59,8 +91,8 @@ export default function Middlebar({ className }) {
                       <ThinBag />
                     </span>
                   </Link>
-                  <span className="w-[18px] h-[18px] rounded-full bg-qh4-pink absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] text-qblack">
-                    15
+                  <span className="w-[18px] h-[18px] rounded-full bg-qh5-bwhite absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] text-qblack">
+                    {wishlistTotal}
                   </span>
                 </div>
                 {/* <div className="fixed left-0 top-0 w-full h-full z-40"></div> */}

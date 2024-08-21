@@ -126,26 +126,40 @@ console.log("offer...:",offer);
     }
   
     try {
-     await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
-        payment_method: paymentMethod,
-        coupon_code: couponCode,
-      }, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-  
       const options = {
-        key: "rzp_test_m3k00iFqtte9HH", // Enter the Key ID generated from the Dashboard
+        key: `${import.meta.env.VITE_PAYMENT_KEY}`, // Enter the Key ID generated from the Dashboard
         name: "BepoCart Pvt limited",
         currency: "INR",
         amount: (subtotal * 100).toString(),
         description: "Thank you for your order",
         image: "https://manuarora.in/logo.png",
         handler: async function (response) {
-          // Directly handle successful payment
-          alert("Payment successful!");
-          navigate("/order-success"); // Redirect to success page or show a success message
+          // Handle successful payment
+          const paymentId = response.razorpay_payment_id;
+          const orderId = response.razorpay_order_id;
+          const signature = response.razorpay_signature;
+  
+          console.log(paymentId);
+          console.log(orderId);
+          console.log(signature);
+  
+          // Create order only after successful payment
+          try {
+            await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
+              payment_method: paymentMethod,
+              coupon_code: couponCode,
+              id: paymentId,
+            }, {
+              headers: {
+                'Authorization': `${token}`,
+              },
+            });
+            alert("Payment successful and order created!");
+            navigate("/order-success"); // Redirect to success page
+          } catch (orderError) {
+            console.error("Error creating order:", orderError);
+            alert("Order creation failed after payment.");
+          }
         },
         prefill: {
           name: "Manu Arora",
@@ -157,10 +171,12 @@ console.log("offer...:",offer);
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (error) {
-      console.error("Error creating order:", error);
-      alert("Order creation failed.");
+      console.error("Error initializing payment:", error);
+      alert("Payment initialization failed.");
+      navigate("/cart"); // Redirect to cart page if payment fails
     }
   };
+  
 
   const handlePlaceOrder = async () => {
     if (paymentMethod === "COD") {
@@ -207,6 +223,8 @@ console.log("offer...:",offer);
       setCouponError("Please enter a coupon code");
     }
   };
+
+  console.log(`${import.meta.env.VITE_PAYMENT_KEY}`,"payment keyssss");
 
   return (
     <Layout childrenClasses="pt-0 pb-0">

@@ -123,21 +123,21 @@ export default function CardPage({ cart = true }) {
                     </h1>
                     <div className="form-area">
                       {/* Address Selection */}
-                      <div className="mb-5">
+                      <div className="mb-9">
                         <div className="border border-[#EDEDED] p-4 rounded-lg">
                           {addresses.map((address) => (
                             <div
                               key={address.id}
                               className="mb-3 p-3 border border-[#EDEDED] rounded-lg"
                             >
-                              <label className="block mb-1 text-sm text-qgray">
+                              <label className="block mb-1 text-sm text-qgray mt-3">
                                 <input
                                   type="radio"
                                   name="address"
                                   className="mr-2"
                                   onChange={() => handleSelectAddress(address.id)}
                                 />
-                                {`${address.address}, ${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
+                                {`${address.address},${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
                               </label>
                             </div>
                           ))}
@@ -151,14 +151,7 @@ export default function CardPage({ cart = true }) {
                     </div>
                   </div>
                 </div>
-                <div className="flex space-x-2.5 items-center">
-                  <Link to="/">
-                    <div className="w-[220px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
-                      <span className="text-sm font-semibold">
-                        Continue Shopping
-                      </span>
-                    </div>
-                  </Link>
+                <div className="grid space-x-5.5 y-2.3 items-center mb-0 mt-0">
                   <button type="button" className="w-[140px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
                     <a href="/cart" className="text-sm font-semibold">Update Cart</a>
                   </button>

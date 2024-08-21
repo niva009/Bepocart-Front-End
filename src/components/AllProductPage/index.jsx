@@ -14,34 +14,6 @@ export default function AllProductPage() {
   const location = useLocation();
   const searchResult = location.state?.searchResult || [];
 
-  const [filters, setFilter] = useState({
-    mobileLaptop: false,
-    gaming: false,
-    imageVideo: false,
-    vehicles: false,
-    furnitures: false,
-    sport: false,
-    foodDrinks: false,
-    fashion: false,
-    toilet: false,
-    makeupCorner: false,
-    babyItem: false,
-    apple: false,
-    samsung: false,
-    walton: false,
-    oneplus: false,
-    vivo: false,
-    oppo: false,
-    xiomi: false,
-    others: false,
-    sizeS: false,
-    sizeM: false,
-    sizeL: false,
-    sizeXL: false,
-    sizeXXL: false,
-    sizeFit: false,
-  });
-
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategory/`);
   }, []);
@@ -57,28 +29,20 @@ export default function AllProductPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
 
-console.log("sorted resulttttttttt",sortedProducts);
+// console.log("sorted resulttttttttt",sortedProducts);
 
-  useEffect(() => {
-    setSortedProducts(searchResult);
-  }, [searchResult]);
+//   useEffect(() => {
+//     setSortedProducts(searchResult);
+//   }, [searchResult]);
 
-  const checkboxHandler = (e) => {
-    const { name } = e.target;
-    setFilter((prevState) => ({
-      ...prevState,
-      [name]: !prevState[name],
-    }));
-  };
+ 
 
-  const handleFilteredResult = (result) => {
-    setFilteredResult(result);
-  };
+
 
   const fetchLowToHigh = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/low-products/${category}`);
-      setSortedProducts(response.data);
+      setShowProducts(response.data);
       setCurrentPage(1); // Reset to first page on sort
     } catch (error) {
       console.error("Error fetching low-to-high products:", error);

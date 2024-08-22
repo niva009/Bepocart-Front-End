@@ -2,9 +2,42 @@ import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
 import Accodion from "../Helpers/Accodion";
 import InputCom from "../Helpers/InputCom";
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import Becoin from "../../assets/bepocoin.png"
 
 export default function PrivacyPolicy() {
+
+  const [coinCount ,setCoinCount] =useState("");
+  const[ coinValue, setCoinValue] = useState("");
+
+  useEffect(() =>{
+    const token = localStorage.getItem("token");
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/coin/`,{
+
+      headers:{
+        'Authorization': `${token}`,
+      }
+    })
+    .then((response) =>{
+      setCoinCount(response.data.data)
+      setCoinValue(response.data.coinValue.value)
+    })
+    .catch((error) =>{
+      console.log(error,"error fetching coin");
+    })
+  },[])
+
+  console.log("coin-count....:",coinValue);
+
+  const totalCoin = Array.isArray(coinCount)? coinCount.reduce((sum,current) => sum+(current.amount || 0), 0):0;
+
+const totalPrice = totalCoin * coinValue
+
+console.log("totalPrice information...:",totalPrice);
   return (
+
+
     <Layout childrenClasses="pt-0 pb-0">
       <div className="terms-condition-page w-full bg-white pb-[30px]">
         <div className="w-full mb-[30px]">
@@ -19,6 +52,17 @@ export default function PrivacyPolicy() {
         <div className="w-full">
           <div className="container-x mx-auto">
             <div className="content-item w-full mb-10">
+            <div className="flex justify-center mb-10 w-auto">
+  <div className="flex items-center justify-between h-40 w-full p-6 border-2 rounded-lg bg-gradient-to-r from-blue-400 via-sky-500 via-20% to-emerald-500">
+    <div className="text-white">
+      <p className="text-lg font-semibold">Total Coins</p> 
+      <p className="text-yellow-300 text-4xl font-bold">{totalCoin}</p>
+      <p className="mt-5 text-lg font-semibold">Total Amount:</p>
+      <p className="text-yellow-300 text-2xl font-bold">{totalPrice} Rs</p>
+    </div>
+    <img src={Becoin} alt="Coin" className="h-30 w-20 rounded-full" />
+  </div>
+</div>
 
               <p className="text-[18px] text-qgraytwo leading-7">
               At Bepocart, we believe in rewarding our customers for their loyalty and support. Our BeCoins loyalty program is designed to give you more value for your purchases and engagement with our store. Here’s how you can earn, redeem, and maximize your BeCoins to get the best out of your shopping experience with us

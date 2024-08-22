@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy } from "react";
 import axios from "axios";
-import LayoutHomeThree from "../Partials/LayoutHomeThree";
-import Banner from "./Banner";
+import LayoutHomeThree from '../Partials/LayoutHomeThree';
+import Banner from './Banner';
 import BrandSection from "./BrandSection";
-import SectionStyleThree from "../Helpers/SectionStyleThree";
+import SectionStyleThree from '../Helpers/SectionStyleThree';
 import ProductsAds from "./ProductsAds";
-import SectionStyleOneHmThree from "../Helpers/SectionStyleOneHmThree";
+import SectionStyleOneHmThree from '../Helpers/SectionStyleOneHmThree';
 import SectionStyleTwo from "../Helpers/SectionStyleTwo";
 import ViewMoreTitle from "../Helpers/ViewMoreTitle";
 import CampaignCountDown from "./CampaignCountDown";
@@ -15,6 +15,7 @@ import offerBanner2 from "../../assets/ads-2.jpg";
 import flashsale from "../../assets/flash-sale-ads.png";
 import 'font-awesome/css/font-awesome.min.css';
 import './Home.css';
+
 
 
 export default function HomeThree() {

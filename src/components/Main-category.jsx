@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import BreadcrumbCom from '../components/BreadcrumbCom';
+import React, { useState, useEffect, lazy } from 'react';
+const BreadcrumbCom = lazy(() =>import('../components/BreadcrumbCom'));
 import ProductCardStyleOne from '../components/Helpers/Cards/ProductCardStyleOne';
 import DataIteration from '../components/Helpers/DataIteration';
 import Layout from '../components/Partials/Layout';
-import ProductsFilter from '../components/AllProductPage/ProductsFilter';
-import { FormControl, NativeSelect } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function MainCategory() {
   const { id } = useParams();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useStat+e([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

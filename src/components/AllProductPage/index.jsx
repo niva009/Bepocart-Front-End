@@ -23,7 +23,7 @@ export default function AllProductPage() {
   const [error, setError] = useState(null);
   const [filterToggle, setToggle] = useState(false);
   const [price, setPrice] = useState({ min: 0, max: 200000 });
-  const [category, setCategory] = useState(null);
+  const [ category, setCategory] = useState(null);
   const [filteredResult, setFilteredResult] = useState([]);
   const [showProducts, setShowProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);

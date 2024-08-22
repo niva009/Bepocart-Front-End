@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,lazy} from 'react';
 import BreadcrumbCom from '../components/BreadcrumbCom';
-import ProductCardStyleOne from '../components/Helpers/Cards/ProductCardStyleOne';
-import DataIteration from '../components/Helpers/DataIteration';
-import Layout from '../components/Partials/Layout';
+import ProductCardStyleOne  from '../components/Helpers/Cards/ProductCardStyleOne' ;
+import DataIteration  from '../components/Helpers/DataIteration';
+import Layout  from '../components/Partials/Layout' ;
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 

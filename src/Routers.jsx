@@ -31,6 +31,7 @@ import ForgetPassword from "./components/Auth/Login/Forget-password.jsx";
 import OtpVeriFication from "./components/Auth/Login/otp-verification.jsx";
 import PasswordCreation from "./components/Auth/Login/password-creation.jsx";
 import ScrollTop from "./components/Partials/Headers/HeaderOne/ScrollToTop.jsx"
+import Maintance from './components/Maintance.jsx'
 
 
 
@@ -72,6 +73,7 @@ const router = createBrowserRouter([
       { path: "/forgot-password", element: <ForgetPassword /> },
       { path: "/otp-verification/:id", element: <OtpVeriFication /> },
       { path: "/new-password/:id", element: <PasswordCreation /> },
+      { path: "/maintenance", element: <Maintance /> },
       { path: "*", element: <FourZeroFour /> },
     ],
   },

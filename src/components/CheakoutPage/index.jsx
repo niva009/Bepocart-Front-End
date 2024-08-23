@@ -335,7 +335,7 @@ useEffect(() =>{
                     </div>
                     <div>
                       <p className="text-[15px] font-medium text-qblack">
-                        ${total.toFixed(2)}
+                      ₹{total.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -347,22 +347,29 @@ useEffect(() =>{
                     </div>
                     <div>
                       <p className="text-[15px] font-medium text-qblack">
-                        ${discount.toFixed(2)}
+                      ₹{discount.toFixed(2)}
                       </p>
                     </div>
                   </div>
                   <div className="flex justify-between mt-4">
-                    <div>
-                      <p className="text-[13px] font-medium text-qblack uppercase">
-                        Shipping
-                      </p>
-                    </div>
+                  <div>
+  <p className="text-[13px] font-medium text-qblack uppercase">
+    Shipping
+  </p>
+  
+  {couponDiscount > 0 && (
+    <p className="text-[13px] font-medium text-green-500 uppercase">
+      Coupon Discount: -₹{couponDiscount.toFixed(2)}
+    </p>
+  )}
+</div>
+
                     <div>
                       <p className="text-[15px] font-medium text-qblack">
                         {shipping === 0 ? (
                           <span style={{ color: 'green' }}>Free Delivery</span>
                         ) : (
-                          `$${shipping.toFixed(2)}`
+                          `$₹{shipping.toFixed(2)}`
                         )}
                       </p>
                     </div>

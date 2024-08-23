@@ -773,34 +773,34 @@ export default function Navbar({ className }) {
                                     </span>
                                   </Link>
                                 </li>
-                                <li>
+                                {/* <li>
                                   <Link to="/terms-condition">
                                     <span className="text-qgray text-sm font-400 border-b border-transparent hover:border-qyellow hover:text-qyellow">
                                       Terms and Conditions
                                     </span>
                                   </Link>
-                                </li>
-                                <li>
+                                </li> */}
+                                {/* <li>
                                   <Link to="/faq">
                                     <span className="text-qgray text-sm font-400 border-b border-transparent hover:border-qyellow hover:text-qyellow">
                                       FAQ
                                     </span>
                                   </Link>
-                                </li>
-                                <li>
+                                </li> */}
+                                {/* <li>
                                   <a href="#">
                                     <span className="text-qgray text-sm font-400 border-b border-transparent hover:border-qyellow hover:text-qyellow">
                                       Shop Category Icon
                                     </span>
                                   </a>
-                                </li>
-                                <li>
+                                </li> */}
+                                {/* <li>
                                   <a href="#">
                                     <span className="text-qgray text-sm font-400 border-b border-transparent hover:border-qyellow hover:text-qyellow">
                                       Shop List View
                                     </span>
                                   </a>
-                                </li>
+                                </li> */}
                               </ul>
                             </div>
                           </div>

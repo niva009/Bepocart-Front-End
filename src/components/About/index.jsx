@@ -70,30 +70,13 @@ export default function About() {
                 />
               </div>
               <div className="content flex-1">
-                <h1 className="text-[18px] font-medium text-qblack mb-2.5">
+                {/* <h1 className="text-[18px] font-medium text-qblack mb-2.5">
                   What is e-commerce business?
-                </h1>
-                <p className="text-[15px] text-qgraytwo leading-7 mb-2.5">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s, when an unknown
-                  printer took a galley of type and scrambled it to make a type
-                  specimen book. It has survived not only five centuries but
-                  also the on leap into electronic typesetting.
+                </h1> */}
+                <p className="text-[15px] text-qgraytwo leading-7 mb-7">
+                Bepokart, an ecommerce website for a wide range of cycles, accessories, and apparel in India, offers some of the best prices and a completely hassle-free experience with options of paying through Cash on Delivery, Debit Card, Credit card, and Net Banking processed through secure and trusted gateways. Browse through our accessories and apparel featured on our site with expert descriptions to help you arrive at the right buying decision. Bepocart also offers free shipping. Join our community of cycling enthusiasts, and let's ride together towards greatness. Subscribe now for the latest updates and cycling adventures!
                 </p>
-                <ul className="text-[15px] text-qgraytwo leading-7 list-disc ml-5 mb-5">
-                  <li>slim body with metal cover</li>
-                  <li>
-                    latest Intel Core i5-1135G7 import.metaor (4 cores / 8
-                    threads)
-                  </li>
-                  <li>8GB DDR4 RAM and fast 512GB PCIe SSD</li>
-                  <li>
-                    NVIDIA GeForce MX350 2GB GDDR5 graphics card backlit
-                    keyboard
-                  </li>
-                </ul>
-
+      
                 <Link to="/contact">
                   <div className="w-[121px] h-10">
                     <span className="yellow-btn">Contact Us</span>

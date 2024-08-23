@@ -58,7 +58,7 @@ const router = createBrowserRouter([
       { path: "/signup", element: <Signup /> },
       { path: "/profile", element: <Profile /> },,
       { path: "/be-coin", element: <PrivacyPolicy /> },
-      { path: "/terms-condition", element: <TermsCondition /> },
+      { path: "/privacy-policy", element: <TermsCondition /> },
       { path: "/orderDetails/:id", element: <OrderDetails /> },
       { path: "/forgot-password", element: <ForgetPassword /> },
       { path: "/otp-verification/:id", element: <OtpVeriFication /> },

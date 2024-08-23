@@ -183,7 +183,7 @@ export default function Navbar({ className, type }) {
                                     </span>
                                   </Link>
                                 </li>
-                                <li>
+                                {/* <li>
                                   <Link to="/terms-condition">
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent   ${type === 3
@@ -194,8 +194,8 @@ export default function Navbar({ className, type }) {
                                       Terms and Conditions
                                     </span>
                                   </Link>
-                                </li>
-                                <li>
+                                </li> */}
+                                {/* <li>
                                   <Link to="/faq">
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent   ${type === 3
@@ -206,8 +206,8 @@ export default function Navbar({ className, type }) {
                                       FAQ
                                     </span>
                                   </Link>
-                                </li>
-                                <li>
+                                </li> */}
+                                {/* <li>
                                   <Link to="/all-products">
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent   ${type === 3
@@ -218,8 +218,8 @@ export default function Navbar({ className, type }) {
                                       Shop Category Icon
                                     </span>
                                   </Link>
-                                </li>
-                                <li>
+                                </li> */}
+                                {/* <li>
                                   <Link to="/all-products">
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent   ${type === 3
@@ -230,7 +230,7 @@ export default function Navbar({ className, type }) {
                                       Shop List View
                                     </span>
                                   </Link>
-                                </li>
+                                </li> */}
                               </ul>
                             </div>
                           </div>

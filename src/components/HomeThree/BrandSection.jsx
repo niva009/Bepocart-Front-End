@@ -21,8 +21,6 @@ export default function BrandSection({ className, sectionTitle, type }) {
 
 
 
-  console.log("brand information",brands);
-
   const settings = {
     infinite: true,
     speed: 500,

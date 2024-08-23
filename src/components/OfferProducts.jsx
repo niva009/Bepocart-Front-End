@@ -26,9 +26,6 @@ export default function OfferProducts() {
         });
 
 
-  console.log(products, "category information");
-
-
 
   return (
     <Layout>

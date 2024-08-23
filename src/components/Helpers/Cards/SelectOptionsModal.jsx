@@ -11,8 +11,6 @@ export default function SelectOptionsModal({ isOpen, onRequestClose, onAddToCart
 
 
 
-  console.log(productId,"product id information thattttttt")
-
   const handleAddToCart = () => {
     if (selectedColor && selectedSize) {
       onAddToCart(selectedColor, selectedSize);

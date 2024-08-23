@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate } from 'react-router-dom';
 
-export default function ProductsTable({ className , onQuantityChange}) {
+export default function ProductsTable({ className, onQuantityChange }) {
   const [cartProducts, setCartProducts] = useState([]);
   const [offer, setOffer] = useState([]);
 
@@ -53,7 +53,7 @@ export default function ProductsTable({ className , onQuantityChange}) {
       });
       setCartProducts(prevProducts => prevProducts.filter(product => product.id !== id));
     } catch (error) {
-    console.error('Error deleting product:', error);
+      console.error('Error deleting product:', error);
     }
   };
 
@@ -62,7 +62,7 @@ export default function ProductsTable({ className , onQuantityChange}) {
       const token = localStorage.getItem("token");
       const response = await axios.put(`${import.meta.env.VITE_PUBLIC_URL}/cart/increment/${id}/`, {}, {
         headers: {
-          Authorization: `${token}`,
+          Authorization:` ${token}`,
         },
       });
       if (response.status === 200) {
@@ -96,7 +96,7 @@ export default function ProductsTable({ className , onQuantityChange}) {
       }
     } catch (error) {
       console.error('Error updating product quantity:', error);
- 
+
     }
   };
 
@@ -128,17 +128,17 @@ export default function ProductsTable({ className , onQuantityChange}) {
   console.log("offerCategory:", offerCategory);
   console.log("is_active:", offerCategory?.is_active);
   console.log("get_option:", offerCategory?.get_option);
-  console.log("methord",offerCategory?.method);
+  console.log("methord", offerCategory?.method);
 
 
 
-    if (offerCategory?.get_option === 1) {
-      offerName = "BUY-ONE-GET-ONE";
-    } else if (offerCategory?.get_option === 2) {
-      offerName = "BUY-TWO-GET-ONE";
-    }
-    
-  console.log("offername.....:",offerName)
+  if (offerCategory?.get_option === 1) {
+    offerName = "BUY-ONE-GET-ONE";
+  } else if (offerCategory?.get_option === 2) {
+    offerName = "BUY-TWO-GET-ONE";
+  }
+
+  console.log("offername.....:", offerName)
   return (
     <div className={`w-full ${className || ''}`}>
       <div className="relative w-full overflow-x-auto border border-[#EDEDED]">
@@ -169,15 +169,32 @@ export default function ProductsTable({ className , onQuantityChange}) {
                       />
                     </div>
                     <div className="flex-1 flex flex-col">
-                      <p className="font-medium text-[15px] text-qblack">
-                        {product.name}
+                      <p
+                        className="font-medium text-[15px] text-qblack cursor-pointer relative group"
+                        title={product.name} // Optional: Add title attribute for hover
+                      >
+                        {/* Truncate product name and add hover effect for full name */}
+                        {product.name.length > 20 ? `${product.name.slice(0, 20)}...` : product.name}
+
+
+                        {/* Tooltip for full name */}
+                        <span className="absolute left-0 top-full mt-1 hidden group-hover:block bg-white text-black p-2 rounded shadow-lg">
+                          {product.name}
+                        </span>
+
+                        <sup className="text-[13px] text-green-600 ml-1 mt-1">
+                          x{product.free_quantity}
+                        </sup>
                       </p>
-                      {product.has_offer == "Offer Applied" && (
-                        <p style={{ paddingTop: "30px", color: "green", fontWeight: "bold" }}>
-                          {offerName} Offer Available
-                        </p>
-                      )}
+
+                      {/* Display offer type */}
+                      <p style={{ paddingTop: "30px", color: "green", fontWeight: "bold" }}>
+                        {product.offer_type}
+                      </p>
                     </div>
+
+
+
                   </div>
                 </td>
                 <td className="text-center py-4 px-2">
@@ -250,6 +267,6 @@ export default function ProductsTable({ className , onQuantityChange}) {
           </tbody>
         </table>
       </div>
-    </div>
-  );
+    </div>
+  );
 }

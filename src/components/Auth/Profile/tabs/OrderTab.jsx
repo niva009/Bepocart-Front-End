@@ -32,7 +32,6 @@ export default function OrderTab() {
     fetchOrders();
   }, []);
 
-  console.log("order details:", orders);
 
   const buttonStyle = {
     width: '140px',
@@ -139,7 +138,7 @@ export default function OrderTab() {
                   <td className="text-center py-4">
                     <span className="text-lg text-qgray font-medium">
                       <img
-                        src={`${import.meta.env.VITE_PUBLIC_URL}/${order.image}`}
+                        src={`${order.image}`}
                         alt={order.name}
                         className="w-16 h-16 object-cover rounded-full"
                         onError={(e) => { e.target.onError = null; e.target.src = DefaultImage; }}

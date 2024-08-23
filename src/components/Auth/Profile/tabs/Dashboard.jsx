@@ -1,203 +1,259 @@
-import React from "react";
+import { useRef, useState, useEffect } from "react";
+import TextField from '@mui/material/TextField';
+import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function Dashboard() {
-  return (
-    <>
-      <div className="welcome-msg w-full">
-        <div>
-          <p className="text-qblack text-lg">Hello, Shovo</p>
-          <h1 className="font-bold text-[24px] text-qblack">
-            Welcome to your Profile
-          </h1>
-        </div>
-      </div>
-      <div className="quick-view-grid w-full flex justify-between items-center mt-3 ">
-        <div className="qv-item w-[252px] h-[208px] bg-qblack group hover:bg-qyellow transition-all duration-300 ease-in-out p-6">
-          <div className="w-[62px] h-[62px] rounded bg-white flex justify-center items-center">
-            <span>
-              <svg
-                width="36"
-                height="37"
-                viewBox="0 0 36 37"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M32.4473 8.03086C32.482 8.37876 32.5 8.73144 32.5 9.08829C32.5 14.919 27.7564 19.6625 21.9258 19.6625C16.0951 19.6625 11.3516 14.919 11.3516 9.08829C11.3516 8.73144 11.3695 8.37876 11.4042 8.03086H8.98055L8.05537 0.628906H0.777344V2.74375H6.18839L8.56759 21.7774H34.1868L35.8039 8.03086H32.4473Z"
-                  fill="#FFBB38"
+  const [profile, setProfile] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    state: "",
+    zip_code: "",
+    image:""
+  });
+
+
+  const profileImgInput = useRef(null);
+  const [profileImageFile, setProfileImageFile] = useState(null);
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/profile-view/`, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+
+      setProfile(response.data.data);
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  const browseProfileImg = () => {
+    profileImgInput.current.click();
+  };
+
+  const profileImgChangeHandler = (e) => {
+    if (e.target.files.length > 0) {
+      const imgReader = new FileReader();
+      imgReader.onload = (event) => {
+        setProfile((prevProfile) => ({
+          ...prevProfile,
+          image: event.target.result,
+        }));
+      };
+      imgReader.readAsDataURL(e.target.files[0]);
+      setProfileImageFile(e.target.files[0]); // Store the image file for upload
+    }
+  };
+
+  const updateProfile = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('first_name', profile.first_name);
+      formData.append('last_name', profile.last_name);
+      formData.append('email', profile.email);
+      formData.append('phone', profile.phone);
+      formData.append('place', profile.place);
+      formData.append('zip_code', profile.zip_code);
+      
+      if(profileImageFile){      
+        formData.append('image', profileImageFile);
+      }
+
+      const response = await axios.put(`${import.meta.env.VITE_PUBLIC_URL}/profile/`, formData, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      toast.success ( " Profile Updated Successfully !",)
+      position: toast.POSITION.TOP_RIGHT
+      setTimeout(() =>{
+        window.location.reload();
+      },3000);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "zip_code" && value.length > 6) {
+      return; // Prevent updating state if zip_code exceeds 6 characters
+    }
+    setProfile((prevProfile) => ({
+      ...prevProfile,
+      [name]: value,
+    }));
+  };
+
+
+    return (
+      <>
+        <div className="flex space-x-10">
+          <div className="w-[570px]">
+            <div className="input-item flex space-x-2.5 mb-8">
+              <div className="w-1/2 h-full">
+                <TextField
+                  label="First Name*"
+                  placeholder="First Name"
+                  type="text"
+                  name="first_name"
+                  inputClasses="h-[50px]"
+                  value={profile?.first_name || ""}
+                  onChange={handleChange}
                 />
-                <path
-                  d="M9.09669 26.0074H6.06485C4.31566 26.0074 2.89258 27.4305 2.89258 29.1797C2.89258 30.9289 4.31566 32.352 6.06485 32.352H6.24672C6.12935 32.6829 6.06485 33.0386 6.06485 33.4094C6.06485 35.1586 7.48793 36.5816 9.23711 36.5816C11.4247 36.5816 12.9571 34.4091 12.2274 32.352H22.1081C21.377 34.413 22.9157 36.5816 25.0985 36.5816C26.8476 36.5816 28.2707 35.1586 28.2707 33.4094C28.2707 33.0386 28.2061 32.6829 28.0888 32.352H30.3856V30.2371H6.06485C5.48178 30.2371 5.00742 29.7628 5.00742 29.1797C5.00742 28.5966 5.48178 28.1223 6.06485 28.1223H33.4407L33.9384 23.8926H8.83233L9.09669 26.0074Z"
-                  fill="#FFBB38"
+              </div>
+              <div className="w-1/2 h-full">
+                <TextField
+                  label="Last Name*"
+                  placeholder="Last Name"
+                  name="last_name"
+                  type="text"
+                  value={profile?.last_name || ""}
+                  inputClasses="h-[50px]"
+                  onChange={handleChange}
                 />
-                <path
-                  d="M21.9262 17.5477C26.5907 17.5477 30.3856 13.7528 30.3856 9.08829C30.3856 4.42378 26.5907 0.628906 21.9262 0.628906C17.2616 0.628906 13.4668 4.42378 13.4668 9.08829C13.4668 13.7528 17.2617 17.5477 21.9262 17.5477ZM20.8688 5.91602H22.9836V8.6503L24.7886 10.4554L23.2932 11.9508L20.8687 9.5262V5.91602H20.8688Z"
-                  fill="#FFBB38"
+              </div>
+            </div>
+            <div className="input-item flex space-x-2.5 mb-8">
+              <div className="w-1/2 h-full">
+                <TextField
+                  label="Email*"
+                  placeholder="Email"
+                  type="email"
+                  name="email"
+                  value={profile?.email || ""}
+                  inputClasses="h-[50px]"
+                  onChange={handleChange}
                 />
-              </svg>
-            </span>
+              </div>
+              <div className="w-1/2 h-full">
+                <TextField
+                  label="Phone Number*"
+                  placeholder="Phone Number"
+                  type="Number"
+                  name="phone"
+                  inputClasses="h-[50px]"
+                  value={profile?.phone || ""}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className="input-item mb-8">
+              <div className="w-full">
+                <TextField
+                  label="State*"
+                  placeholder="State"
+                  type="Text"
+                  name="place"
+                  value={profile?.place || ""}
+                  inputClasses="h-[50px]"
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className="input-item mb-8">
+              <div className="w-full">
+                <TextField
+                  label="Zip Code*"
+                  placeholder="ZIP CODE"
+                  type="Number"
+                  name="zip_code"
+                  value={profile?.zip_code || ""}
+                  inputClasses="h-[50px]"
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
           </div>
-          <p className="text-xl text-white group-hover:text-qblacktext mt-5">
-            New Orders
-          </p>
-          <span className="text-[40px] text-white group-hover:text-qblacktext font-bold leading-none mt-1 block">
-            656
-          </span>
-        </div>
-        <div className="qv-item w-[252px] h-[208px] bg-qblack group hover:bg-qyellow transition-all duration-300 ease-in-out p-6">
-          <div className="w-[62px] h-[62px] rounded bg-white flex justify-center items-center">
-            <span>
-              <svg
-                width="33"
-                height="27"
-                viewBox="0 0 33 27"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M30.2253 12.8816H29.4827L28.6701 9.36514C28.376 8.10431 27.2552 7.22168 25.9662 7.22168H21.8474V3.84528C21.8474 2.03804 20.3764 0.581055 18.5831 0.581055H3.17237C1.46313 0.581055 0.0761719 1.96801 0.0761719 3.67717V20.0967C0.0761719 21.8058 1.46313 23.1928 3.17237 23.1928H4.29313C4.89555 25.1962 6.74485 26.6533 8.93037 26.6533C11.1159 26.6533 12.9792 25.1962 13.5816 23.1928C13.8455 23.1928 20.3459 23.1928 20.1942 23.1928C20.7966 25.1962 22.6459 26.6533 24.8315 26.6533C27.031 26.6533 28.8803 25.1962 29.4827 23.1928H30.2253C31.7663 23.1928 32.9992 21.9599 32.9992 20.4189V15.6555C32.9992 14.1145 31.7663 12.8816 30.2253 12.8816ZM8.93037 23.8513C7.78968 23.8513 6.88491 22.8969 6.88491 21.7918C6.88491 20.657 7.79558 19.7324 8.93037 19.7324C10.0652 19.7324 10.9898 20.657 10.9898 21.7918C10.9898 22.9151 10.0692 23.8513 8.93037 23.8513ZM13.9739 8.06224L9.79897 11.3125C9.20227 11.7767 8.30347 11.6903 7.82363 11.0604L6.21247 8.94486C5.7361 8.32843 5.86222 7.4458 6.47866 6.98346C7.08107 6.50717 7.96369 6.63321 8.44006 7.24965L9.19656 8.23035L12.2507 5.84867C12.8531 5.3864 13.7357 5.48448 14.2121 6.10092C14.6884 6.71727 14.5763 7.58595 13.9739 8.06224ZM24.8315 23.8513C23.6906 23.8513 22.7861 22.8969 22.7861 21.7918C22.7861 20.657 23.7107 19.7324 24.8315 19.7324C25.9662 19.7324 26.8909 20.657 26.8909 21.7918C26.8909 22.9166 25.9683 23.8513 24.8315 23.8513ZM22.618 10.0236H25.2798C25.6021 10.0236 25.8962 10.2337 26.0083 10.542L26.8629 13.0497C27.031 13.5541 26.6667 14.0724 26.1344 14.0724H22.618C22.1976 14.0724 21.8474 13.7222 21.8474 13.3019V10.7942C21.8474 10.3739 22.1976 10.0236 22.618 10.0236Z"
-                  fill="#FFBB38"
-                />
-              </svg>
-            </span>
-          </div>
-          <p className="text-xl text-white group-hover:text-qblacktext mt-5">
-            New Orders
-          </p>
-          <span className="text-[40px] text-white group-hover:text-qblacktext font-bold leading-none mt-1 block">
-            656
-          </span>
-        </div>
-        <div className="qv-item w-[252px] h-[208px] bg-qblack group hover:bg-qyellow transition-all duration-300 ease-in-out p-6">
-          <div className="w-[62px] h-[62px] rounded bg-white flex justify-center items-center">
-            <span>
-              <svg
-                width="27"
-                height="31"
-                viewBox="0 0 27 31"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9.79749 18.4331C6.71621 20.0289 5.95627 20.8019 4.64859 23.6816C3.76653 22.8387 2.90107 22.0123 2.00953 21.1599C2.5288 20.3146 3.03267 19.4942 3.53535 18.6726C3.88035 18.1071 3.46066 17.0579 2.82282 16.899C1.88623 16.6666 0.94845 16.4426 0 16.2114C0 14.4034 0 12.6274 0 10.7827C0.921182 10.561 1.85422 10.3405 2.78489 10.1117C3.46777 9.94331 3.8922 8.90476 3.52705 8.30605C3.03385 7.49868 2.5371 6.6925 2.06051 5.91596C3.35514 4.62014 4.62251 3.35396 5.92426 2.05339C6.70673 2.53355 7.52832 3.03978 8.35347 3.54246C8.88698 3.8673 9.94331 3.44524 10.0927 2.84416C10.3262 1.90638 10.5491 0.965048 10.7839 0C12.5883 0 14.3785 0 16.2197 0C16.4366 0.906955 16.6548 1.8234 16.8777 2.73865C17.0555 3.46777 18.0763 3.89694 18.7082 3.50926C19.5144 3.01489 20.3182 2.52051 21.0829 2.05102C22.3763 3.34447 23.6318 4.59998 24.943 5.9124C24.4783 6.67235 23.9756 7.49038 23.4753 8.31079C23.1114 8.90713 23.5405 9.93976 24.2258 10.1081C25.1434 10.3334 26.0646 10.5503 27 10.7756C27 12.5954 27 14.3892 27 16.2197C26.1298 16.426 25.2667 16.6287 24.4048 16.8338C23.4658 17.0579 23.0651 18.0122 23.5654 18.8267C24.029 19.5819 24.4914 20.3383 24.9727 21.122C24.1487 22.004 23.3473 22.8612 22.4901 23.7776C21.5393 21.1741 19.8297 19.4243 17.3163 18.4592C20.5565 15.5332 19.8558 11.4668 17.659 9.41099C15.2973 7.19992 11.5995 7.26157 9.31378 9.56393C7.15368 11.7406 6.71858 15.6885 9.79749 18.4331Z"
-                  fill="#FFBB38"
-                />
-                <path
-                  d="M21.0695 30.3147C16.0415 30.3147 11.0847 30.3147 6.03891 30.3147C6.03891 29.9768 6.03416 29.6496 6.04009 29.3224C6.06262 28.0396 5.97963 26.7426 6.13612 25.4752C6.53566 22.2576 9.12611 19.9244 12.3722 19.8213C13.5886 19.7821 14.8417 19.7762 16.0249 20.0169C18.8643 20.5954 20.8916 23.0258 21.0552 25.9364C21.1359 27.3709 21.0695 28.8138 21.0695 30.3147Z"
-                  fill="#FFBB38"
-                />
-                <path
-                  d="M13.5375 17.9235C11.2244 17.9093 9.35005 16.0112 9.38325 13.7195C9.41763 11.4124 11.3169 9.55701 13.6157 9.58428C15.8849 9.61036 17.7486 11.5013 17.7403 13.7693C17.7332 16.0752 15.8481 17.9378 13.5375 17.9235Z"
-                  fill="#FFBB38"
-                />
-              </svg>
-            </span>
-          </div>
-          <p className="text-xl text-white group-hover:text-qblacktext mt-5">
-            New Orders
-          </p>
-          <span className="text-[40px] text-white group-hover:text-qblacktext font-bold leading-none mt-1 block">
-            656
-          </span>
-        </div>
-      </div>
-      <div className="dashboard-info mt-8 flex justify-between items-center bg-primarygray px-7 py-7">
-        <div className="">
-          <p className="title text-[22px] font-semibold">
-            Parsonal Information
-          </p>
-          <div className="mt-5">
-            <table>
-              <tbody>
-                <tr className="inline-flex mb-5">
-                  <td className="text-base text-qgraytwo w-[100px] block">
-                    <div>Name:</div>
-                  </td>
-                  <td className="text-base text-qblack font-medium">
-                    Shuvo khan
-                  </td>
-                </tr>
-                <tr className="inline-flex mb-5">
-                  <td className="text-base text-qgraytwo w-[100px] block">
-                    <div>Email:</div>
-                  </td>
-                  <td className="text-base text-qblack font-medium">
-                    rafiqulislamsuvobd@gmail.com
-                  </td>
-                </tr>
-                <tr className="inline-flex mb-5">
-                  <td className="text-base text-qgraytwo w-[100px] block">
-                    <div>Phone:</div>
-                  </td>
-                  <td className="text-base text-qblack font-medium">
-                    01792166627
-                  </td>
-                </tr>
-                <tr className="inline-flex mb-5">
-                  <td className="text-base text-qgraytwo w-[100px] block">
-                    <div>City:</div>
-                  </td>
-                  <td className="text-base text-qblack font-medium">
-                    Dhaka,Bangladesh
-                  </td>
-                </tr>
-                <tr className="inline-flex mb-5">
-                  <td className="text-base text-qgraytwo w-[100px] block">
-                    <div>Zip:</div>
-                  </td>
-                  <td className="text-base text-qblack font-medium">4040</td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="flex-1">
+            <div className="update-logo w-full mb-9">
+              <h1 className="text-xl tracking-wide font-bold text-qblack flex items-center mb-2">
+                Update Profile
+                <span className="ml-1">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10 0C4.47457 0 0 4.47791 0 10C0 15.5221 4.47791 20 10 20C15.5221 20 20 15.5221 20 10C19.9967 4.48126 15.5221 0.00669344 10 0ZM10 16.67C9.53815 16.67 9.16667 16.2985 9.16667 15.8367C9.16667 15.3748 9.53815 15.0033 10 15.0033C10.4618 15.0033 10.8333 15.3748 10.8333 15.8367C10.8333 16.2952 10.4618 16.67 10 16.67ZM11.6098 10.425C11.1078 10.7396 10.8132 11.2952 10.8333 11.8842V12.5033C10.8333 12.9652 10.4618 13.3367 10 13.3367C9.53815 13.3367 9.16667 12.9652 9.16667 12.5033V11.8842C9.14324 10.6861 9.76907 9.56827 10.8032 8.96586C11.4357 8.61781 11.7704 7.90161 11.6366 7.19545C11.5027 6.52276 10.9772 5.99732 10.3046 5.8668C9.40094 5.69946 8.5308 6.29853 8.36346 7.20214C8.34673 7.30254 8.33668 7.40295 8.33668 7.50335C8.33668 7.96519 7.9652 8.33668 7.50335 8.33668C7.0415 8.33668 6.67002 7.96519 6.67002 7.50335C6.67002 5.66265 8.16265 4.17001 10.0067 4.17001C11.8474 4.17001 13.34 5.66265 13.34 7.50669C13.3333 8.71821 12.674 9.83601 11.6098 10.425Z"
+                      fill="#374557"
+                      fillOpacity="0.6"
+                    />
+                  </svg>
+                </span>
+              </h1>
+              <p className="text-sm text-qgraytwo mb-5">
+                Profile images should be at least 300x300 pixels. GIFs are also supported with a maximum size of 5MB.
+              </p>
+              <div className="flex xl:justify-center justify-start">
+                <div className="relative">
+                  <div className="sm:w-[198px] sm:h-[198px] w-[199px] h-[199px] rounded-full overflow-hidden relative">
+                    <img
+                        src={`${import.meta.env.VITE_PUBLIC_URL}/${profile.image}`}  
+                      alt={profile.first_name}
+                      className="object-cover w-full h-ful    l"
+                    />
+                  </div>
+                  <input
+                    ref={profileImgInput}
+                    onChange={profileImgChangeHandler}
+                    type="file"
+                    className="hidden"
+                  />
+                  <div
+                    onClick={browseProfileImg}
+                    className="w-[32px] h-[32px] absolute bottom-7 sm:right-0 right-[105px] bg-qblack rounded-full cursor-pointer"
+                  >
+                    <ToastContainer />
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M16.5147 11.5C17.7284 12.7137 18.9234 13.9087 20.1296 15.115C19.9798 15.2611 19.8187 15.4109 19.6651 15.5683C17.4699 17.7635 15.271 19.9587 13.0758 22.1539C12.9334 22.2962 12.7948 22.4386 12.6524 22.5735C12.6187 22.6034 12.5663 22.6296 12.5213 22.6296C11.3788 22.6334 10.2362 22.6297 9.09365 22.6334C9.01498 22.6334 9 22.6034 9 22.536C9 21.4009 9 20.2621 9.00375 19.1271C9.00375 19.0746 9.02997 19.0109 9.06368 18.9772C10.4123 17.6249 11.7609 16.2763 13.1095 14.9277C14.2295 13.8076 15.3459 12.6913 16.466 11.5712C16.4884 11.5487 16.4997 11.5187 16.5147 11.5Z"
+                        fill="white"
+                      />
+                      <path
+                        d="M20.9499 14.2904C19.7436 13.0842 18.5449 11.8854 17.3499 10.6904C17.5634 10.4694 17.7844 10.2446 18.0054 10.0199C18.2639 9.76139 18.5261 9.50291 18.7884 9.24443C19.118 8.91852 19.5713 8.91852 19.8972 9.24443C20.7251 10.0611 21.5492 10.8815 22.3771 11.6981C22.6993 12.0165 22.7105 12.4698 22.3996 12.792C21.9238 13.2865 21.4443 13.7772 20.9686 14.2717C20.9648 14.2792 20.9536 14.2867 20.9499 14.2904Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="w-[1px] h-[164px] bg-[#E4E4E4]"></div>
-        <div className="ml-6">
-          <p className="title text-[22px] font-semibold">Shop Info</p>
-          <div className="mt-5">
-            <table>
-              <tr className="inline-flex mb-5">
-                <td className="text-base text-qgraytwo w-[100px] block">
-                  <div>Name:</div>
-                </td>
-                <td className="text-base text-qblack font-medium">
-                  Shuvo khan
-                </td>
-              </tr>
-              <tr className="inline-flex mb-5">
-                <td className="text-base text-qgraytwo w-[100px] block">
-                  <div>Email:</div>
-                </td>
-                <td className="text-base text-qblack font-medium">
-                  rafiqulislamsuvobd@gmail.com
-                </td>
-              </tr>
-              <tr className="inline-flex mb-5">
-                <td className="text-base text-qgraytwo w-[100px] block">
-                  <div>Phone:</div>
-                </td>
-                <td className="text-base text-qblack font-medium">
-                  01792166627
-                </td>
-              </tr>
-              <tr className="inline-flex mb-5">
-                <td className="text-base text-qgraytwo w-[100px] block">
-                  <div>City:</div>
-                </td>
-                <td className="text-base text-qblack font-medium">
-                  Dhaka,Bangladesh
-                </td>
-              </tr>
-              <tr className="inline-flex mb-5">
-                <td className="text-base text-qgraytwo w-[100px] block">
-                  <div>Zip:</div>
-                </td>
-                <td className="text-base text-qblack font-medium">4040</td>
-              </tr>
-            </table>
-          </div>
+        <div className="action-area flex space-x-4 items-center">
+          <button type="button" className="text-sm text-qred font-semibold">
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="w-[164px] h-[50px] bg-qblack text-white text-sm"
+            onClick={updateProfile}
+          >
+            Update Profile
+          </button>
         </div>
-      </div>
-    </>
-  );
-}
+      </>
+    );
+  }

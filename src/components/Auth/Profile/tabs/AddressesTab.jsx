@@ -36,7 +36,6 @@ export default function AddressesTab() {
       if (response.status === 200) {
         const updatedAddresses = addresses.filter((address) => address.id !== id);
         setAddresses(updatedAddresses);
-        console.log(`Address with id ${id} deleted successfully.`);
       }
     } catch (error) {
       console.error(`Error deleting address with id ${id}:`, error);

@@ -89,25 +89,25 @@ export default function Footer({ type }) {
                         </span>
                       </Link>
                     </li>
-                    <li>
+                    {/* <li>
                       <Link to="/tracking-order">
                         <span className="text-[#9A9A9A] text-[15px] hover:text-qblack border-b border-transparent hover:border-qblack cursor-pointer capitalize">
                           Tracking Order
                         </span>
                       </Link>
-                    </li>
-                    <li>
+                    </li> */}
+                    {/* <li>
                       <Link to="/become-saller">
                         <span className="text-[#9A9A9A] text-[15px] hover:text-qblack border-b border-transparent hover:border-qblack cursor-pointer capitalize">
                           Become Seller
                         </span>
                       </Link>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </div>
             </div>
-            <div className="lg:w-1/3 lg:flex lg:flex-col items-center w-full mb-10 lg:mb-0">
+            {/* <div className="lg:w-1/3 lg:flex lg:flex-col items-center w-full mb-10 lg:mb-0">
               <div>
                 <div className="mb-5">
                   <h6 className="text-[18] font-500 text-[#2F2F2F]">Helpful</h6>
@@ -138,31 +138,31 @@ export default function Footer({ type }) {
                   </ul>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="bottom-bar border-t border-qgray-border lg:h-[82px] lg:flex justify-between items-center">
           <div className="flex lg:space-x-5 justify-between items-center mb-3">
             <div className="flex space-x-5 items-center">
-              <a href="#">
+              <a href="https://www.instagram.com/bepocart/">
                 <Instagram className="fill-current text-qgray hover:text-qblack" />
               </a>
-              <a href="#">
+              <a href="facebook.com/profile.php?id=100088585718895">
                 <Facebook className="fill-current text-qgray hover:text-qblack" />
               </a>
-              <a href="#">
+              <a href="https://www.youtube.com/@Bepocart_cycling_accessories">
                 <Youtube className="fill-current text-qgray hover:text-qblack" />
               </a>
             </div>
             <span className="sm:text-base text-[10px] text-qgray font-300">
               ©2022
               <a
-                href="https://quomodosoft.com/"
+                href="/"
                 target="_blank"
                 rel="noreferrer"
                 className="font-500 text-qblack mx-1"
               >
-                Quomodosoft
+                Bepocart
               </a>
               All rights reserved
             </span>

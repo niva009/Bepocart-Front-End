@@ -8,7 +8,7 @@ import axios from 'axios';
 
 export default function MainCategory() {
   const { id } = useParams();
-  const [products, setProducts] = useStat+e([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -30,7 +30,6 @@ export default function MainCategory() {
     }
   }, [id]);
 
-  console.log("product in main category",products);
 
 
 

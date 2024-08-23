@@ -7,9 +7,7 @@ import ProductsTable from "./ProductsTable";
 import axios from "axios";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { responsiveFontSizes } from "@mui/material";
 import AddressDetails from "./AddressDetails";
-import { Link } from "react-router-dom"
 
 export default function CardPage({ cart = true }) {
   const [cartProducts, setCartProducts] = useState([]);
@@ -30,7 +28,6 @@ export default function CardPage({ cart = true }) {
           Authorization: `${token}`,
         },
       });
-      console.log(response.data,"response data from cart");
 
       const data = response.data;
       setCartProducts(data.data);
@@ -38,11 +35,6 @@ export default function CardPage({ cart = true }) {
       setShipping(data.Shipping ?? 0);
       setDiscount(data.Discount ?? 0);
       setTotal(data.TotalPrice ?? 0);
-
-      console.log("Total:", data.Subtotal);
-      console.log("Discount:", data.Discount);
-      console.log("Shipping Charge:", data.Shipping);
-      console.log("Sub total:", data.TotalPrice);
     } catch (error) {
       console.error('Error fetching cart products:', error);
     }
@@ -56,7 +48,6 @@ export default function CardPage({ cart = true }) {
         },
       });
       setAddresses(response.data.address);
-      console.log("User addresses:", response.data.address);
     } catch (error) {
       console.error("Error fetching user addresses:", error);
     }
@@ -70,6 +61,7 @@ export default function CardPage({ cart = true }) {
   const handleQuantityChange = () => {
     fetchCartProducts();
   };
+
   const handleSelectAddress = (addressId) => {
     setSelectedAddressId(addressId);
   };
@@ -84,8 +76,6 @@ export default function CardPage({ cart = true }) {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  console.log("Selected Address Id:", selectedAddressId);
 
   return (
     <Layout childrenClasses={cart ? "pt-0 pb-0" : ""}>
@@ -114,53 +104,41 @@ export default function CardPage({ cart = true }) {
           </div>
           <div className="w-full mt-[23px]">
             <div className="container-x mx-auto">
-              <ProductsTable className="mb-[30px]" cartProducts={cartProducts}  onQuantityChange={handleQuantityChange}/>
+              <ProductsTable className="mb-[30px]" cartProducts={cartProducts} onQuantityChange={handleQuantityChange} />
               <div className="w-full sm:flex justify-between">
-                <div className="discount-code sm:w-[1000px] w-full mb-5 sm:mb-0 h-[50px] flex">
-                  <div className="lg:w-1/2 w-full">
-                    <h1 className="sm:text-2xl text-xl text-qblack font-medium mb-5">
-                      Select Address
-                    </h1>
-                    <div className="form-area">
-                      {/* Address Selection */}
-                      <div className="mb-9">
-                        <div className="border border-[#EDEDED] p-4 rounded-lg">
-                          {addresses.map((address) => (
-                            <div
-                              key={address.id}
-                              className="mb-3 p-3 border border-[#EDEDED] rounded-lg"
-                            >
-                              <label className="block mb-1 text-sm text-qgray mt-3">
-                                <input
-                                  type="radio"
-                                  name="address"
-                                  className="mr-2"
-                                  onChange={() => handleSelectAddress(address.id)}
-                                />
-                                {`${address.address},${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
-                              </label>
-                            </div>
-                          ))}
-                          {/* Add new address button */}
-                          <button onClick={handleOpen} className="text-sm text-qblack underline">
-                            Add New Address
-                          </button>
-                        </div>
+                <div className="sm:w-[1000px] w-full mb-5 sm:mb-0">
+                  <h1 className="sm:text-2xl text-xl text-qblack font-medium mb-5">
+                    Select Address
+                  </h1>
+                  <div className="form-area">
+                    <div className="mb-9">
+                      <div className="border border-[#EDEDED] p-4 rounded-lg">
+                        {addresses.map((address) => (
+                          <div
+                            key={address.id}
+                            className="mb-3 p-3 border border-[#EDEDED] rounded-lg"
+                          >
+                            <label className="block mb-1 text-sm text-qgray mt-3">
+                              <input
+                                type="radio"
+                                name="address"
+                                className="mr-2"
+                                onChange={() => handleSelectAddress(address.id)}
+                              />
+                              {`${address.address}, ${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
+                            </label>
+                          </div>
+                        ))}
+                        <button onClick={handleOpen} className="text-sm text-qblack underline">
+                          Add New Address
+                        </button>
                       </div>
-                      {/* Other form fields */}
                     </div>
                   </div>
                 </div>
-                <div className="grid space-x-5.5 y-2.3 items-center mb-0 mt-0">
-                  <button type="button" className="w-[140px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
-                    <a href="/cart" className="text-sm font-semibold">Update Cart</a>
-                  </button>
-                </div>
-              </div>
-              <div className="w-full mt-[30px] flex sm:justify-end">
-                <div className="sm:w-[370px] w-full border border-[#EDEDED] px-[30px] py-[26px]">
+                <div className="sm:w-[370px] w-full border border-[#EDEDED] px-[30px] py-[26px] mt-5 sm:mt-0">
                   <div className="sub-total mb-6">
-                    <div className=" flex justify-between mb-6">
+                    <div className="flex justify-between mb-6">
                       <p className="text-[15px] font-medium text-qblack">
                         Subtotal
                       </p>
@@ -200,7 +178,7 @@ export default function CardPage({ cart = true }) {
                     </ul>
                   </div>
                   <div className="total mb-6">
-                    <div className=" flex justify-between">
+                    <div className="flex justify-between">
                       <p className="text-[18px] font-medium text-qblack">
                         Total
                       </p>

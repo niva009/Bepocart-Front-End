@@ -25,8 +25,6 @@ export default function Navbar({ className, type }) {
   }, []);
 
 
-  console.log("category information...:",categories)
-
 
 
   useEffect(() => {
@@ -40,8 +38,6 @@ export default function Navbar({ className, type }) {
     }
   }, [categoryToggle, categories]);
 
-
-  console.log("categories in main page", categories);
 
   return (
     <div

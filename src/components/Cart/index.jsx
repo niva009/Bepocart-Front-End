@@ -18,7 +18,6 @@ export default function Cart({ className, type }) {
         }
         const data = await response.json();
         setCartProducts(data.data);
-        console.log(data.data);
       } catch (error) {
         console.error('Error fetching cart products:', error);
       }

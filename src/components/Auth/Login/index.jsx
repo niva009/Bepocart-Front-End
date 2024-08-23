@@ -26,7 +26,6 @@ export default function Login() {
     setMessage("");
     try {
       const response = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/login/`, values);
-      console.log("Response:", response.data);
       const token = response.data.token;
       localStorage.setItem("token", token);
       setMessageType("success");

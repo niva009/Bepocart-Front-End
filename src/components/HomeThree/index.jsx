@@ -34,7 +34,6 @@ export default function HomeThree() {
             limit: 10
           }
         });
-        console.log("Products response:", productsResponse.data);
         const { products } = productsResponse.data;
         const brands = products.map(product => product.brand);
          const limitedProducts = products.slice(0, 15);
@@ -51,7 +50,6 @@ export default function HomeThree() {
             'Authorization': `${token}`,
           },
         });
-        console.log("Recommended response:", recommendedResponse);
         setRecommendedProducts(recommendedResponse.data.data);
       } catch (error) {
         console.error("Error fetching recommended products:", error);
@@ -59,7 +57,6 @@ export default function HomeThree() {
 
       try {
         const bannersResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/offer-banner/`);
-        console.log("Banners response:", bannersResponse.data);
         setBanners(bannersResponse.data.banner);
       } catch (error) {
         console.error("Error fetching banners:", error);
@@ -67,14 +64,13 @@ export default function HomeThree() {
 
       try {
         const offerProductResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/buy-1-get-1-free/`);
-        console.log("Offer products response:", offerProductResponse.data);
+
         setOfferProducts(offerProductResponse.data.data);
       } catch (error) {
         console.error("Error fetching offer products:", error);
       }
       try {
         const DiscountProducts = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/offers/`);
-        console.log("Discount products response:", DiscountProducts.data);
         setDiscountProducts(DiscountProducts.data.data);
       } catch (error) {
         console.error("Error fetching offer products:", error);
@@ -84,8 +80,6 @@ export default function HomeThree() {
     fetchData();
   }, []);
 
-  console.log("Discount products...:",DiscountProducts);  
-  console.log(products,"product information")
 
   return (
     <>

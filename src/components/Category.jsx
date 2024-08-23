@@ -40,7 +40,6 @@ export default function Category() {
     }
   }, [id]);
 
-  console.log(category, "category information");
 
 
 
@@ -79,9 +78,6 @@ export default function Category() {
   const handleFilteredResult = (result) => {
     setProducts(result);
   };
-
-  console.log("filtered product data",filteredResult);
-
 
   return (
     <Layout>

@@ -34,7 +34,6 @@ export default function SingleProductPage() {
     fetchProduct(id);
   }, [id]);
 
-  // console.log(id,"id data")
   
   const fetchProduct = async (id) => {
     setLoading(true);
@@ -43,7 +42,6 @@ export default function SingleProductPage() {
       setProducts(response.data); // Update state with fetched products array
       setProductId(response.data.product.id)
       setCategoryId(response.data.product.mainCategory)
-      console.log("Data received from API:", response.data.images); 
     } catch (error) {
       console.error("Error fetching product:", error);
     } finally {
@@ -53,10 +51,6 @@ export default function SingleProductPage() {
 
 
 
-
-
-  // console.log("product are presenet here ", products);
-  console.log("category id .....",categoryId);
 
 
   useEffect(() => {
@@ -75,13 +69,10 @@ export default function SingleProductPage() {
 
 
 
-  console.log("category data",categoryData.mainCategory);
-
 
   useEffect(() =>{
     axios.get(`${import.meta.env.VITE_PUBLIC_URL}/category/${categoryId}/products/`)
     .then((response) =>{
-      console.log("response from releated products:",response)
       setReleatedproducts(response.data.products);
     })
     .catch((error) =>{
@@ -89,7 +80,6 @@ export default function SingleProductPage() {
     })
   },[categoryId])
 
-  console.log("releated product data...",releatedproducts);
 
 
   const reviewAction = () => {
@@ -109,7 +99,6 @@ export default function SingleProductPage() {
     )
     .then(response => {
       // Handle the response here if needed
-      console.log(response.data);
     })
     .catch(error => {
       // Handle errors here
@@ -118,7 +107,6 @@ export default function SingleProductPage() {
   };
   
 
-  console.log("product id:",productId);
 
 useEffect(() =>{
 
@@ -127,7 +115,6 @@ useEffect(() =>{
 
     .then((response) =>{     
       setComments(response.data)
-      console.log(response);
     })
   
     .catch((error) =>{
@@ -136,8 +123,6 @@ useEffect(() =>{
   }
 },[productId])
 
-
-console.log("comments of product :",comments);
 
 
   return (

@@ -12,7 +12,6 @@ export default function Banner({ className }) {
       try {
         const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/banners/`)
         setSliderData(response.data.banner); 
-        console.log("Data:", response.data.banner); 
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -21,7 +20,6 @@ export default function Banner({ className }) {
   }, []);
 
 
-  console.log(sliderData,"slider images");
   const settings = {
     dots: false,
     infinite: true,

@@ -33,7 +33,6 @@ export default function ProfileTab() {
       });
 
       setProfile(response.data.data);
-      console.log(response.data.data);
     } catch (error) {
       console.error('Error fetching profile data:', error);
     }
@@ -77,8 +76,6 @@ export default function ProfileTab() {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      console.log('Profile updated successfully:', response.data);
       toast.success ( " Profile Updated Successfully !",)
       position: toast.POSITION.TOP_RIGHT
       setTimeout(() =>{

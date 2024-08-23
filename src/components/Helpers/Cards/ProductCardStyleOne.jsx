@@ -15,12 +15,6 @@ export default function   ProductCardStyleOne({ datas, type }) {
 
 
 
-
-  console.log(datas,  "datas information");
-
-
-
-
   const available =
     (datas.cam_product_sale /
       (datas.cam_product_available + datas.cam_product_sale)) *
@@ -89,8 +83,6 @@ export default function   ProductCardStyleOne({ datas, type }) {
     }
   };
 
-  console.log("prduct for sale price", selectedProduct);
-
   return (
   
     <div className="product-card-one w-full h-full bg-white relative group overflow-hidden" style={{ boxShadow: "0px 15px 64px 0px rgba(0, 0, 0, 0.05)" }}>
@@ -103,6 +95,11 @@ export default function   ProductCardStyleOne({ datas, type }) {
           display: "flex",
         }}
       >
+     <div className="discount-box absolute top-3 left-3 px-2 py-1 bg-qh3-blue text-white text-xs font-bold rounded">
+  {`${Math.floor(datas.discount)}% OFF`}
+</div>
+
+
         {datas.campaingn_product && (
           <>
             <div className="px-[30px] absolute left-0 top-3 w-full">

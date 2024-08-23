@@ -95,7 +95,6 @@ export default function ProductView({ className }) {
   
 
   const productId = product?.id;
-  console.log("initial image.....:",src);
 
   useEffect(() => {
     const fetchRating = async () => {
@@ -235,8 +234,6 @@ export default function ProductView({ className }) {
   };
   
 
-  console.log("stock data..:",stock);
-  console.log('your handsome:', stock.length === 0)
 
   const isOutOfStock = stock === 0 || stock.length === 0
   

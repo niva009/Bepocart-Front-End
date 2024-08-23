@@ -40,12 +40,6 @@ export default function DrawerThree({ className, open, action }) {
     fetchCategories();
   }, []);
 
-  console.log("Maincategory",categories);
-
-
-  console.log("subcategory information.....:",brands);
-
-
 
 
   useEffect(() =>{

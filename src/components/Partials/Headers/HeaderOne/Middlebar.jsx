@@ -72,16 +72,9 @@ const token = localStorage.getItem('token');
   }, [token]);
   
 
-  console.log(wishlistTotal,"wishlist toatal products")
-  console.log(wishlistItems,"wishlist-items");
-  console.log(cartTotal,"cart total length");
-
 
   const totalAmount = Array.isArray(coinCount)? coinCount.reduce((sum,current) => sum+(current.amount || 0), 0):0;
 
-  console.log(totalAmount);
-
-  console.log("coin count is:...",coinCount)
   return (
     <div className={`w-full h-[86px] bg-white ${className}`}>
       <div className="container-x mx-auto h-full">

@@ -21,7 +21,6 @@ export default function OrderDetails() {
       })
      },[])
 
-     console.log("order Information",orders);
 
   const buttonStyle = {
     width: '140px',  // Define button width

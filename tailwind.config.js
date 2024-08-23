@@ -17,7 +17,7 @@ export default {
         "qh2-green": "#2D6F6D",
         "qh4-pink": "#FDB2BB",
         "qh5-bwhite": "#95D7DE",
-        "qh3-blue": "#1868D5",
+        "qh3-blue": "#93ff05",
       },
       scale: {
         60: "0.6",

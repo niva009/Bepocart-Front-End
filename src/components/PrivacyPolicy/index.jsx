@@ -28,13 +28,11 @@ export default function PrivacyPolicy() {
     })
   },[])
 
-  console.log("coin-count....:",coinValue);
 
   const totalCoin = Array.isArray(coinCount)? coinCount.reduce((sum,current) => sum+(current.amount || 0), 0):0;
 
 const totalPrice = totalCoin * coinValue
 
-console.log("totalPrice information...:",totalPrice);
   return (
 
 

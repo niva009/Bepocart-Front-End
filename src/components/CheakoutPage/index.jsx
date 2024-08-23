@@ -94,7 +94,6 @@ useEffect(() =>{
  setOffer (offerProduct)
 },[cartItems]);
 
-console.log("offer...:",offer);
 
 
   const initializeRazorpay = () => {
@@ -138,10 +137,6 @@ console.log("offer...:",offer);
           const paymentId = response.razorpay_payment_id;
           const orderId = response.razorpay_order_id;
           const signature = response.razorpay_signature;
-  
-          console.log(paymentId);
-          console.log(orderId);
-          console.log(signature);
   
           // Create order only after successful payment
           try {
@@ -205,15 +200,22 @@ console.log("offer...:",offer);
   };
 
   const applyCoupon = () => {
-    setCouponError(null);
+    setCouponError(null); 
     if (couponCode !== "") {
       const appliedCoupon = couponData.find(
         (coupon) => coupon.code === couponCode && coupon.status === "Active"
       );
-
+  
       if (appliedCoupon) {
         alert("Coupon code applied successfully");
-        const discountAmount = parseFloat(appliedCoupon.discount);
+        
+        let discountAmount = 0;
+        if (appliedCoupon.coupon_type === "Percentage") {
+          discountAmount = (subtotal * parseFloat(appliedCoupon.discount)) / 100;
+        } else {
+          discountAmount = parseFloat(appliedCoupon.discount);
+        }
+  
         setCouponDiscount(discountAmount);
         setDiscount((prevDiscount) => prevDiscount + discountAmount);
       } else {
@@ -223,8 +225,8 @@ console.log("offer...:",offer);
       setCouponError("Please enter a coupon code");
     }
   };
+  
 
-  console.log(`${import.meta.env.VITE_PAYMENT_KEY}`,"payment keyssss");
 
   return (
     <Layout childrenClasses="pt-0 pb-0">

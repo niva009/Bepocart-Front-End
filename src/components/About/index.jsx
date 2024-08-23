@@ -712,11 +712,11 @@ export default function About() {
 
         <div className="blog-post-wrapper w-full mb-[30px]">
           <div className="container-x mx-auto">
-            <div className="blog-post-title flex justify-center items-cente mb-[30px]">
+            {/* <div className="blog-post-title flex justify-center items-cente mb-[30px]">
               <h1 className="text-3xl font-semibold text-qblack">
                 My Latest News
               </h1>
-            </div>
+            </div> */}
 
             <div className="blogs-wrapper w-full">
               <div className="grid md:grid-cols-2 grid-cols-1 lg:gap-[30px] gap-5">

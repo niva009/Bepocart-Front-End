@@ -63,7 +63,6 @@ export default function AddressDetails({ open, handleClose }) {
       )
       .then(response => {
         // Handle successful response
-        console.log(response);
         handleClose(); // Close the modal on successful submission
         window.location.reload();
       })

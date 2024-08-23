@@ -66,7 +66,7 @@ export default function Profile() {
               <div className="profile-wrapper w-full mt-8 flex space-x-10">
                 <div className="w-[236px] min-h-[600px] border-r border-[rgba(0, 0, 0, 0.1)]">
                   <div className="flex flex-col space-y-10">
-                    <div className="item group">
+                    {/* <div className="item group">
                       <Link to="/profile#dashboard">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
                           <span>
@@ -77,7 +77,7 @@ export default function Profile() {
                           </span>
                         </div>
                       </Link>
-                    </div>
+                    </div> */}
                     <div className="item group">
                       <Link to="/profile#profile">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
@@ -91,18 +91,6 @@ export default function Profile() {
                       </Link>
                     </div>
 
-                    {/* <div className="item group">
-                      <Link to="/profile#payment">
-                        <div className="flex space-x-3 items-center text-qgray hover:text-qblack">
-                          <span>
-                            <IcoPayment />
-                          </span>
-                          <span className=" font-normal text-base">
-                            Payment Method
-                          </span>
-                        </div>
-                      </Link>
-                    </div> */}
                     <div className="item group">
                       <Link to="/profile#order">
                         <div className="flex space-x-3 items-center text-qgray hover:text-qblack">

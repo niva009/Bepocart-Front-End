@@ -7,6 +7,8 @@ import { FormControl, NativeSelect } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import './Pagination.css'; // Import the CSS file for pagination styles
+import SliderImg from '../../assets/sliderAd.jpg'
+import { Link } from 'react-router-dom';
 
 const PRODUCTS_PER_PAGE = 15;
 
@@ -28,8 +30,6 @@ export default function AllProductPage() {
   const [showProducts, setShowProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-
-// console.log("sorted resulttttttttt",sortedProducts);
 
 //   useEffect(() => {
 //     setSortedProducts(searchResult);
@@ -99,11 +99,13 @@ export default function AllProductPage() {
           <div className="w-full lg:flex lg:space-x-[30px]">
             <div className="lg:w-[270px]">
               <div className="w-full hidden lg:block h-[295px]">
+                <Link to={""}>
                 <img
-                  src={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-5.png`}
-                  alt=""
+                  src={SliderImg}
+                  alt="slider-imag-ad"
                   className="w-full h-full object-contain"
                 />
+                </Link>
               </div>
             </div>
             <div className="flex-1">

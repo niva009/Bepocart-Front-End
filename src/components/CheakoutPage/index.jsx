@@ -266,26 +266,31 @@ useEffect(() =>{
               </div>
             </div>
             <div className="w-full lg:flex lg:space-x-5">
-              <div className="lg:w-1/2 w-full mb-5 lg:mb-0">
-                <div className="flex items-center space-x-4">
+           <div className="w-full mb-5 lg:mb-0 lg:w-1/2">
+                <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-4">
                   <TextField
-                    placeholder="Discount Code"
+                    placeholder="Enter your discount code"
                     name='couponCode'
                     onChange={handleChange}
-                    disabled = {offer === true}
+                    disabled={offer === true}
+                    style={{ border: '2px dotted #ccc', borderRadius: '0.375rem' }} // Adjust border and radius
+                    className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-qh3-blue"
                   />
                   <button
                     type="button"
-                    className="w-[90px] h-[40px] black-btn rounded-md"
+                    className="w-full lg:w-[120px] h-[44px] bg-black text-white rounded-md hover:bg-gray-800 disabled:opacity-50"
                     onClick={applyCoupon}
-                    disabled = {offer === true}
+                    disabled={offer === true}
                   >
-                    <span className="text-sm font-semibold">Apply</span>
+                    <span className="text-lg font-semibold">Apply</span>
                   </button>
-
-                  {offer && <p>Coupon codes cannot be applied to products with an active offer. Please enjoy the current discount! </p>}
                 </div>
-              </div>
+                {offer && (
+                  <p className="text-center lg:text-left text-sm text-red-500 mt-2">
+                    Coupon codes cannot be applied to products with an active offer. Please enjoy the current discount!
+                  </p>
+                )}
+              </div>
 
               <div className="lg:w-1/2 w-full">
                 <h1 className="sm:text-2xl text-xl text-qblack font-medium mb-5">
@@ -364,15 +369,16 @@ useEffect(() =>{
   )}
 </div>
 
-                    <div>
-                      <p className="text-[15px] font-medium text-qblack">
-                        {shipping === 0 ? (
-                          <span style={{ color: 'green' }}>Free Delivery</span>
-                        ) : (
-                          `$₹{shipping.toFixed(2)}`
-                        )}
-                      </p>
-                    </div>
+<div>
+  <p className="text-[15px] font-medium text-qblack">
+    {shipping === 0 ? (
+      <span style={{ color: 'green' }}>Free Delivery</span>
+    ) : (
+      `$${shipping.toFixed(2)}`
+    )}
+  </p>
+</div>
+
                   </div>
                   <div className="flex justify-between mt-4">
                     <div>

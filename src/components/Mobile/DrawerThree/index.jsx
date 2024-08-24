@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import Compair from "../../Helpers/icons/Compair";
+import { useState, useEffect, startTransition } from "react";
 import ThinLove from "../../Helpers/icons/ThinLove";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -32,7 +31,9 @@ export default function Drawer({ className, open, action }) {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/category/`);
-        setCategories(response.data.data);
+        startTransition(() => {
+          setCategories(response.data.data);
+        });
       } catch (error) {
         console.error("Error fetching categories:", error);
       }

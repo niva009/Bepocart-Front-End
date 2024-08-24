@@ -43,6 +43,8 @@ export default function ProductsTable({ className, onQuantityChange }) {
     fetchCartProducts();
   }, []);
 
+  console.log(cartProducts)
+
   const handleDeleteProduct = async (id) => {
     try {
       const token = localStorage.getItem("token");
@@ -182,9 +184,7 @@ export default function ProductsTable({ className, onQuantityChange }) {
                           {product.name}
                         </span>
 
-                        <sup className="text-[13px] text-green-600 ml-1 mt-1">
-                          x{product.free_quantity}
-                        </sup>
+                      
                       </p>
 
                       {/* Display offer type */}

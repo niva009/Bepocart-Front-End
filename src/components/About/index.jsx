@@ -79,7 +79,7 @@ export default function About() {
       
                 <Link to="/contact">
                   <div className="w-[121px] h-10">
-                    <span className="yellow-btn">Contact Us</span>
+                  <button className="bg-qh3-blue hover:bg-qh3-darkblue text-white font-semibold py-2 px-4 rounded">About Us</button>
                   </div>
                 </Link>
               </div>
@@ -108,24 +108,14 @@ export default function About() {
                     <span className="text-[13px] text-qblack">(5.0)</span>
                   </div>
                   <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
+                  I have ordered 2 helmets from bepocart Few days back i Received Parcel Firstly the packing was good and about helmets they was also good i love it seriously that's what I was looking for... You can also buy it i will give 10/10 Keep shopping
                   </div>
                   <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img src="/banner-image.jpg" alt="banner-image"
-                      />
-                    </div>
+        
                     <div>
                       <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
+                        Arul
                       </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
                     </div>
                   </div>
                 </div>
@@ -143,28 +133,14 @@ export default function About() {
                     <span className="text-[13px] text-qblack">(5.0)</span>
                   </div>
                   <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
+                  Hi cyclist, Worth the money, I recently purchased a car rack at an affordable price, and the build quality of the bicycle stand is also good. I've tried it with two road bikes, each weighing approximately 10 kilos
                   </div>
                   <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
+          
                     <div>
                       <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
+                      Sathish Kumar S
                       </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
                     </div>
                   </div>
                 </div>
@@ -182,262 +158,15 @@ export default function About() {
                     <span className="text-[13px] text-qblack">(5.0)</span>
                   </div>
                   <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
+      
+
+Complete brake cable replacement kit. It includes all the neccessary parts like end caps, ferrule, etc, Il you need to completely change your brake lines. At this offer price, it is probably the best you can find in the market.
                   </div>
                   <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
                     <div>
                       <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
+                        Rema.nair
                       </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden">
-                      <img
-                        src={`${
-                          import.meta.env.VITE_PUBLIC_URL
-                        }/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
                     </div>
                   </div>
                 </div>
@@ -449,7 +178,7 @@ export default function About() {
                 <button
                   onClick={prev}
                   type="button"
-                  className="w-[48px] h-[48px] rounded-full overflow-hidden flex justify-center items-center border border-qyellow text-qyellow focus:bg-qyellow focus:text-white"
+                  className="w-[48px] h-[48px] rounded-full overflow-hidden flex justify-center items-center border border-qh3-blue text-qh3-blue focus:bg-qh3-blue focus:text-white"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -469,7 +198,7 @@ export default function About() {
                 <button
                   onClick={next}
                   type="button"
-                  className="w-[48px] h-[48px] rounded-full overflow-hidden flex justify-center items-center border border-qyellow text-qyellow focus:bg-qyellow focus:text-white"
+                  className="w-[48px] h-[48px] rounded-full overflow-hidden flex justify-center items-center border border-qh3-blue text-qh3-blue focus:bg-qh3-blue focus:text-white"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -493,7 +222,7 @@ export default function About() {
         <div className="container-x mx-auto my-[60px]">
           <div
             data-aos="fade-down"
-            className="best-services w-full bg-qyellow flex flex-col space-y-10 lg:space-y-0 lg:flex-row lg:justify-between lg:items-center lg:h-[110px] px-10 lg:py-0 py-10"
+            className="best-services w-full bg-qh3-blue flex flex-col space-y-10 lg:space-y-0 lg:flex-row lg:justify-between lg:items-center lg:h-[110px] px-10 lg:py-0 py-10"
           >
             <div className="item">
               <div className="flex space-x-5 items-center">
@@ -548,7 +277,7 @@ export default function About() {
                   <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
                     Free Shipping
                   </p>
-                  <p className="text-sm text-qblack">When ordering over $100</p>
+                  <p className="text-sm text-qblack">When ordering above 500 Rs</p>
                 </div>
               </div>
             </div>

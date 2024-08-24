@@ -38,8 +38,7 @@ export default function Footer({ type }) {
           <div className="lg:w-[424px]  ml-0 w-full mb-10 lg:mb-0">
             <h1 className="text-[18] font-500 text-[#2F2F2F] mb-5">About Us</h1>
             <p className="text-[#9A9A9A] text-[15px] w-[247px] leading-[28px]">
-              We know there are a lot of threa developers our but we pride into
-              a firm in the industry.
+            Bepokart, an ecommerce website for a wide range of cycles, accessories, and apparel in India, 
             </p>
           </div>
           <div className="flex-1 lg:flex">
@@ -89,20 +88,20 @@ export default function Footer({ type }) {
                         </span>
                       </Link>
                     </li>
-                    {/* <li>
-                      <Link to="/tracking-order">
+                    <li>
+                      <Link to="/privacy-policy">
                         <span className="text-[#9A9A9A] text-[15px] hover:text-qblack border-b border-transparent hover:border-qblack cursor-pointer capitalize">
-                          Tracking Order
+                          Privacy policy
                         </span>
                       </Link>
-                    </li> */}
-                    {/* <li>
-                      <Link to="/become-saller">
+                    </li>
+                    <li>
+                      <Link to="/shipping-policy">
                         <span className="text-[#9A9A9A] text-[15px] hover:text-qblack border-b border-transparent hover:border-qblack cursor-pointer capitalize">
-                          Become Seller
+                          Shipping Policy
                         </span>
                       </Link>
-                    </li> */}
+                    </li>
                   </ul>
                 </div>
               </div>

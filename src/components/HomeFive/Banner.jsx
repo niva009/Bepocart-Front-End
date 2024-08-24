@@ -295,7 +295,7 @@ export default function Banner({ className }) {
                   Free Shipping
                 </p>
                 <p className="text-sm text-qgray text-white">
-                  When ordering over $100
+                  When ordering over
                 </p>
               </div>
             </div>

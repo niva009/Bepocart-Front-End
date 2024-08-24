@@ -1,10 +1,11 @@
-import React, { useState, useEffect, lazy } from 'react';
-const BreadcrumbCom = lazy(() =>import('../components/BreadcrumbCom'));
+import React, { useState, useEffect, } from 'react';
+import BreadcrumbCom  from '../components/BreadcrumbCom';
 import ProductCardStyleOne from '../components/Helpers/Cards/ProductCardStyleOne';
 import DataIteration from '../components/Helpers/DataIteration';
 import Layout from '../components/Partials/Layout';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import SliderAd from '../assets/sliderAd.jpg'
 
 export default function MainCategory() {
   const { id } = useParams();
@@ -43,7 +44,7 @@ export default function MainCategory() {
             <div className="lg:w-[270px]">
               <div className="w-full hidden lg:block h-[295px]">
                 <img
-                  src={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/ads-5.png`}
+                  src={SliderAd}
                   alt=""
                   className="w-full h-full object-contain"
                 />

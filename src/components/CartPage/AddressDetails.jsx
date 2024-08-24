@@ -29,14 +29,24 @@ const style = {
 const defaultTheme = createTheme();
 
 const validationSchema = yup.object({
+  phone: yup
+    .string()
+    .required('Phone number is required')
+    .matches(/^[0-9]{10}$/, 'Phone number should be 10 digits'),
+  email: yup
+    .string()
+    .email('Enter a valid email')
+    .required('Email is required'),
   address: yup.string().required('Address is required'),
-  email: yup.string().email('Enter a valid email').required('Email is required'),
-  phone: yup.string().matches(/^[0-9]{10}$/, 'Phone number should be 10 digits').required('Phone number is required'),
   city: yup.string().required('City is required'),
   state: yup.string().required('State is required'),
-  pincode: yup.string().matches(/^[0-9]{6}$/, 'Pin Code should be 6 digits').required('Pin Code is required'),
-  note: yup.string()
+  pincode: yup
+    .string()
+    .required('Pin Code is required')
+    .matches(/^[0-9]{6}$/, 'Pin Code should be 6 digits'),
+  note: yup.string(),
 });
+
 
 export default function AddressDetails({ open, handleClose }) {
   const formik = useFormik({
@@ -103,7 +113,6 @@ export default function AddressDetails({ open, handleClose }) {
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>
                       <TextField
-                        autoComplete="given-name"
                         name="phone"
                         required
                         fullWidth
@@ -111,7 +120,7 @@ export default function AddressDetails({ open, handleClose }) {
                         label="Phone"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        value={formik.values.phone}
+                        // value={formik.values.phone}
                         error={formik.touched.phone && Boolean(formik.errors.phone)}
                         helperText={formik.touched.phone && formik.errors.phone}
                         autoFocus

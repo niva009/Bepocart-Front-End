@@ -123,12 +123,10 @@ export default function HomeThree() {
           />
         </ViewMoreTitle>
         <ProductsAds
-          ads={[
-            offerBanner1, // Directly using the imported image
-            offerBanner2  // You can add more images like this
-          ]}
+          ads={banners.slice(0, 2).map((banner) => `${banner.image}`)}
+          sectionHeight="sm:h-[295px] h-full"
           className="products-ads-section mb-[60px]"
-        />;
+        />
         {/* <SectionStyleOneHmThree
           type={3}
           categoryBackground={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/section-category-2.jpg`}
@@ -152,7 +150,7 @@ export default function HomeThree() {
         />
       </LayoutHomeThree>
       <a
-        href="https://wa.me/8167845851?text=Hello,%20I%20am%20interested%20in%20your%20products!"
+        href="https://wa.me/6235402223?text=Hello,%20I%20am%20interested%20in%20your%20products!"
         className="whatsapp_float"
         target="_blank"
         rel="noopener noreferrer"

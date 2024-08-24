@@ -10,8 +10,9 @@ export default function Banner({ className }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/banners/`)
-        setSliderData(response.data.banner); 
+        const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/banners/`);
+        setSliderData(response.data.banner);
+        console.log("Data:", response.data.banner);
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -19,7 +20,7 @@ export default function Banner({ className }) {
     fetchData();
   }, []);
 
-
+  console.log(sliderData, "slider images");
   const settings = {
     dots: false,
     infinite: true,
@@ -29,76 +30,65 @@ export default function Banner({ className }) {
   };
 
   return (
-    <div className={`w-full xl:h-[733px] h-[500px] ${className || ""}`}>
-      <div className="main-wrapper w-full h-full">
-        <div className="hero-slider-wrapper xl:h-full mb-20 xl:mb-0  w-full relative">
-          <div className="absolute left-0 top-0 w-full h-full items-center justify-between hidden xl:flex">
-            <button
-              type="button"
-              onClick={() => sliderRef.current.slickPrev()}
-              className="relative hover:text-qh3-blue text-[#8cb1f6] 2xl:left-32 left-5 cursor-pointer z-10"
-            >
-              {/* Left arrow SVG */}
-            </button>
-            <button
-              type="button"
-              onClick={() => sliderRef.current.slickNext()}
-              className="relative hover:text-qh3-blue text-[#8cb1f6]  2xl:right-32 right-5 cursor-pointer z-10"
-            >
-              {/* Right arrow SVG */}
-            </button>
-          </div>
-          <SimpleSlider settings={settings} selector={sliderRef}>
-            {sliderData.map((item, index) => (
-              <div key={index} className="item w-full xl:h-[733px] h-[500px]">
-                <div
-                  className="w-full h-full relative"
-                  style={{
-                    backgroundImage: `url(${item.image})`,
-                    backgroundRepeat: "no-repeat",
-                    backgroundSize: "cover",
-                  }}
-                >
-                  <div className="container-x mx-auto flex items-center  h-full">
-                    <div className="w-full h-full xl:flex items-center pt-20 xl:pt-0">
-                      <div className="xl:w-[626px] w-full">
-                        {/* <p className="md:text-[34px] text-[20px] font-medium text-white mb-[7px]">
-                          VR BOX 3D Glass
-                        </p> */}
-                        <h1 className="md:text-[66px] text-[40px]  font-bold text-black md:leading-[80px] leading-[40px] mb-[44px]">
-                          {/* {item.name} */}
-                        </h1>
+    <div className={`relative w-full ${className || ""}`}>
+      <div className="relative w-full h-full">
+        <div className="absolute top-1/2 left-4 transform -translate-y-1/2 flex flex-col justify-between h-full">
+          <button
+            type="button"
+            onClick={() => sliderRef.current.slickPrev()}
+            className="bg-white p-3 rounded-full shadow-lg flex items-center justify-center text-[#8cb1f6] hover:bg-gray-200 transition-transform transform hover:scale-110 mb-2"
+            style={{ zIndex: 10 }}
+          >
+            {/* Left arrow SVG */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18l-6-6 6-6" stroke="#8cb1f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => sliderRef.current.slickNext()}
+            className="bg-white p-3 rounded-full shadow-lg flex items-center justify-center text-[#8cb1f6] hover:bg-gray-200 transition-transform transform hover:scale-110"
+            style={{ zIndex: 10 }}
+          >
+            {/* Right arrow SVG */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18l6-6-6-6" stroke="#8cb1f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
 
-                        <Link to="#" passhref="true">
-                          <div rel="noopener noreferrer">
-                            <div
-                              className={`w-[160px] h-[52px] flex justify-center items-center group rounded bg-qh3-blue text-white relative transition-all duration-300 ease-in-out overflow-hidden cursor-pointer ${
-                                className || ""
-                              }`}
-                            >
-                            <div className="flex space-x-1 items-center transition-all duration-300 ease-in-out relative z-10">
-  <Link to="/all-products" className="text-sm font-600 tracking-wide leading-7 mr-2">
-    Shop Now
-  </Link>
-</div>
-                              <div
-                                style={{
-                                  transition: `transform 0.25s ease-in-out`,
-                                }}
-                                className="w-full h-full bg-black absolute top-0 left-0 right-0 bottom-0 transform scale-x-0 group-hover:scale-x-100 origin-[center_left] group-hover:origin-[center_right]"
-                              ></div>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
+        </div>
+        <SimpleSlider settings={settings} selector={sliderRef}>
+          {sliderData.map((item, index) => (
+            <div key={index} className="relative w-full h-[300px] xl:h-[733px] flex items-center justify-center">
+              <div
+                className="w-full h-full bg-cover bg-center flex items-center justify-center"
+                style={{
+                  backgroundImage: `url(${item.image})`,
+                }}
+              >
+                <div className="text-center w-full">
+                  <h1 className="text-[24px] sm:text-[40px] md:text-[66px] font-bold text-black leading-tight mb-[20px] sm:mb-[44px]">
+                    {/* {item.name} */}
+                  </h1>
+
+                  <div className="flex items-center relative z-10">
+                    <Link
+                      to="/all-products"
+                      className="text-sm font-semibold tracking-wide leading-7 px-5 py-3 bg-qh3-blue text-white  shadow-md hover:bg-qh3-blue transition-colors duration-300 ml-[150px]"
+                    >
+                      Shop Now
+                    </Link>
                   </div>
+
+
+
+
                 </div>
               </div>
-            ))}
-          </SimpleSlider>
-        </div>
+            </div>
+          ))}
+        </SimpleSlider>
       </div>
-    </div>
-  );
+    </div>
+  );
 }

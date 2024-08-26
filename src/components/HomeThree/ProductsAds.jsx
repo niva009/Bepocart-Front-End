@@ -27,7 +27,7 @@ export default function ProductsAds({
           </div>
           {ads.length > 1 && ads.length <= 2 && (
             <div data-aos="fade-left" className="flex-1 h-full">
-              <Link to="/single-product">
+              <Link to="/all-products">
                 <img src={ads[1]} alt="" className="w-full h-full" />
               </Link>
             </div>

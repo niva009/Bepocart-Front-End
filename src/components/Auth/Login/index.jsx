@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
-import * as yup from "yup";  // Correct import for Yup
+import * as yup from "yup";
 import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -40,15 +40,14 @@ export default function Login() {
     }
   };
 
-
   return (
-    <div className="login-page-wrapper w-full py-10">
+    <div className="login-page-wrapper w-full py-10 px-4">
       <div className="container-x mx-auto">
         <div className="lg:flex items-center relative">
-          <div className="lg:w-[572px] w-full h-[783px] bg-white flex flex-col justify-center sm:p-10 p-5 border border-[#E0E0E0]">
+          <div className="lg:w-[572px] w-full h-full bg-white flex flex-col justify-center sm:p-10 p-5 border border-[#E0E0E0]">
             <div className="w-full">
               <div className="title-area flex flex-col justify-center items-center relative text-center mb-7">
-                <h1 className="text-[34px] font-bold leading-[74px] text-qblack">
+                <h1 className="text-[24px] sm:text-[34px] font-bold leading-[40px] sm:leading-[74px] text-qblack">
                   Log In
                 </h1>
                 <div className="shape -mt-6">
@@ -82,7 +81,7 @@ export default function Login() {
                       <div className="input-item mb-5">
                         <TextField
                           placeholder="Email"
-                          style={{width:"500px"}}
+                          fullWidth
                           label="Email Address*"
                           name="email"
                           type="email"
@@ -96,8 +95,8 @@ export default function Login() {
                       <div className="input-item mb-5">
                         <TextField
                           placeholder="Password"
+                          fullWidth
                           label="Password*"
-                          style={{width:"500px"}}
                           name="password"
                           type="password"
                           value={values.password}
@@ -107,7 +106,7 @@ export default function Login() {
                           helperText={touched.password && errors.password}
                         />
                       </div>
-                      <div className="forgot-password-area flex justify-between items-center mb-7">
+                      <div className="forgot-password-area flex justify-between items-center mb-7 text-sm sm:text-base">
                         <div className="remember-checkbox flex items-center space-x-2.5">
                           <button
                             onClick={rememberMe}
@@ -147,16 +146,13 @@ export default function Login() {
                         <div className="flex justify-center">
                           <button
                             type="submit"
-                            className="black-btn mb-6 text-sm text-white w-full h-[50px] font-semibold flex justify-center bg-purple items-center"
+                            className="black-btn mb-6 text-sm sm:text-base text-white w-full h-[50px] font-semibold flex justify-center bg-purple items-center"
                             disabled={isSubmitting}
                           >
                             <span>Log In</span>
                           </button>
                         </div>
                       </div>
-
-                    
-
                       <div className="signup-area flex justify-center">
                         <p className="text-base text-qgraytwo font-normal">
                           Don’t have an account?

@@ -74,7 +74,7 @@ export default function Banner({ className }) {
                   <div className="flex items-center relative z-10">
                     <Link
                       to="/all-products"
-                      className="text-sm font-semibold tracking-wide leading-7 px-5 py-3 bg-qh3-blue text-white  shadow-md hover:bg-qh3-blue transition-colors duration-300 ml-[150px]"
+                      className="text-sm font-semibold tracking-wide leading-7 px-5 py-3 bg-qh3-blue text-black  shadow-md hover:bg-qh3-blue transition-colors duration-300 ml-[150px]"
                     >
                       Shop Now
                     </Link>

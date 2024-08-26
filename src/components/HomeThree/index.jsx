@@ -150,7 +150,7 @@ export default function HomeThree() {
         />
       </LayoutHomeThree>
       <a
-        href="https://wa.me/6235402223?text=Hello,%20I%20am%20interested%20in%20your%20products!"
+        href="https://wa.me/+917025494747?text=Hello,%20I%20am%20interested%20in%20your%20products!"
         className="whatsapp_float"
         target="_blank"
         rel="noopener noreferrer"

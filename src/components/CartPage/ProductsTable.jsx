@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate , Link} from 'react-router-dom';
 
 export default function ProductsTable({ className, onQuantityChange }) {
   const [cartProducts, setCartProducts] = useState([]);
@@ -162,6 +162,7 @@ export default function ProductsTable({ className, onQuantityChange }) {
             {cartProducts.map((product, index) => (
               <tr key={index} className="bg-white border-b hover:bg-gray-50">
                 <td className="pl-10 py-4 w-[380px]">
+                  <Link to={`/single-product/${product.slug}`}>
                   <div className="flex space-x-6 items-center">
                     <div className="w-[80px] h-[80px] overflow-hidden flex justify-center items-center border border-[#EDEDED]">
                       <img
@@ -196,6 +197,7 @@ export default function ProductsTable({ className, onQuantityChange }) {
 
 
                   </div>
+                  </Link>
                 </td>
                 <td className="text-center py-4 px-2">
                   <div className="flex justify-center items-center">

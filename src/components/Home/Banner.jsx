@@ -112,7 +112,7 @@ export default function Banner({ className }) {
                       Free Shipping
                     </p>
                     <p className="text-sm text-qgray">
-                      When ordering over $100
+                      When orderring above ₹ 500
                     </p>
                   </div>
                 </div>
@@ -146,7 +146,7 @@ export default function Banner({ className }) {
                   </div>
                   <div>
                     <p className="text-black text-[15px] font-700 tracking-wide mb-1">
-                      Free Return
+                      Cash on delivery available
                     </p>
                     <p className="text-sm text-qgray">
                       {/* Get Return within 30 days */}

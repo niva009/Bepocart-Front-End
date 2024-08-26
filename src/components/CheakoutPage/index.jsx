@@ -74,6 +74,8 @@ export default function CheckoutPage() {
     fetchCouponData();
   }, [token]);
 
+  console.log("shipping charges",shipping);
+
   useEffect(() => {
     const calculatedTotal = total + shipping - discount;
     setSubtotal(calculatedTotal);
@@ -81,11 +83,15 @@ export default function CheckoutPage() {
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
+    let newShipping = 0;
+  
     if (method === "COD") {
-      setShipping((prevShipping) => prevShipping + 40);
-    } else {
-      setShipping((prevShipping) => prevShipping - 40);
+      newShipping = total < 500 ? 100 : 40;
+    } else if (method === "razorpay") {
+      newShipping = total < 500 ? 40 : 0;
     }
+  
+    setShipping(newShipping);
   };
 
 useEffect(() =>{

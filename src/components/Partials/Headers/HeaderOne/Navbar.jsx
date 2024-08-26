@@ -131,7 +131,7 @@ export default function Navbar({ className, type }) {
                   <li>
                     <Link to="/">
                       <span
-                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-white" : "text-qblacktext"
+                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-black" : "text-qblacktext"
                           }`}
                       >
                         <span>Home</span>
@@ -140,7 +140,7 @@ export default function Navbar({ className, type }) {
                   </li>
                   <li className="relative">
                     <span
-                      className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-white" : "text-qblacktext"
+                      className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-black" : "text-qblacktext"
                         }`}
                     >
                       <span>Pages</span>
@@ -194,7 +194,7 @@ export default function Navbar({ className, type }) {
                   <li>
                     <Link to="/about">
                       <span
-                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-white" : "text-qblacktext"
+                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-black" : "text-qblacktext"
                           }`}
                       >
                         <span>About</span>
@@ -204,7 +204,7 @@ export default function Navbar({ className, type }) {
                   <li>
                     <Link to="/blogs">
                       <span
-                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-white" : "text-qblacktext"
+                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-black" : "text-qblacktext"
                           }`}
                       >
                         <span>Blog</span>
@@ -214,7 +214,7 @@ export default function Navbar({ className, type }) {
                   <li>
                     <Link to="/contact">
                       <span
-                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-white" : "text-qblacktext"
+                        className={`flex items-center text-sm font-600 cursor-pointer ${type === 3 ? "text-black" : "text-qblacktext"
                           }`}
                       >
                         <span>Contact</span>

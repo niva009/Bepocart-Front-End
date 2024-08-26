@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import tailwind from "tailwindcss";
-
 import { VitePWA } from "vite-plugin-pwa";
 
 // Add PWA configuration
@@ -20,9 +19,9 @@ const pwaConfig = {
     ],
   },
   manifest: {
-    name: "Shopo",
-    short_name: "Shopo",
-    description: "Shopo",
+    name: "Bepocart",
+    short_name: "Bepocart",
+    description: "bepocart",
     start_url: "/",
     display: "standalone",
     background_color: "#FFBB38",
@@ -44,6 +43,15 @@ const pwaConfig = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',  // Add this line
+  base: '/',  // Specify the base path
   plugins: [react(), VitePWA(pwaConfig), tailwind()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://bepocart.in', // Backend URL
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // Optional: remove '/api' prefix
+      },
+    },
+  },
 });

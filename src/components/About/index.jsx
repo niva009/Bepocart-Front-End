@@ -79,7 +79,7 @@ export default function About() {
       
                 <Link to="/contact">
                   <div className="w-[121px] h-10">
-                  <button className="bg-qh3-blue hover:bg-qh3-darkblue text-white font-semibold py-2 px-4 rounded">About Us</button>
+                  <button className="bg-qh3-blue hover:bg-qh3-darkblue text-black font-semibold py-2 px-4 rounded">About Us</button>
                   </div>
                 </Link>
               </div>
@@ -310,7 +310,7 @@ Complete brake cable replacement kit. It includes all the neccessary parts like 
                 </div>
                 <div>
                   <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
-                    Free Return
+                    Cash on delivery available
                   </p>
                   <p className="text-sm text-qblack">
                     {/* Get Return within 30 days */}

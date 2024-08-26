@@ -33,7 +33,8 @@ export default function ProductView({ className }) {
 
   useEffect(() => {
     fetchProduct(id);
-  }, [id]);
+    stock
+  }, [id],stock);
   
   const fetchProduct = async () => {
     setLoading(true);
@@ -66,6 +67,7 @@ export default function ProductView({ className }) {
           .map(variant => variant.size);
   
         initialStock = initialStockInfo.filter(variant => variant.stock > 0);
+        console.log("initial stock inormation" ,initialStock)
       }
   
       setVariants(initialStockInfo);
@@ -232,6 +234,8 @@ export default function ProductView({ className }) {
       }
     }
   };
+
+  console.log("stock information",stock)
   
 
 
@@ -423,25 +427,6 @@ export default function ProductView({ className }) {
     </FormControl>
   </div>
 )}
-
-          {/* <div className="mb-4">
-            <h4 className="text-base font-bold text-qblack mb-2">Quantity</h4>
-            <div className="flex items-center space-x-4">
-              <button
-                className="w-8 h-8 border border-qgray text-qblack flex justify-center items-center"
-                onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
-              >
-                -
-              </button>
-              <span>{quantity}</span>
-              <button
-                className="w-8 h-8 border border-qgray text-qblack flex justify-center items-center"
-                onClick={() => setQuantity(quantity + 1)}
-              >
-                +
-              </button>
-            </div>
-          </div> */}
           <div className="mb-4">
 
             <div className="mb-4">

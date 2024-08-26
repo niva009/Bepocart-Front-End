@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Wishlist.css';
+import { Link } from 'react-router-dom';
 
 Modal.setAppElement('#root'); // Set the root element for accessibility
 
@@ -34,6 +35,9 @@ export default function ProductsTable({ className }) {
       console.error("Error fetching wishlist:", error);
     }
   };
+
+
+  console.log("wishlist-itemsssss",wishlist);
 
   const handleDeleteItem = async (itemId) => {
     try {
@@ -117,7 +121,9 @@ export default function ProductsTable({ className }) {
           {wishlist.map((item) => (
             <tr key={item.id} className="bg-white border-b hover:bg-gray-50">
               <td className="pl-10 py-4">
+              <Link to={`/single-product/${item.slug}`}>
                 <div className="flex space-x-6 items-center">
+                 
                   <div className="w-[80px] h-[80px] overflow-hidden flex justify-center items-center border border-[#EDEDED]">
                     <img
                       src={`${item.productImage}`}
@@ -131,6 +137,7 @@ export default function ProductsTable({ className }) {
                     </p>
                   </div>
                 </div>
+                </Link>
               </td>
               <td className="text-center py-4 px-2">
                 <div className="flex space-x-1 items-center justify-center">

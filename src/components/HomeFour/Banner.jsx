@@ -163,7 +163,7 @@ export default function Banner({ className }) {
                   </div>
                   <div>
                     <p className="text-white text-[15px] font-700 tracking-wide mb-1">
-                      Free Return
+                      Cash on delivery available
                     </p>
                     <p className="text-sm text-qgray text-white">
                       {/* Get Return within 30 days */}

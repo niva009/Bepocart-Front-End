@@ -1,9 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../../Partials/Layout";
 import Thumbnail from "./Thumbnail";
 import { Link } from "react-router-dom";
 import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,12 +15,20 @@ import * as yup from 'yup';
 import { useFormik } from 'formik';
 
 export default function Signup() {
-
   const [checked, setValue] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const rememberMe = () => {
     setValue(!checked);
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   const validationSchema = yup.object({
@@ -172,9 +184,23 @@ export default function Signup() {
                         value={formik.values.password}
                         error={formik.touched.password && Boolean(formik.errors.password)}
                         helperText={formik.touched.password && formik.errors.password}
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         style={{ height: '70px', width: '100%' }}
                         placeholder="password"
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={handleClickShowPassword}
+                                onMouseDown={handleMouseDownPassword}
+                                edge="end"
+                              >
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
                       />
                     </div>
                     <div className="forgot-password-area mb-7">
@@ -201,42 +227,29 @@ export default function Signup() {
                         </button>
                         <span
                           onClick={rememberMe}
-                          className="text-base text-black"
+                          className="text-base text-black capitalize"
+                          style={{ cursor: 'pointer' }}
                         >
                           Remember Me
                         </span>
                       </div>
                     </div>
-                    <div className="signin-area mb-3">
-                      <div className="flex justify-center">
-                        <button
-                          type="submit"
-                          className="black-btn text-sm text-white w-full h-[50px] font-semibold flex justify-center bg-purple items-center"
-                        >
-                          <span>Create Account</span>
-                        </button>
-                      </div>
-                    </div>
-                    <div className="signup-area flex justify-center">
-                      <p className="text-base text-qgraytwo font-normal">
-                        Already have an Account?
-                        <Link to="/login" className="ml-2 text-qblack">
-                          Log In
-                        </Link>
-                      </p>
-                    </div>
+                    <button type="submit" className="black-btn w-full h-[50px] text-white text-[18px] font-semibold flex justify-center bg-black items-center">
+                      Sign Up
+                    </button>
                   </div>
                 </form>
+                <div className="from-footer text-center mt-10">
+                  <p className="text-base text-qgray">
+                    Already have an account?{' '}
+                    <Link to="/login" className="text-qblack">
+                      Login
+                    </Link>
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex-1 lg:flex hidden transform scale-60 xl:scale-100 xl:justify-center">
-              <div
-                className="absolute xl:-right-20 -right-[138px]"
-                style={{ top: "calc(50% - 258px)" }}
-              >
-                <Thumbnail />
-              </div>
-            </div>
+            <Thumbnail />
           </div>
         </div>
       </div>

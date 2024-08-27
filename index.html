@@ -7,7 +7,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>bepocart</title>
   </head>
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1826070831209321');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1826070831209321&ev=PageView&noscript=1"
+    /></noscript>
   <body>
+
+    <script>
+        // Track Scroll Depth
+        function trackScrollDepth() {
+            const scrollDepth = (window.scrollY + window.innerHeight) / document.body.scrollHeight;
+
+            if (scrollDepth >= 0.5 && !window.hasTracked50) {
+                fbq('trackCustom', 'SLScrollDepth50');
+                window.hasTracked50 = true;
+            }
+
+            if (scrollDepth >= 0.75 && !window.hasTracked75) {
+                fbq('trackCustom', 'SLScrollDepth75');
+                window.hasTracked75 = true;
+            }
+
+            if (scrollDepth >= 0.95 && !window.hasTracked95) {
+                fbq('trackCustom', 'SLScrollDepth95');
+                window.hasTracked95 = true;
+            }
+        }
+
+        window.addEventListener('scroll', trackScrollDepth);
+
+        // Track Time on Page
+        function trackTimeOnPage() {
+            setTimeout(() => fbq('trackCustom', 'SLTimeOnPage3s'), 3000);
+            setTimeout(() => fbq('trackCustom', 'SLTimeOnPage5s'), 5000);
+            setTimeout(() => fbq('trackCustom', 'SLTimeOnPage10s'), 10000);
+            setTimeout(() => fbq('trackCustom', 'SLTimeOnPage30s'), 30000);
+            setTimeout(() => fbq('trackCustom', 'SLTimeOnPage60s'), 60000);
+        }
+
+        window.addEventListener('load', trackTimeOnPage);
+
+        // Track Time on Site
+        function trackTimeOnSite() {
+            let startTime = localStorage.getItem('siteStartTime');
+            
+            if (!startTime) {
+                startTime = Date.now();
+                localStorage.setItem('siteStartTime', startTime);
+            }
+            
+            function sendSiteTimeEvents() {
+                const elapsedTime = (Date.now() - startTime) / 1000; // seconds
+
+                if (elapsedTime >= 3 && !window.hasTrackedSite3s) {
+                    fbq('trackCustom', 'SLTimeOnSite3s');
+                    window.hasTrackedSite3s = true;
+                }
+
+                if (elapsedTime >= 5 && !window.hasTrackedSite5s) {
+                    fbq('trackCustom', 'SLTimeOnSite5s');
+                    window.hasTrackedSite5s = true;
+                }
+
+                if (elapsedTime >= 10 && !window.hasTrackedSite10s) {
+                    fbq('trackCustom', 'SLTimeOnSite10s');
+                    window.hasTrackedSite10s = true;
+                }
+
+                if (elapsedTime >= 30 && !window.hasTrackedSite30s) {
+                    fbq('trackCustom', 'SLTimeOnSite30s');
+                    window.hasTrackedSite30s = true;
+                }
+
+                if (elapsedTime >= 60 && !window.hasTrackedSite60s) {
+                    fbq('trackCustom', 'SLTimeOnSite60s');
+                    window.hasTrackedSite60s = true;
+                }
+            }
+
+            window.addEventListener('beforeunload', sendSiteTimeEvents);
+        }
+
+        window.addEventListener('load', trackTimeOnSite);
+
+        // Track Add to Cart Event
+        function trackAddToCart(productId) {
+            fbq('trackCustom', 'ShoelaceAddToCart', {
+                content_ids: [productId],  // Replace with your product ID
+                content_type: 'product',
+            });
+        }
+
+        document.getElementById('add-to-cart-button').addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            trackAddToCart(productId);
+        });
+    </script>
+
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

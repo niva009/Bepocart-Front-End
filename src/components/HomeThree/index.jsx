@@ -28,7 +28,8 @@ export default function HomeThree() {
 
     useEffect(() => {
       if (window.fbq) {
-        window.fbq('track', 'PageView', { page: 'Home' });
+        window.fbq('track', 'PageView', { page: 'HomeThree' });
+    
       }
     }, []);
 

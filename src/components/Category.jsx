@@ -40,6 +40,14 @@ export default function Category() {
     }
   }, [id]);
 
+  
+  useEffect(() => {
+    if (window.fbq) {
+      window.fbq('track', 'PageView', { page: 'HomeThree' });
+  
+    }
+  }, []);
+
 
 
 

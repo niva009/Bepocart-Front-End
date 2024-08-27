@@ -21,6 +21,14 @@ export default function CardPage({ cart = true }) {
 
 
 
+  useEffect(() => {
+    if (window.fbq) {
+      window.fbq('track', 'PageView', { page: 'CardPage' });
+    }
+  }, []);
+
+
+
 
   const token = localStorage.getItem("token");
   const navigate = useNavigate();

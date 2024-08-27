@@ -37,6 +37,7 @@ import ShippingPolicy from "./components/TermsCondition/ShippingPolicy.jsx";
 
 
 const router = createBrowserRouter([
+
   {
     element: <ScrollTop />,
     children: [
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
       { path: "/single-product/:id", element: <SingleProductPage /> },
       { path: "/all-products/", element: <AllProductPage /> },
       { path: "/order-success/", element: <OrderSuccess /> },
-      { path: "/cart", element: <CardPage /> },
+      { path: "/cart", element: <CardPage/>},
       { path: "/checkout/:id/", element: <CheakoutPage /> },
       { path: "/wishlist", element: <Wishlist /> },
       { path: "/about", element: <About /> },

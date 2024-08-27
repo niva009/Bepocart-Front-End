@@ -277,7 +277,7 @@ Complete brake cable replacement kit. It includes all the neccessary parts like 
                   <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
                     Free Shipping
                   </p>
-                  <p className="text-sm text-qblack">When ordering above 500 Rs</p>
+                  <p className="text-sm text-qblack">When orde</p>
                 </div>
               </div>
             </div>
@@ -411,10 +411,10 @@ Complete brake cable replacement kit. It includes all the neccessary parts like 
                 </div>
                 <div>
                   <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
-                    Best Quality
+                    Customer Support
                   </p>
                   <p className="text-sm text-qblack">
-                    Original Product Guarenteed
+                    9am-5pm(mon-sat)
                   </p>
                 </div>
               </div>

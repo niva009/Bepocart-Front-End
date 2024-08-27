@@ -19,6 +19,7 @@ export default function CheckoutPage() {
   const [couponError, setCouponError] = useState(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [ offer, setOffer] = useState("");
+  const [ profile, setProfile] = useState([]);
 
   const token = localStorage.getItem("token");
   const { id } = useParams();
@@ -27,6 +28,26 @@ export default function CheckoutPage() {
   useEffect(() => {
     setSelectedAddress(parseInt(id)); // Parse id from params
   }, [id]);
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  const fetchProfileData = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/profile-view/`, {
+        headers: {
+          Authorization: `${localStorage.getItem('token')}`,
+        },
+      });
+
+      setProfile(response.data.data);
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  console.log("profile detailssss",profile);
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -86,13 +107,16 @@ export default function CheckoutPage() {
     let newShipping = 0;
   
     if (method === "COD") {
-      newShipping = total < 500 ? 100 : 40;
+      newShipping = subtotal < 500 ? 60 : 40;
     } else if (method === "razorpay") {
-      newShipping = total < 500 ? 40 : 0;
+      newShipping = subtotal < 500 ? 40 : 0;
     }
   
     setShipping(newShipping);
   };
+
+
+  console.log("total price",total);
 
 useEffect(() =>{
  
@@ -163,9 +187,9 @@ useEffect(() =>{
           }
         },
         prefill: {
-          name: "Manu Arora",
-          email: "manuarorawork@gmail.com",
-          contact: "9999999999",
+          name: profile.first_name,
+          email: profile.email,
+          contact: profile.phone,
         },
       };
   

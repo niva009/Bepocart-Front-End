@@ -67,7 +67,7 @@ export default function DiscountBanner({ className, type }) {
                   <p className="text-black text-[15px] font-700 tracking-wide mb-1">
                     Free Shipping
                   </p>
-                  <p className="text-sm text-qgray">When orderring above ₹ 500</p>
+                  <p className="text-sm text-qgray">On order above 500 rs</p>
                 </div>
               </div>
             </div>
@@ -201,10 +201,10 @@ export default function DiscountBanner({ className, type }) {
                 </div>
                 <div>
                   <p className="text-black text-[15px] font-700 tracking-wide mb-1">
-                    Best Quality
+                    Customer Support
                   </p>
                   <p className="text-sm text-qgray">
-                    Original Product Guarenteed
+                    9am-5pm(mon-sat)
                   </p>
                 </div>
               </div>

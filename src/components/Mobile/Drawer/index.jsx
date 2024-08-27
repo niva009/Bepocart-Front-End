@@ -42,6 +42,10 @@ export default function DrawerThree({ className, open, action }) {
   }, []);
 
 
+  console.log("subcategory information",brands);
+  console.log("category information",categories);
+
+
 
   useEffect(() =>{
     const token = localStorage.getItem("token");

@@ -129,7 +129,7 @@ export default function Banner({ className }) {
                       Free Shipping
                     </p>
                     <p className="text-sm text-qgray text-white">
-                      When ordering over
+                      When ord
                     </p>
                   </div>
                 </div>
@@ -264,10 +264,10 @@ export default function Banner({ className }) {
                   </div>
                   <div>
                     <p className="text-white text-[15px] font-700 tracking-wide mb-1">
-                      Best Quality
+                      Customer Support
                     </p>
                     <p className="text-sm text-qgray text-white">
-                      Original Product Guarenteed
+                      9am-5pm(mon-sat)
                     </p>
                   </div>
                 </div>

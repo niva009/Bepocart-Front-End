@@ -24,6 +24,9 @@ export default function AddressesTab() {
 
     fetchAddresses();
   }, [token]);
+  
+
+  console.log("address details", addresses);
 
   const handleDeleteAddress = async (id) => {
     try {

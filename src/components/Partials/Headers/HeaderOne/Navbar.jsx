@@ -1,5 +1,5 @@
 import { useEffect, useState ,startTransition} from "react";
-import { Link } from "react-router-dom";
+import { Link, useFetcher } from "react-router-dom";
 import axios from "axios";
 import Arrow from "../../../Helpers/icons/Arrow";
 
@@ -7,6 +7,10 @@ export default function Navbar({ className, type }) {
   const [categoryToggle, setToggle] = useState(false);
   const [elementsSize, setSize] = useState("0px");
   const [categories, setCategories] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+
+
 
   const handler = () => {
     startTransition(() => {
@@ -25,8 +29,31 @@ export default function Navbar({ className, type }) {
         console.error("Error fetching categories:", error);
       }
     };
+
+    const fetchSubCategory = async () =>{
+
+      try{
+        const response =await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategorys/`)
+        setSubCategory(response.data.data)
+      }
+      catch(error){
+        console.log("subcategory fetching error");
+      }
+    }
     fetchCategories();
+    fetchSubCategory();
+    
   }, []);
+
+  // console.log("category information", categories);
+  // console.log("subcategory information", subCategory);
+
+  const handleCategoryClick = (categoryId) => {
+    setActiveCategory((prevActiveCategory) =>
+      prevActiveCategory === categoryId ? null : categoryId
+    );
+  };
+  
 
 
 
@@ -92,39 +119,55 @@ export default function Navbar({ className, type }) {
                     onClick={handler}
                   ></div>
                 )}
-                <div
-                  className="category-dropdown w-full absolute left-0 top-[53px] overflow-hidden"
-                  style={{ height: `${elementsSize} ` }}
-                >
-                  <ul className="categories-list">
-                    {categories.map((category) => (
-                      <li className="category-item" key={category.id}>
-                        <Link to={`/main-category/${category.slug}/`}>
-                          <div
-                            className={`flex justify-between items-center px-5 h-10 bg-white transition-all duration-300 ease-in-out cursor-pointer text-qblack ${type === 3
-                                ? "hover:bg-qh3-blue hover:text-white"
-                                : "hover:bg-qyellow"
-                              }`}
-                          >
-                            <div className="flex items-center space-x-6">
-                        
-                              <span className="text-sm font-400">
-                                {category.name}
-                              </span>
-                            </div>
-                            <div>
-                              <Arrow
-                                width="9.48895"
-                                height="1.85719"
-                                className="fill-current"
-                              />
-                            </div>
-                          </div>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+               <div
+  className="category-dropdown w-full absolute left-0 top-[53px] overflow-hidden"
+  style={{ height: `${elementsSize} ` }}
+>
+  <ul className="categories-list overflow-y-auto max-h-64">
+    {categories.map((category) => (
+      <li className="category-item" key={category.id}>
+        <Link to={`/main-category/${category.slug}/`}>
+          <div
+            className={`flex justify-between items-center px-5 h-10 bg-white transition-all duration-300 ease-in-out cursor-pointer text-qblack ${type === 3
+              ? "hover:bg-qh3-blue hover:text-white"
+              : "hover:bg-qyellow"
+              }`}
+          >
+            <div className="flex items-center space-x-6">
+              <span className="text-sm font-400">{category.name}</span>
+            </div>
+            <div onClick={(e) => {
+              e.preventDefault();
+              handleCategoryClick(category.id);
+            }}>
+              <Arrow
+                width="10.7"
+                height="2.4"
+                className="fill-current cursor-pointer"
+              />
+            </div>  
+          </div>
+        </Link>
+        {activeCategory === category.id && (
+          <ul className="subcategories-list overflow-y-auto max-h-40">
+            {subCategory
+              .filter(subCategory => subCategory.category === category.id)
+              .map(subCategory => (
+                <li className="subcategory-item" key={subCategory.id}>
+                  <Link to={`/category/${subCategory.slug}/`}>
+                    <div className="flex items-center px-5 h-8 bg-gray-100 transition-all duration-300 ease-in-out cursor-pointer text-qblack hover:bg-gray-200">
+                      <span className="text-sm font-400">{subCategory.name}</span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ul>
+</div>
+
               </div>
               <div className="nav">
                 <ul className="nav-wrapper flex xl:space-x-10 space-x-5">

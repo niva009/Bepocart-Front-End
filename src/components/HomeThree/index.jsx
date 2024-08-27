@@ -26,6 +26,12 @@ export default function HomeThree() {
   const [offerProduct, setOfferProducts] = useState([]);
   const [DiscountProducts, setDiscountProducts] = useState([]);
 
+    useEffect(() => {
+      if (window.fbq) {
+        window.fbq('track', 'PageView', { page: 'Home' });
+      }
+    }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {

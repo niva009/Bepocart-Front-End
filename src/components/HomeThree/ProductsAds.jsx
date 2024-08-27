@@ -21,7 +21,7 @@ export default function ProductsAds({
               ads.length > 1 && ads.length <= 2 ? "sm:w-1/2 w-full" : "w-full"
             }  `}
           >
-            <Link to="/single-product">
+            <Link to="/all-products">
               <img src={ads[0]} alt="" className="w-full sm:h-full h-auto" />
             </Link>
           </div>

@@ -6,6 +6,7 @@ import { Formik, Form } from "formik";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Thumbnail from "./Thumbnail";
+import { GoogleLogin } from '@react-oauth/google';
 
 export default function Login() {
   const [checked, setValue] = useState(false);
@@ -38,6 +39,28 @@ export default function Login() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleGoogleLoginSuccess = async (response) => {
+    try {
+      const { credential } = response;
+      const idToken = credential;
+      // const result = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/google-login/`, { idToken });
+      // const token = result.data.token;
+      // localStorage.setItem("token", token);
+      // setMessageType("success");
+      // setMessage("Login successful!");
+
+      // navigate("/");
+    } catch (error) {
+      console.error("Google login error:", error.response ? error.response.data : error.message);
+      setMessageType("error");
+      setMessage("Google login failed. Please try again.");
+    }
+  };
+
+  const handleGoogleLoginError = () => {
+    console.log('Google Login Failed');
   };
 
   return (
@@ -152,6 +175,13 @@ export default function Login() {
                             <span>Log In</span>
                           </button>
                         </div>
+                      </div>
+                      <div className="google-login-section mb-3.5">
+                        <GoogleLogin
+                          onSuccess={handleGoogleLoginSuccess}
+                          onError={handleGoogleLoginError}
+                          buttonText="Login with Google"
+                        />
                       </div>
                       <div className="signup-area flex justify-center">
                         <p className="text-base text-qgraytwo font-normal">

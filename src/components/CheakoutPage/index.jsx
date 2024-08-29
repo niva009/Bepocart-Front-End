@@ -95,12 +95,18 @@ export default function CheckoutPage() {
     fetchCouponData();
   }, [token]);
 
-  console.log("shipping charges",shipping);
 
   useEffect(() => {
-    const calculatedTotal = total + shipping - discount;
+    let calculatedTotal = total + shipping - discount;
+  
+    if (paymentMethod === "COD" && calculatedTotal < 500) {
+      calculatedTotal += 40; // Add ₹40 COD charge for orders below ₹500
+    }
+  
     setSubtotal(calculatedTotal);
-  }, [total, shipping, discount]);
+  }, [total, shipping, discount, paymentMethod]);
+
+
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
@@ -354,7 +360,7 @@ useEffect(() =>{
                             </div>
                             <div>
                               <span className="text-[15px] text-qblack font-medium">
-                                ${item.salePrice * item.quantity}
+                              ₹{item.salePrice * item.quantity}
                               </span>
                             </div>
                           </div>
@@ -398,18 +404,31 @@ useEffect(() =>{
     </p>
   )}
 </div>
-
 <div>
   <p className="text-[15px] font-medium text-qblack">
     {shipping === 0 ? (
       <span style={{ color: 'green' }}>Free Delivery</span>
     ) : (
-      `$${shipping.toFixed(2)}`
+      `₹${shipping.toFixed(2)}`
     )}
   </p>
 </div>
+       </div>
+       {subtotal !== undefined && subtotal < 500 && paymentMethod == "COD" &&(
+  <div className="flex justify-between">
+    <div>
+      <p className="text-[13px] mt-3 font-medium text-qblack uppercase">
+        COD
+      </p>
+    </div>
+    <div>
+      <p className="text-[15px] font-medium mt-3 text-qblack">
+        ₹40
+      </p>
+    </div>
+  </div>
+)}
 
-                  </div>
                   <div className="flex justify-between mt-4">
                     <div>
                       <p className="text-[15px] font-medium text-qblack uppercase">
@@ -417,7 +436,7 @@ useEffect(() =>{
                       </p>
                     </div>
                     <div>
-                      <p className="text-[15px] font-medium text-qred">${(subtotal).toFixed(2)}
+                      <p className="text-[15px] font-medium text-qred">₹{(subtotal).toFixed(2)}
                       </p>
                     </div>
                   </div>

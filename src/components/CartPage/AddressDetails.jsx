@@ -44,7 +44,6 @@ const validationSchema = yup.object({
     .string()
     .required('Pin Code is required')
     .matches(/^[0-9]{6}$/, 'Pin Code should be 6 digits'),
-  note: yup.string(),
 });
 
 
@@ -57,7 +56,6 @@ export default function AddressDetails({ open, handleClose }) {
       city: '',
       state: '',
       pincode: '',
-      note: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -197,19 +195,7 @@ export default function AddressDetails({ open, handleClose }) {
                         helperText={formik.touched.pincode && formik.errors.pincode}
                       />
                     </Grid>
-                    <Grid item xs={12}>
-                      <TextField
-                        required
-                        fullWidth
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.note}
-                        name="note"
-                        label="Note"
-                        error={formik.touched.note && Boolean(formik.errors.note)}
-                        helperText={formik.touched.note && formik.errors.note}
-                      />
-                    </Grid>
+            
                   </Grid>
                   <Button
                     type="submit"

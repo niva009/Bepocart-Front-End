@@ -328,13 +328,13 @@ export default function Banner({ className }) {
                 </span>
               </div>
               <div>
-                <p className="text-white text-[15px] font-700 tracking-wide mb-1">
-                  Cash on delivery available
-                </p>
-                <p className="text-sm text-qgray text-white">
-                  Get Return within 30 days
-                </p>
-              </div>
+                  <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
+                    COD
+                  </p>
+                  <p className="text-sm text-qblack">
+                   Cash on Delivery Available
+                  </p>
+                </div>
             </div>
           </div>
           <div className="item">
@@ -385,7 +385,7 @@ export default function Banner({ className }) {
           <div className="item">
             <div className="flex space-x-5 items-center">
               <div>
-                <span>
+                {/* <span>
                   <svg
                     width="32"
                     height="35"
@@ -426,11 +426,11 @@ export default function Banner({ className }) {
                       strokeLinecap="square"
                     />
                   </svg>
-                </span>
+                </span> */}
               </div>
               <div>
                 <p className="text-white text-[15px] font-700 tracking-wide mb-1">
-                  Customer Support
+                  Customer Support 
                 </p>
                 <p className="text-sm text-qgray text-white">
                   9am-5pm(mon-sat)

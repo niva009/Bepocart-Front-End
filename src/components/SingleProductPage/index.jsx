@@ -6,7 +6,6 @@ import Layout from "../Partials/Layout";
 import ProductView from "./ProductView";
 import Reviews from "./Reviews";
 import axios from "axios";
-import ReletedProducts from "../Helpers/ReletedProducts";
 import DataIteration from "../Helpers/DataIteration";
 
 
@@ -190,14 +189,14 @@ useEffect(() =>{
                     ">
                     {products.product?.description}
                     </p>
-                    <div>
+                    {/* <div>
                       <h6 className="text-[18px] text-medium mb-4">
                         Product-Info 
                       </h6>
                       <p className="text-[15px] text-qgray text-normal mb-10">
                     {products.product?.short_description}
                     </p>
-                    </div>
+                    </div> */}
                   </div>
                 )}
                 {tab === "review" && (

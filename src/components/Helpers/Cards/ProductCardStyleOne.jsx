@@ -96,9 +96,22 @@ export default function   ProductCardStyleOne({ datas, type }) {
           display: "flex",
         }}
       >
-        <div className="discount-box absolute top-3 left-3 px-2 py-1 bg-qh3-blue text-black text-xs font-bold rounded">
-          {`${Math.floor(datas.discount)}% OFF`}
-        </div>
+        <div className="discount-container absolute top-3 left-3 flex space-x-2">
+          {/* Render discount percentage box */}
+          {datas.discount && (
+        
+            <div className="discount-box px-2 py-1 bg-qh3-blue text-black text-xs font-bold rounded">
+              {parseInt(datas.discount)}% OFF
+            </div>
+          )}
+
+          {/* Render sale box only if datas.sale exists */}
+          {datas.sale && (
+            <div className="discount-box px-2 py-1 bg-green-600 text-white text-xs font-bold rounded">
+              {datas.sale}
+            </div>
+          )}
+        </div>
   
         {datas.campaingn_product && (
           <>

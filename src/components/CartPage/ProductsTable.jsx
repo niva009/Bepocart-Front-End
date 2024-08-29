@@ -245,7 +245,7 @@ export default function ProductsTable({ className, onQuantityChange }) {
                 <td className="text-right py-4">
                   <div className="flex space-x-1 items-center justify-center">
                     <span className="text-[15px] font-normal">
-                      ${product.salePrice * product.quantity}
+                    ₹{product.salePrice * product.quantity}
                     </span>
                   </div>
                 </td>

@@ -177,7 +177,7 @@ export default function CardPage({ cart = true }) {
                   <p className="text-sm sm:text-base font-medium text-qblack">
                     Subtotal
                   </p>
-                  <p className="text-sm sm:text-base font-medium text-qred">${total.toFixed(2)}</p>
+                  <p className="text-sm sm:text-base font-medium text-qred">₹{total.toFixed(2)}</p>
                 </div>
                 {!hasFreeProduct && (
                 <div className="free-quantity-box mt-5 p-2 border-dotted border-2 border-green-500 rounded-lg text-center">
@@ -200,7 +200,7 @@ export default function CardPage({ cart = true }) {
                           Discount
                         </span>
                         <span className="text-xs sm:text-sm text-green-500">
-                          +${discount.toFixed(2)}
+                          +₹{discount.toFixed(2)}
                         </span>
                       </div>
                     </li>
@@ -210,7 +210,7 @@ export default function CardPage({ cart = true }) {
                           Shipping Charge
                         </span>
                         <span className="text-xs sm:text-sm text-green-500">
-                          +${shipping.toFixed(2)}
+                          +₹{shipping.toFixed(2)}
                         </span>
                       </div>
                     </li>
@@ -221,7 +221,7 @@ export default function CardPage({ cart = true }) {
                     <p className="text-lg sm:text-xl font-medium text-qblack">
                       Total
                     </p>
-                    <p className="text-lg sm:text-xl font-medium text-qred">${subtotal.toFixed(2)}</p>
+                    <p className="text-lg sm:text-xl font-medium text-qred">₹{subtotal.toFixed(2)}</p>
                   </div>
                 </div>
                 <div className="w-full h-[50px] bg-black text-white flex justify-center items-center rounded-md cursor-pointer" onClick={handleProceedToCheckout}>

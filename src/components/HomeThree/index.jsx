@@ -10,8 +10,6 @@ import SectionStyleTwo from "../Helpers/SectionStyleTwo";
 import ViewMoreTitle from "../Helpers/ViewMoreTitle";
 import CampaignCountDown from "./CampaignCountDown";
 import SectionStyleFour from "../Helpers/SectionStyleFour";
-import offerBanner1 from "../../assets/ads-1.jpg";
-import offerBanner2 from "../../assets/ads-2.jpg";
 import flashsale from "../../assets/flash-sale-ads.png";
 import 'font-awesome/css/font-awesome.min.css';
 import './Home.css';
@@ -25,6 +23,7 @@ export default function HomeThree() {
   const [banners, setBanners] = useState([]);
   const [offerProduct, setOfferProducts] = useState([]);
   const [DiscountProducts, setDiscountProducts] = useState([]);
+  const [BestSeller, setBestSeller] = useState([])
 
     useEffect(() => {
       if (window.fbq) {
@@ -70,6 +69,13 @@ export default function HomeThree() {
       }
 
       try {
+        const BestSales = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/best-sale/`);
+        setBestSeller(BestSales.data);
+      }catch(error){
+        console.log("error fetching best-sales");
+      }
+
+      try {
         const offerProductResponse = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/buy-1-get-1-free/`);
 
         setOfferProducts(offerProductResponse.data.data);
@@ -81,13 +87,13 @@ export default function HomeThree() {
         setDiscountProducts(DiscountProducts.data.data);
       } catch (error) {
         console.error("Error fetching offer products:", error);
-      }
+      } 
     };
 
     fetchData();
   }, []);
 
-
+  
   return (
     <>
       <LayoutHomeThree type={3} childrenClasses="pt-0">
@@ -129,11 +135,22 @@ export default function HomeThree() {
             products={offerProduct}
           />
         </ViewMoreTitle>
+     
         <ProductsAds
           ads={banners.slice(0, 2).map((banner) => `${banner.image}`)}
           sectionHeight="sm:h-[295px] h-full"
           className="products-ads-section mb-[60px]"
         />
+
+<SectionStyleOneHmThree
+          type={3}
+          products={BestSeller}
+          brands={brands}
+          categoryTitle="Best Sellers"
+          sectionTitle="Best Sellers"
+          seeMoreUrl="/all-products"
+          className="category-products mb-[60px]"
+        />
         {/* <SectionStyleOneHmThree
           type={3}
           categoryBackground={`${import.meta.env.VITE_PUBLIC_URL}/assets/images/section-category-2.jpg`}
@@ -148,13 +165,13 @@ export default function HomeThree() {
           className="mb-[60px]"
           lastDate="2023-10-04 4:00:00"
         />
-        <SectionStyleFour
+        {/* <SectionStyleFour
            type={3}
           products={DiscountProducts}
-          sectionTitle="Discount Products"
-          seeMoreUrl="/all-products"
+          // sectionTitle="Discount Products"
+          // seeMoreUrl="/all-products"
           className="category-products mb-[60px]"
-        />
+        /> */}
       </LayoutHomeThree>
       <a
         href="https://wa.me/+917025494747?text=Hello,%20I%20am%20interested%20in%20your%20products!"

@@ -34,7 +34,9 @@ export default function ProductView({ className }) {
   useEffect(() => {
     fetchProduct(id);
     stock
-  }, [id],stock);
+  }, [id]);
+
+
   
   const fetchProduct = async () => {
     setLoading(true);
@@ -74,7 +76,10 @@ export default function ProductView({ className }) {
       setSelectedColor(productImages[0]?.color || "");
       setSizes(availableSizes);
       setSelectedSize(availableSizes[0] || "");
-      setStock(initialStock);
+      // setStock(initialStock);
+      setTimeout(() => {
+        setStock(initialStock);
+      }, 100);
   
       // Check if the selected size has any stock
       if (productData.type !== "single" && availableSizes.length === 0) {
@@ -93,6 +98,36 @@ export default function ProductView({ className }) {
       setLoading(false);
     }
   };
+
+
+  useEffect(() => {
+    if (showSuccessMessage) {
+      const timer = setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000); // 2 seconds
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [showSuccessMessage]);
+
+  // Use effect for wishlist success message
+  useEffect(() => {
+    if (showWishlistSuccessMessage) {
+      const timer = setTimeout(() => {
+        setShowWishlistSuccessMessage(false);
+      }, 3000); // 2 seconds
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [showWishlistSuccessMessage]);
+
+  // Use effect for error message
+  useEffect(() => {
+    if (errorWishlist) {
+      const timer = setTimeout(() => {
+        setErrorWishlist(null);
+      }, 3000); // 2 seconds
+      return () => clearTimeout(timer); // Cleanup the timer
+    }
+  }, [errorWishlist]);
   
   
 
@@ -239,7 +274,7 @@ export default function ProductView({ className }) {
   
 
 
-  const isOutOfStock = stock === 0 || stock.length === 0
+  const isOutOfStock = stock !== null && (stock === 0 || stock.length === 0);
   
 
   const PreviousButton = ({ onClick }) => (
@@ -397,21 +432,22 @@ export default function ProductView({ className }) {
 </div>
 
 <div className="mb-4">
-  <h4 className="text-base font-bold text-qblack mb-2">Color</h4>
-  <div className="flex flex-wrap space-x-2">
-    {productImages.map((image) => (
-      <button
-        key={image.id}
-        className={`px-4 py-2 rounded border ${
-          selectedColor === image.color ? "border-qblack text-qblack font-semibold" : "border-qgray text-qblack"
-        }`}
-        onClick={() => handleColorChange(image.id)}
-      >
-        {image.color}
-      </button>
-    ))}
-  </div>
-</div>
+            <h4 className="text-base font-bold text-qblack mb-2">Color</h4>
+            <div className="flex flex-wrap gap-2">
+              {productImages.map((image) => (
+                <button
+                  key={image.id}
+                  className={`px-4 py-2 rounded border ${selectedColor === image.color
+                      ? "border-qblack text-qblack font-semibold"
+                      : "border-qgray text-qblack"
+                    }`}
+                  onClick={() => handleColorChange(image.id)}
+                >
+                  {image.color}
+                </button>
+              ))}
+            </div>
+          </div>
 
 
           {product?.type !== "single" && sizes.length > 0 && (
@@ -432,6 +468,17 @@ export default function ProductView({ className }) {
             <div className="mb-4">
             {isOutOfStock && <p style={{ color:"red",fontWeight:"bold",fontSize:"25px", padding:"20px 0px"}} className="out-of-stock-message">Out of stock.</p>}
             </div>
+
+
+{console.log("stock information.....:",stock)}
+            <div className="mb-4">
+  {stock !== undefined && stock < 10 && stock.length !== 0 && stock !== 0 &&(
+    <p style={{ color: "green", fontWeight: "500", fontSize: "18px", padding: "10px 0px" }}>
+      {`${stock}`} items Left
+    </p>
+  )}
+</div>
+
 <button
   className="w-full bg-qyellow text-qblack py-3 text-lg font-medium"
   onClick={AddToCart}
@@ -450,6 +497,7 @@ export default function ProductView({ className }) {
 
 
           </div>
+
           {showSuccessMessage && (
             <Stack sx={{ width: "100%" }} spacing={2}>
               <Alert severity="success">Product added to cart successfully!</Alert>

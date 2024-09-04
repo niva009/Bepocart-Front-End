@@ -19,7 +19,7 @@ export default function DiscountBanner({ className }) {
             className="w-full h-full object-contain"
           />
         </div>
-        <div className="flex justify-center items-center w-full h-full relative xl:left-[100px]">
+        {/* <div className="flex justify-center items-center w-full h-full relative xl:left-[100px]">
           <div>
             <div data-aos="fade-up">
               <h1 className="sm:text-3xl text-xl font-700 text-qblack mb-2 text-center">
@@ -74,7 +74,7 @@ export default function DiscountBanner({ className }) {
               </button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ export default function DiscountBanner({ className }) {
         backgroundSize: "cover",
       }}
     >
-      <div>
+      {/* <div>
         <div data-aos="fade-up">
           <h1 className="sm:text-3xl text-xl font-700 text-qblack mb-2 text-center">
             Get <span className="mx-1 text-qyellow">20%</span> Off Discount
@@ -64,7 +64,7 @@ export default function DiscountBanner({ className }) {
             Get the Coupon
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

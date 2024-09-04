@@ -32,6 +32,7 @@ export default function OrderTab() {
     fetchOrders();
   }, []);
 
+  console.log("order details:", orders);
 
   const buttonStyle = {
     width: '140px',
@@ -234,6 +235,6 @@ export default function OrderTab() {
           </div>
         </Box>
       </Modal>
-    </>
-  );
+    </>
+  );
 }

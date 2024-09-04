@@ -118,7 +118,7 @@ export default function AddressDetails({ open, handleClose }) {
                         label="Phone"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        // value={formik.values.phone}
+                        value={formik.values.phone}
                         error={formik.touched.phone && Boolean(formik.errors.phone)}
                         helperText={formik.touched.phone && formik.errors.phone}
                         autoFocus

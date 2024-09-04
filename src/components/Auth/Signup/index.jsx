@@ -35,9 +35,7 @@ export default function Signup() {
     first_name: yup.string().required("First name required"),
     last_name: yup.string().required("Last name required"),
     email: yup.string().email("Enter a valid email").required("Email required"),
-    place: yup.string().required("Place name is required"),
     phone: yup.string().matches(/^[0-9]{10}$/, 'Phone number should be 10 digits').required('Phone number is required'),
-    zip_code: yup.string().matches(/^[0-9]{6}$/, 'Pin Code should be 6 digits').required("Zip code is required"),
     password: yup.string().required("Password is required"),
   });
 
@@ -46,9 +44,7 @@ export default function Signup() {
       first_name: '',
       last_name: '',
       email: '',
-      place: '',
       phone: '',
-      zip_code: '',
       password: '',
     },
     validationSchema: validationSchema,
@@ -59,7 +55,7 @@ export default function Signup() {
         values,
         {
           headers: {
-            Authorization: `${token}`,
+            'Authorization': `${token}`,
           },
         }
       )
@@ -152,30 +148,7 @@ export default function Signup() {
                         style={{ height: '70px', width: '100%' }}
                       />
                     </div>
-                    <div className="flex sm:flex-row flex-col space-y-5 sm:space-y-0 sm:space-x-5 mb-5">
-                      <TextField
-                        placeholder="Your address Here"
-                        label="Place"
-                        name="place"
-                        type="text"
-                        onChange={formik.handleChange}
-                        value={formik.values.place}
-                        error={formik.touched.place && Boolean(formik.errors.place)}
-                        helperText={formik.touched.place && formik.errors.place}
-                        style={{ height: '70px', width: '100%' }}
-                      />
-                      <TextField
-                        label="Postcode / ZIP*"
-                        name="zip_code"
-                        onChange={formik.handleChange}
-                        value={formik.values.zip_code}
-                        error={formik.touched.zip_code && Boolean(formik.errors.zip_code)}
-                        helperText={formik.touched.zip_code && formik.errors.zip_code}
-                        type="text"
-                        style={{ height: '70px', width: '100%' }}
-                        placeholder="00000"
-                      />
-                    </div>
+                    
                     <div className="flex sm:flex-row flex-col space-y-5 sm:space-y-0 sm:space-x-5 mb-5">
                       <TextField
                         label="Password*"

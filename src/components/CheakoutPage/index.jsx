@@ -9,6 +9,7 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [subtotal, setSubtotal] = useState(0);
+  const [dataSubTotal, setDataSubTotal] = useState(0);
   const [shipping, setShipping] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
@@ -20,6 +21,7 @@ export default function CheckoutPage() {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [ offer, setOffer] = useState("");
   const [ profile, setProfile] = useState([]);
+
 
   const token = localStorage.getItem("token");
   const { id } = useParams();
@@ -47,7 +49,6 @@ export default function CheckoutPage() {
     }
   };
 
-  console.log("profile detailssss",profile);
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -60,6 +61,7 @@ export default function CheckoutPage() {
         const data = response.data;
         setCartItems(data.data);
         setSubtotal(data.Subtotal ?? 0);
+        setDataSubTotal(data.Subtotal ?? 0)
         setShipping(data.Shipping ?? 0);
         setDiscount(data.Discount ?? 0);
         setTotal(data.TotalPrice ?? 0);
@@ -96,33 +98,42 @@ export default function CheckoutPage() {
   }, [token]);
 
 
+
+
   useEffect(() => {
     let calculatedTotal = total + shipping - discount;
   
-    if (paymentMethod === "COD" && calculatedTotal < 500) {
+    if (paymentMethod === "COD" && dataSubTotal) {
       calculatedTotal += 40; // Add ₹40 COD charge for orders below ₹500
     }
   
     setSubtotal(calculatedTotal);
-  }, [total, shipping, discount, paymentMethod]);
+  }, [total, shipping, discount, paymentMethod,dataSubTotal]);
+
+
+  console.log(dataSubTotal,"subtotla informationnnnnn")
+
+
 
 
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
+    
     let newShipping = 0;
   
-    if (method === "COD") {
-      newShipping = subtotal < 500 ? 60 : 40;
-    } else if (method === "razorpay") {
-      newShipping = subtotal < 500 ? 40 : 0;
-    }
-  
+    if (dataSubTotal< 500) {
+      newShipping = 60;
+    } 
+    
     setShipping(newShipping);
   };
 
+  
+  console.log("subtotal dataaaa",subtotal)
+  console.log("total...",total)
+  console.log("data subtotal",dataSubTotal)
 
-  console.log("total price",total);
 
 useEffect(() =>{
  
@@ -168,6 +179,7 @@ useEffect(() =>{
         amount: (subtotal * 100).toString(),
         description: "Thank you for your order",
         image: "https://manuarora.in/logo.png",
+        callback_url:`${import.meta.env.VITE_PUBLIC_URL}/order-success`,  
         handler: async function (response) {
           // Handle successful payment
           const paymentId = response.razorpay_payment_id;
@@ -176,20 +188,27 @@ useEffect(() =>{
   
           // Create order only after successful payment
           try {
-            await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
+           const orderResponse = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
               payment_method: paymentMethod,
               coupon_code: couponCode,
-              id: paymentId,
+              payment_id: paymentId,
+     
             }, {
               headers: {
                 'Authorization': `${token}`,
               },
             });
             alert("Payment successful and order created!");
-            navigate("/order-success"); // Redirect to success page
-          } catch (orderError) {
+
+            console.log(orderResponse,"orderResponse");
+
+          if(orderResponse.status === 200){
+            navigate('/order-success');
+          }
+          } 
+          catch (orderError) {
             console.error("Error creating order:", orderError);
-            alert("Order creation failed after payment.");
+            alert("Error creating order");
           }
         },
         prefill: {
@@ -208,6 +227,7 @@ useEffect(() =>{
     }
   };
   
+  console.log("payment merhodddd",paymentMethod);
 
   const handlePlaceOrder = async () => {
     if (paymentMethod === "COD") {
@@ -217,7 +237,7 @@ useEffect(() =>{
           coupon_code: couponCode,
         }, {
           headers: {
-            Authorization: `${token}`,
+            'Authorization': `${token}`,
           },
         });
         navigate("/order-success");
@@ -230,10 +250,13 @@ useEffect(() =>{
     }
   };
 
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCouponCode(value);
   };
+
 
   const applyCoupon = () => {
     setCouponError(null); 
@@ -414,7 +437,7 @@ useEffect(() =>{
   </p>
 </div>
        </div>
-       {subtotal !== undefined && subtotal < 500 && paymentMethod == "COD" &&(
+       {dataSubTotal !== undefined  && paymentMethod == "COD" &&(
   <div className="flex justify-between">
     <div>
       <p className="text-[13px] mt-3 font-medium text-qblack uppercase">

@@ -93,9 +93,10 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
             {type === 3 ? (
               <Link to="/">
                 <img
-                  width="152"
-                  height="36"
+                  width="150"
+                  height="30"
                   src={Logo}
+                  className="pt-2.5"
                 />
               </Link>
             ) : type === 4 ? (
@@ -124,7 +125,7 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
             <Link to="/be-coin">
   <p style={{color:"#e0c031", fontWeight:'bold'}} className="mr-2">Becoin</p>
 </Link>
-  <img style={{ width: '50px', height: '50px'}} src={BepoCoin} alt="Coin" />
+  <img style={{ width: '50px', height: '50px',}} src={BepoCoin} alt="Coin" />
   <p className="mr-2">{totalAmount}</p>
 </div>
       

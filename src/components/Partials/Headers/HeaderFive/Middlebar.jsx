@@ -41,7 +41,7 @@ export default function Middlebar({ className }) {
     };
   
     fetchWishlistAndCart();
-  }, [token]);
+  },);
 
   return (
     <div className={`w-full h-[86px] bg-white ${className}`}>

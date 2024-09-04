@@ -27,6 +27,8 @@ export default function ProductView({ className }) {
   const [isReadMore, setIsReadMore] = useState(true);
   const [review, setReview] = useState([]);
   const [stock,setStock] = useState([]);
+  const [selectedImage, setSelectedImage] = useState([]);
+
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -69,7 +71,7 @@ export default function ProductView({ className }) {
           .map(variant => variant.size);
   
         initialStock = initialStockInfo.filter(variant => variant.stock > 0);
-        console.log("initial stock inormation" ,initialStock)
+       
       }
   
       setVariants(initialStockInfo);
@@ -89,7 +91,7 @@ export default function ProductView({ className }) {
       }
     } catch (error) {
       console.error("Error fetching product:", error);
-      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
         navigate("/login");
       } else {
         setError("Error fetching product");
@@ -168,7 +170,7 @@ export default function ProductView({ className }) {
             color: selectedColor,
           },
           {
-            headers: { Authorization: `${token}` },
+            headers: { "Authorization": `${token}` },
           }
         );
         setShowSuccessMessage(true);
@@ -177,7 +179,7 @@ export default function ProductView({ className }) {
       }
     } catch (error) {
       console.log(error);
-      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
         navigate("/login");
       } else {
         setError("Error adding to cart");
@@ -190,7 +192,7 @@ export default function ProductView({ className }) {
   
     // Find the image based on the selected color
     const changedImage = productImages.find(image => image.color === color);
-  
+ 
     if (changedImage) {
       const stockAvailable = changedImage.stock;
   
@@ -253,6 +255,7 @@ export default function ProductView({ className }) {
     const selectedImage = productImages.find(image => image.id === colorId);
   
     if (selectedImage) {
+      setSelectedImage(selectedImage);
       setSrc(selectedImage.image1);
       setSelectedColor(selectedImage.color);
       const stockAvailable = selectedImage.stock
@@ -270,9 +273,8 @@ export default function ProductView({ className }) {
     }
   };
 
-  console.log("stock information",stock)
-  
 
+  
 
   const isOutOfStock = stock !== null && (stock === 0 || stock.length === 0);
   
@@ -333,9 +335,46 @@ export default function ProductView({ className }) {
     slidesToScroll: 1,
     prevArrow: <PreviousButton />,
     nextArrow: <NextButton />,
+
   };
 
+  
 
+  useEffect(() => {
+    // Check if product is fully loaded and all necessary properties exist
+    if (product && product.categoryName && product.name && product.id && product.salePrice && window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_category: product.categoryName,
+        content_name: product.name,
+        content_ids: product.id,
+        content_type: 'product_Group',
+        value: product.salePrice,
+        currency: 'INR',
+      });
+    }
+  }, [product]);
+
+
+  const handleButtonClick = () => {
+    handleWishlistToggle();
+    handleTrackWishlist();
+  };
+  
+
+
+  const handleTrackWishlist = () => {
+
+    if (product && product.categoryName && product.name && product.id && product.salePrice && window.fbq&& window.fbq) { // Track only when adding to wishlist
+      window.fbq('track', 'AddToWishlist', {
+        content_category: product.categoryName,
+        content_ids: product.id,
+        content_name: product.name,
+        content_type: 'product_Group',
+        currency: 'INR',
+        value: product.salePrice,
+      });
+    }
+  };
   return (
     <div className={`product-view w-full lg:flex justify-between ${className || ""}`}>
       <div data-aos="fade-right" className="lg:w-1/2 xl:mr-[70px] lg:mr-[50px]">
@@ -347,6 +386,7 @@ export default function ProductView({ className }) {
             </div>
           </div>
           <Slider {...settings}>
+
   {productImages.map((item) =>
     Object.keys(item)
       .filter((key) => key.startsWith("image"))
@@ -469,8 +509,6 @@ export default function ProductView({ className }) {
             {isOutOfStock && <p style={{ color:"red",fontWeight:"bold",fontSize:"25px", padding:"20px 0px"}} className="out-of-stock-message">Out of stock.</p>}
             </div>
 
-
-{console.log("stock information.....:",stock)}
             <div className="mb-4">
   {stock !== undefined && stock < 10 && stock.length !== 0 && stock !== 0 &&(
     <p style={{ color: "green", fontWeight: "500", fontSize: "18px", padding: "10px 0px" }}>
@@ -490,7 +528,7 @@ export default function ProductView({ className }) {
           <div>
 <button
   className={`w-full py-3 text-lg font-medium ${wishlist ? "bg-qgray text-qwhite" : "bg-qblack text-white"}`}
-  onClick={handleWishlistToggle}
+  onClick={handleButtonClick}
 >
   {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
 </button>

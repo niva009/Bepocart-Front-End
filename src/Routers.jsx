@@ -23,6 +23,8 @@ import Category from "./components/Category.jsx";
 import OfferProducts from "./components/OfferProducts.jsx";
 import MainCategory from "./components/Main-category.jsx"
 import ForgetPassword from "./components/Auth/Login/Forget-password.jsx";
+import PhoneLogin from "./components/Auth/Login/PhoneLogin.jsx";
+import PhoneOtpVerification from "./components/Auth/Login/PhoneOtpVerification.jsx";
 import OtpVeriFication from "./components/Auth/Login/otp-verification.jsx";
 import PasswordCreation from "./components/Auth/Login/password-creation.jsx";
 import ScrollTop from "./components/Partials/Headers/HeaderOne/ScrollToTop.jsx"
@@ -64,6 +66,8 @@ const router = createBrowserRouter([
       { path: "/privacy-policy", element: <TermsCondition /> },
       { path: "/orderDetails/:id", element: <OrderDetails /> },
       { path: "/forgot-password", element: <ForgetPassword /> },
+      { path: "/mobile-Otp", element: <PhoneOtpVerification /> },
+      { path: "/phone-verify", element: <PhoneLogin /> },
       { path: "/otp-verification/:id", element: <OtpVeriFication /> },
       { path: "/new-password/:id", element: <PasswordCreation /> },
       { path: "/maintenance", element: <Maintance /> },

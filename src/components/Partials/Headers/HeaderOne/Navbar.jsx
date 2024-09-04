@@ -2,6 +2,8 @@ import { useEffect, useState ,startTransition} from "react";
 import { Link, useFetcher } from "react-router-dom";
 import axios from "axios";
 import Arrow from "../../../Helpers/icons/Arrow";
+import { IoIosArrowDown } from "react-icons/io";
+
 
 export default function Navbar({ className, type }) {
   const [categoryToggle, setToggle] = useState(false);
@@ -106,6 +108,7 @@ export default function Navbar({ className, type }) {
                     </span>
                   </div>
                   <div>
+                  
                     <Arrow
                       width="5.78538"
                       height="1.28564"
@@ -140,11 +143,7 @@ export default function Navbar({ className, type }) {
               e.preventDefault();
               handleCategoryClick(category.id);
             }}>
-              <Arrow
-                width="10.7"
-                height="2.4"
-                className="fill-current cursor-pointer"
-              />
+           <IoIosArrowDown width={4} />
             </div>  
           </div>
         </Link>

@@ -1,31 +1,26 @@
-import { useState, useEffect , startTransition} from "react";
+import { useState, useEffect, startTransition } from "react";
 import ThinLove from "../../Helpers/icons/ThinLove";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ThinPeople from '../../Helpers/icons/ThinPeople'
 import { RiLoginBoxLine } from "react-icons/ri";
+import { IoIosArrowDown } from "react-icons/io";
 
-export default function DrawerThree({ className, open, action }) {
+export default function Drawer({ className, open, action }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
   const[coinCount, setCoinCount] =useState([]);
   const [tab, setTab] = useState("category");
   const [categories, setCategories] = useState([]);
+  const [subCategory, setSubCategory] = useState([]);
+  const [wishlistTotal, setWishlistTotal] = useState(0)
   const[ brands, setBrands] =useState([]);
   const navigate = useNavigate();
+  const [activeCategory, setActiveCategory] = useState(null);
 
 
-
-  useEffect(() => {
-    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategorys/`)
-      .then(response => {
-        setBrands(response.data.data);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the brands!", error);
-      });
-  }, []);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -38,12 +33,21 @@ export default function DrawerThree({ className, open, action }) {
         console.error("Error fetching categories:", error);
       }
     };
+
+    const fetchSubCategory = async () =>{
+
+      try{
+        const response =await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/subcategorys/`)
+        setSubCategory(response.data.data)
+      }
+      catch(error){
+        console.log("subcategory fetching error");
+      }
+    }
     fetchCategories();
-  }, []);
-
-
-  console.log("subcategory information",brands);
-  console.log("category information",categories);
+    fetchSubCategory();
+    
+  }, [token]);
 
 
 
@@ -61,7 +65,20 @@ export default function DrawerThree({ className, open, action }) {
     .catch((error) =>{
       console.log(error,"error fetching coin");
     })
-  },[])
+  },[token])
+
+
+  useEffect(() =>{
+    axios.get(`${import.meta.env.VITE_PUBLIC_URL}/wishlist/`,{
+      headers:{ 'Authorization' : `${token}`}
+    })
+    .then((response) =>{
+      setWishlistTotal(response.data.data.length)
+    })
+    .catch((error) =>{
+      console.log(error,"error fetching wishlist");
+    })
+  },[token])
 
 
   const totalAmount = Array.isArray(coinCount)? coinCount.reduce((sum,current) => sum+(current.amount || 0), 0):0;
@@ -86,6 +103,12 @@ export default function DrawerThree({ className, open, action }) {
           setErrorMessage(null); // Clear error message after 3 seconds
         }, 3000);
       });
+  };
+
+  const handleCategoryClick = (categoryId) => {
+    setActiveCategory((prevActiveCategory) =>
+      prevActiveCategory === categoryId ? null : categoryId
+    );
   };
 
   return (
@@ -131,7 +154,7 @@ export default function DrawerThree({ className, open, action }) {
                     </span>
                   </Link>
                   <span className="w-[18px] h-[18px] text-white rounded-full bg-qh3-blue absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px]">
-                    1
+                    {wishlistTotal}
                   </span>
                 </div>
               </div>
@@ -214,49 +237,45 @@ export default function DrawerThree({ className, open, action }) {
           </div>
           {tab === "category" ? (
             <div className="category-item mt-5 w-full">
-             <ul className="categories-list">
-  {categories.map((category) => (
-    <li className="category-item" key={category.id}>
-      <Link to={`/main-category/${category.slug}/`}>
-        <div className="flex justify-between items-center px-5 h-12 bg-white hover:bg-qh3-blue transition-all duration-300 ease-in-out cursor-pointer">
-          <div className="flex items-center space-x-6">
-            <span className="text-sm font-400">
-              {category.name} {/* Corrected from categories.name to category.name */}
-            </span>
+ <ul className="categories-list overflow-y-auto max-h-64">    
+    {categories.map((category) => (
+      <li className="category-item" key={category.id}>
+        <Link to={`/main-category/${category.slug}/`}>
+          <div
+            className={`flex justify-between items-center px-5 h-10 bg-white transition-all duration-300 ease-in-out cursor-pointer text-qblack
+              ? "hover:bg-qh3-blue hover:text-white"
+              : "hover:bg-qyellow"
+              }`}
+          >
+            <div className="flex items-center space-x-6">
+              <span className="text-sm font-400">{category.name}</span>
+            </div>
+            <div onClick={(e) => {
+              e.preventDefault();
+              handleCategoryClick(category.id);
+            }}>
+           <IoIosArrowDown width={4} />
+            </div>  
           </div>
-          <div>
-            <span>
-              <svg
-                width="6"
-                height="9"
-                viewBox="0 0 6 9"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="1.49805"
-                  y="0.818359"
-                  width="5.78538"
-                  height="1.28564"
-                  transform="rotate(45 1.49805 0.818359)"
-                  fill="#1D1D1D"
-                />
-                <rect
-                  x="5.58984"
-                  y="4.90918"
-                  width="5.78538"
-                  height="1.28564"
-                  transform="rotate(135 5.58984 4.90918)"
-                  fill="#1D1D1D"
-                />
-              </svg>
-            </span>
-          </div>
-        </div>
-      </Link>
-    </li>
-  ))}
-</ul>
+        </Link>
+        {activeCategory === category.id && (
+          <ul className="subcategories-list overflow-y-auto max-h-40">
+            {subCategory
+              .filter(subCategory => subCategory.category === category.id)
+              .map(subCategory => (
+                <li className="subcategory-item" key={subCategory.id}>
+                  <Link to={`/category/${subCategory.slug}/`}>
+                    <div className="flex items-center px-5 h-8 bg-gray-100 transition-all duration-300 ease-in-out cursor-pointer text-qblack hover:bg-gray-200">
+                      <span className="text-sm font-400">{subCategory.name}</span>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ul>
 
             </div>
           ) : (

@@ -10,7 +10,7 @@ import SectionStyleTwo from "../Helpers/SectionStyleTwo";
 import ViewMoreTitle from "../Helpers/ViewMoreTitle";
 import CampaignCountDown from "./CampaignCountDown";
 import SectionStyleFour from "../Helpers/SectionStyleFour";
-import flashsale from "../../assets/flash-sale-ads.png";
+import flashsale from "../../assets/flash-sale-ads.jpg";
 import 'font-awesome/css/font-awesome.min.css';
 import './Home.css';
 

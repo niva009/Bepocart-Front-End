@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import * as yup from "yup";
@@ -7,12 +7,16 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Thumbnail from "./Thumbnail";
 import { GoogleLogin } from '@react-oauth/google';
+import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const [checked, setValue] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
   const navigate = useNavigate();
+
 
   const rememberMe = () => {
     setValue(!checked);
@@ -43,25 +47,40 @@ export default function Login() {
 
   const handleGoogleLoginSuccess = async (response) => {
     try {
-      const { credential } = response;
-      const idToken = credential;
-      // const result = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/google-login/`, { idToken });
-      // const token = result.data.token;
-      // localStorage.setItem("token", token);
-      // setMessageType("success");
-      // setMessage("Login successful!");
-
-      // navigate("/");
+      const idToken = response.credential;
+      const decodedIdToken = jwtDecode(idToken);
+      const name = decodedIdToken.name;
+      const email = decodedIdToken.email;
+      console.log("name and email", name, email);
+  
+      const result = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/google-login/`, { name: name, email: email });
+      const token = result.data.token;
+      console.log("result information...:", result);
+      localStorage.setItem("token", token);
+      
+      // Set success message
+      setMessageType("success");
+      setMessage("Login successful!");
+  
+      // Redirect to callback URL after successful login
+      const callbackUrl = '/';  // Change this to your desired redirect URL
+      window.location.href = callbackUrl;
+      
     } catch (error) {
-      console.error("Google login error:", error.response ? error.response.data : error.message);
+      console.error("Google login error:", error.response ? error.response.data : error.message
+      );
+      console.log(error,"erroorrrr")
+      
+      // Set error message
       setMessageType("error");
       setMessage("Google login failed. Please try again.");
     }
   };
-
+  
   const handleGoogleLoginError = () => {
     console.log('Google Login Failed');
   };
+  
 
   return (
     <div className="login-page-wrapper w-full py-10 px-4">
@@ -115,19 +134,26 @@ export default function Login() {
                           helperText={touched.email && errors.email}
                         />
                       </div>
-                      <div className="input-item mb-5">
+                      <div className="input-item mb-5 relative">
                         <TextField
                           placeholder="Password"
                           fullWidth
                           label="Password*"
                           name="password"
-                          type="password"
+                          type={showPassword ? "text" : "password"} // Toggle password visibility
                           value={values.password}
                           onChange={handleChange}
                           onBlur={handleBlur}
                           error={touched.password && Boolean(errors.password)}
                           helperText={touched.password && errors.password}
                         />
+                        <button
+                          type="button"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                          onClick={() => setShowPassword(!showPassword)} // Toggle showPassword state
+                        >
+                          {showPassword ? <MdOutlineVisibilityOff size={24} /> : <MdOutlineVisibility size={24} />}
+                        </button>
                       </div>
                       <div className="forgot-password-area flex justify-between items-center mb-7 text-sm sm:text-base">
                         <div className="remember-checkbox flex items-center space-x-2.5">

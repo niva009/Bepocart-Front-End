@@ -78,11 +78,12 @@ export default function Middlebar({ className, type }) {
           <div className="flex justify-between items-center h-full">
             <div>
               <Link to="/">
-                <img
+                <img 
                   width="152"
                   height="36"
                   src={Logo}
                   alt="logo"
+                
                 />
               </Link>
             </div>

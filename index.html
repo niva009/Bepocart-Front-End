@@ -109,10 +109,20 @@
             });
         }
 
-        document.getElementById('add-to-cart-button').addEventListener('click', function() {
-            const productId = this.getAttribute('data-product-id');
-            trackAddToCart(productId);
-        });
+     var cartData = document.getElementById('add-to-cart-button');
+    
+   
+
+     if(cartData){
+        const addHandleClick =() =>{
+        const productId = this.getAttribute('data-product-id');
+        trackAddToCart(productId);
+     }
+     cartData.addEventListener('click',addHandleClick)
+     }
+
+
+  
     </script>
 
 

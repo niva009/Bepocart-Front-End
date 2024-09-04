@@ -31,9 +31,9 @@ export default function AllProductPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
 
-//   useEffect(() => {
-//     setSortedProducts(searchResult);
-//   }, [searchResult]);
+  // useEffect(() => {
+  //   setSortedProducts(searchResult);
+  // }, [searchResult]);
 
  
 

@@ -111,7 +111,6 @@ export default function CheckoutPage() {
   }, [total, shipping, discount, paymentMethod,dataSubTotal]);
 
 
-  console.log(dataSubTotal,"subtotla informationnnnnn")
 
 
 
@@ -130,10 +129,6 @@ export default function CheckoutPage() {
   };
 
   
-  console.log("subtotal dataaaa",subtotal)
-  console.log("total...",total)
-  console.log("data subtotal",dataSubTotal)
-
 
 useEffect(() =>{
  
@@ -154,61 +149,64 @@ useEffect(() =>{
       script.onerror = () => {
         resolve(false);
       };
-
       document.body.appendChild(script);
     });
   };
 
   const makePayment = async () => {
-    const res = await initializeRazorpay();
-  
-    if (!res) {
-      alert("Razorpay SDK Failed to load");
+    // Initialize Razorpay SDK
+    const isRazorpayLoaded = await initializeRazorpay();
+    if (!isRazorpayLoaded) {
+      alert("Failed to load Razorpay SDK. Please try again later.");
       return;
     }
+  
+    // Check if address is selected
     if (!selectedAddress) {
       alert("Please select an address to place the order.");
       return;
     }
   
+    // Proceed with payment initiation
     try {
-      const options = {
-        key: `${import.meta.env.VITE_PAYMENT_KEY}`, // Enter the Key ID generated from the Dashboard
-        name: "BepoCart Pvt limited",
+      const paymentOptions = {
+        key: `${import.meta.env.VITE_PAYMENT_KEY}`, // Razorpay Key ID
+        name: "BepoCart Pvt Limited",
         currency: "INR",
-        amount: (subtotal * 100).toString(),
+        amount: (subtotal * 100).toString(), // Amount in paise
         description: "Thank you for your order",
         image: "https://manuarora.in/logo.png",
-        callback_url:`${import.meta.env.VITE_PUBLIC_URL}/order-success`,  
+        callback_url: '/order-success',
         handler: async function (response) {
-          // Handle successful payment
-          const paymentId = response.razorpay_payment_id;
-          const orderId = response.razorpay_order_id;
-          const signature = response.razorpay_signature;
+          // Payment handler
+          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
   
-          // Create order only after successful payment
           try {
-           const orderResponse = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
-              payment_method: paymentMethod,
-              coupon_code: couponCode,
-              payment_id: paymentId,
-     
-            }, {
-              headers: {
-                'Authorization': `${token}`,
+            // Create order after successful payment
+            const orderResponse = await axios.post(
+              `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
+              {
+                payment_method: paymentMethod,
+                coupon_code: couponCode,
+                payment_id: razorpay_payment_id, // Send payment ID
               },
-            });
-            alert("Payment successful and order created!");
+              {
+                headers: {
+                  'Authorization': `${token}`,
+                },
+              }
+            );
 
-            console.log(orderResponse,"orderResponse");
-
-          if(orderResponse.status === 200){
-            navigate('/order-success');
-          }
-          } 
-          catch (orderError) {
+  
+            if (orderResponse.status === 200) {
+              alert("Payment successful and order created!");
+              navigate('/order-success');
+            } else {
+              alert("Failed to create order. Please try again.");
+            }
+          } catch (orderError) {
             console.error("Error creating order:", orderError);
-            alert("Error creating order");
+            alert("An error occurred while creating your order. Please try again.");
           }
         },
         prefill: {
@@ -218,16 +216,16 @@ useEffect(() =>{
         },
       };
   
-      const paymentObject = new window.Razorpay(options);
+      // Open Razorpay payment dialog
+      const paymentObject = new window.Razorpay(paymentOptions);
       paymentObject.open();
     } catch (error) {
       console.error("Error initializing payment:", error);
-      alert("Payment initialization failed.");
-      navigate("/cart"); // Redirect to cart page if payment fails
-    }
-  };
-  
-  console.log("payment merhodddd",paymentMethod);
+      alert("Payment initialization failed. Redirecting to cart.");
+      navigate("/cart"); // Redirect to cart if payment fails
+    }
+  };
+
 
   const handlePlaceOrder = async () => {
     if (paymentMethod === "COD") {

@@ -13,10 +13,15 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
+import { GoogleLogin } from '@react-oauth/google';
+import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
+import { jwtDecode } from "jwt-decode";
 
 export default function Signup() {
   const [checked, setValue] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
+
   const navigate = useNavigate();
 
   const rememberMe = () => {
@@ -69,6 +74,41 @@ export default function Signup() {
       });
     },
   });
+
+
+  const handleGoogleLoginSuccess = async (response) => {
+    try {
+      const idToken = response.credential;
+      const decodedIdToken = jwtDecode(idToken);
+      const name = decodedIdToken.name;
+      const email = decodedIdToken.email;
+  
+      const result = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/google-login/`, { name: name, email: email });
+      const token = result.data.token;
+      localStorage.setItem("token", token);
+      
+      // Set success message
+      setMessageType("success");
+      setMessage("Login successful!");
+  
+      // Redirect to callback URL after successful login
+      const callbackUrl = '/';  // Change this to your desired redirect URL
+      window.location.href = callbackUrl;
+      
+    } catch (error) {
+      console.error("Google login error:", error.response ? error.response.data : error.message
+      );
+      console.log(error,"erroorrrr")
+      
+      // Set error message
+      setMessageType("error");
+      setMessage("Google login failed. Please try again.");
+    }
+  };
+  
+  const handleGoogleLoginError = () => {
+    console.log('Google Login Failed');
+  };
 
   return (
     <Layout childrenClasses="pt-0 pb-0">
@@ -212,14 +252,37 @@ export default function Signup() {
                     </button>
                   </div>
                 </form>
-                <div className="from-footer text-center mt-10">
-                  <p className="text-base text-qgray">
-                    Already have an account?{' '}
-                    <Link to="/login" className="text-qblack">
-                      Login
-                    </Link>
-                  </p>
-                </div>
+                <div className="google-phone-login-section mb-3.5 flex flex-col sm:flex-row space-y-10 sm:space-y-0 mt-10 sm:space-x-4">
+  {/* Google Login Section */}
+  <div className="google-login-section flex-1">
+    <GoogleLogin
+      onSuccess={handleGoogleLoginSuccess}
+      onError={handleGoogleLoginError}
+      buttonText="Login with Google"
+      className="w-full"
+    />
+  </div>
+
+  {/* Phone Login Section */}
+  <div className="phone-login-section flex-1">
+    <button 
+      className="bg-slate-200 border-solid border-black border-1 text-black py-2 px-4 rounded-sm hover:bg-green-600 transition duration-200 ease-in-out w-full flex items-center justify-center space-x-2"
+      onClick={() => navigate('/phone-verify')}
+    >
+      <span>Register with Otp</span>
+    </button>
+  </div>
+</div>
+
+<div className="from-footer text-center mt-10">
+  <p className="text-base text-gray-600">
+    Already have an account?{' '}
+    <Link to="/login" className="text-blue-600 hover:underline">
+      Login
+    </Link>
+  </p>
+</div>
+
               </div>
             </div>
             <Thumbnail />

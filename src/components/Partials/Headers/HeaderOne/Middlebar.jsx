@@ -41,7 +41,6 @@ export default function Middlebar({ className, type }) {
       setCartTotal(cartResponse.data.data.length);
 
     } catch (error) {
-      console.error('Error fetching data:', error);
       setError(error?.response?.data?.message || 'An error occurred while fetching the wishlist and cart');
     } finally {
       setLoading(false);
@@ -139,12 +138,14 @@ export default function Middlebar({ className, type }) {
                 </Link>
               </div>
               <div>
-                <Link to="/login">
-                  <span>
-                    <RiLoginBoxLine style={{ width: "50px", height: "22px" }} />
-                  </span>
-                </Link>
-              </div>
+      {!token && (
+        <Link to="/login">
+          <span>
+            <RiLoginBoxLine style={{ width: "50px", height: "22px" }} />
+          </span>
+        </Link>
+      )}
+    </div>
             </div>
           </div>
         </div>

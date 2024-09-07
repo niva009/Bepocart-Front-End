@@ -47,12 +47,12 @@ export default function ProductsTable({ className }) {
       });
       setWishlist(wishlist.filter(item => item.id !== itemId));
     } catch (error) {
-      console.error(`Error deleting item with ID ${itemId}:`, error);
       toast.error(`Error deleting item: ${error.response?.data?.message || error.message}`);
     }
   };
 
   const fetchProductDetails = async (itemId, wishlistItemId) => {
+
     try {
       const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/product/${itemId}/`);
       const productData = response.data;
@@ -89,7 +89,6 @@ export default function ProductsTable({ className }) {
       setIsModalOpen(false);
       handleDeleteItem(wishlistItemId); // Remove the item from the wishlist
     } catch (error) {
-      console.error(`Error adding item with ID ${productId} to cart:`, error);
       toast.error(`Error adding item to cart: ${error.response?.data?.message || error.message}`);
     }
   };
@@ -99,6 +98,29 @@ export default function ProductsTable({ className }) {
     const colorImage = productDetails.images.find(image => image.color === selectedColor);
     return colorImage ? colorImage.stock_info.filter(stock => stock.stock > 0) : [];
   };
+
+  const availableStock = () => {
+    if (!productDetails) return false;
+  
+    if (productDetails.product.type === 'single') {
+      const colorImage = productDetails.images.find(image => image.color === selectedColor);
+      const productStock = colorImage.stock;
+      return productStock === 0;
+    }
+  
+    if (productDetails.product.type === 'variant') {
+      if (!selectedColor) return false;
+  
+      const colorImage = productDetails.images.find(image => image.color === selectedColor);
+  
+      // If no color image is found or stock info is missing, return true (out of stock)
+      if (!colorImage || !colorImage.stock_info || colorImage.stock_info.length === 0) return true;
+  
+      return colorImage.stock_info.every(stock => stock.stock === 0);
+    }
+    return false;
+  };
+
 
   return (
     <div className={`w-full ${className || ""}`}>
@@ -200,12 +222,14 @@ export default function ProductsTable({ className }) {
               </div>
             )}
             <div className="flex justify-end space-x-3">
-              <button
-                onClick={() => addToCart(productDetails.product.id, selectedWishlistItemId)}
-                className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-              >
-                Add to Cart
-              </button>
+              
+            <button
+  onClick={() => addToCart(productDetails.product.id, selectedWishlistItemId)}
+  className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+  disabled={availableStock()} // Disable the button if out of stock for either single or variant products
+>
+  {availableStock() ? 'Out of Stock' : 'Add to Cart'} {/* Change text based on stock availability */}
+</button>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="bg-gray-300 text-black py-2 px-4 rounded-md hover:bg-gray-400"

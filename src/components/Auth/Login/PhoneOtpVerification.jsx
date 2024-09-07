@@ -1,61 +1,86 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import HeaderOne from '../../Partials/Headers/HeaderOne';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import axios from 'axios';
-import Footer from '../../Partials/Footers/Footer';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const VerifyOtp = () => {
-    const [otp, setOtp] = useState("");
+
+const PhoneOtpVerification = () => {
+    const [otp, setOtp] = useState(new Array(6).fill(""));
     const [error, setError] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
-    // const { phone } = location.state;
+    const { phone } = location.state || {}; // Destructure phone, handle case where state is undefined
 
-    const handleChange = (e) => {
-        setOtp(e.target.value);
-    }
 
-    const handleSubmit = async (e) => {
+    const handleChange = (element, index) => {
+        if (isNaN(element.value)) return;
+
+        setOtp([...otp.map((d, idx) => (idx === index ? element.value : d))]);
+
+        // Focus next input
+        if (element.nextSibling) {
+            element.nextSibling.focus();
+        }
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
 
-        try {
-            // Verify the OTP with the backend
-            const response = await axios.post('https://your-backend-url/verify-otp', { phone, otp });
+        const otpCode = otp.join("");
+        axios.post(`${import.meta.env.VITE_PUBLIC_URL}/verification-otp/`, { otp: otpCode, phone: phone })
+            .then((res) => {
+                localStorage.setItem("token",res.data.token)
 
-            if (response.data.success) {
-                // OTP is correct, proceed to the next step
-                navigate('/home');
-            } else {
-                setError('Invalid OTP. Please try again.');
-            }
-        } catch (error) {
-            setError('An error occurred. Please try again.');
-        }
-    }
+                if(res.status === 200){
+
+                    navigate('/');
+                }else{
+                    setError("otp verification not successfull")
+                }
+            })
+            .catch((error) => {
+                setError(error.response?.data?.error || "An error occurred. Please try again.");
+            });
+    };
 
     return (
         <div>
             <HeaderOne />
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: '100px' }}>
-            <h1 style={{ fontFamily: 'initial', fontSize: '40px', fontWeight: 'bolder' }}>Verify OTP</h1>
-            <Box
-                sx={{
-                    width: 500,
-                    maxWidth: '100%',
-                    marginTop: '25px'
-                }}
-            >
-                <TextField onChange={handleChange} fullWidth label="Enter OTP" id="fullWidth" value={otp} />
+            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" mt={10}>
+                <h1 style={{ fontFamily: 'initial', fontSize: '40px', fontWeight: 'bolder' }}>Enter OTP</h1>
+                <p>Enter the 6-digit OTP sent to your phone.</p>
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: '25px' }}>
+                    <Box display="flex">
+                        {otp.map((data, index) => (
+                            <input
+                                type="number"
+                                name="otp"
+                                maxLength="1"
+                                key={index}
+                                value={data}
+                                onChange={e => handleChange(e.target, index)}
+                                onFocus={e => e.target.select()}
+                                style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    margin: '0 10px',
+                                    textAlign: 'center',
+                                    fontSize: '20px',
+                                    color: "white",
+                                    backgroundColor: "#6495ED"
+                                }}
+                            />
+                        ))}
+                    </Box>
+                    <Button type="submit" style={{ marginTop: '30px', padding: '10px 20px' }} variant="contained">Submit</Button>
+                </form>
+                {error && <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>}
             </Box>
-            <Button onClick={handleSubmit} style={{ marginTop: '30px', padding: '10px 20px' }} variant="contained">Verify</Button>
-            {error && <p style={{ color: 'red', marginTop: '20px' }}>{error}</p>}
-        </div>
-        <Footer/>
         </div>
     );
-}
+};
 
-export default VerifyOtp;
+export default PhoneOtpVerification;
+

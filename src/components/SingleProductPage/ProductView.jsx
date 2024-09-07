@@ -8,6 +8,12 @@ import { FormControl, Select, MenuItem } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
 import Star from "@mui/icons-material/Star";
+import { FaCircleMinus } from "react-icons/fa6";
+import { FaCirclePlus } from "react-icons/fa6";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { FaShare } from 'react-icons/fa'; //
+
 
 export default function ProductView({ className }) {
   const [loading, setLoading] = useState(false);
@@ -21,13 +27,14 @@ export default function ProductView({ className }) {
   const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
-  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showWishlistSuccessMessage, setShowWishlistSuccessMessage] = useState(false);
   const [errorWishlist, setErrorWishlist] = useState(null);
   const [isReadMore, setIsReadMore] = useState(true);
   const [review, setReview] = useState([]);
   const [stock,setStock] = useState([]);
   const [selectedImage, setSelectedImage] = useState([]);
+  
+
 
 
   const { id } = useParams();
@@ -90,7 +97,6 @@ export default function ProductView({ className }) {
         setError("");
       }
     } catch (error) {
-      console.error("Error fetching product:", error);
       if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
         navigate("/login");
       } else {
@@ -102,14 +108,7 @@ export default function ProductView({ className }) {
   };
 
 
-  useEffect(() => {
-    if (showSuccessMessage) {
-      const timer = setTimeout(() => {
-        setShowSuccessMessage(false);
-      }, 3000); // 2 seconds
-      return () => clearTimeout(timer); // Cleanup the timer
-    }
-  }, [showSuccessMessage]);
+
 
   // Use effect for wishlist success message
   useEffect(() => {
@@ -135,6 +134,7 @@ export default function ProductView({ className }) {
 
   const productId = product?.id;
 
+
   useEffect(() => {
     const fetchRating = async () => {
       try {
@@ -158,6 +158,9 @@ export default function ProductView({ className }) {
 
   const averageRating = calculateAverageRating();
 
+  // console.log("stock information..:", stock)
+
+
   const AddToCart = async () => {
     try {
       if (id) {
@@ -173,13 +176,18 @@ export default function ProductView({ className }) {
             headers: { "Authorization": `${token}` },
           }
         );
-        setShowSuccessMessage(true);
+
+        if(response.status === 201){
+          toast.success("Added to Cart Successfull!", { position: "bottom-center" });
+        }
       } else {
-        console.log("ID not found");
+        toast.warning("id not found")
       }
     } catch (error) {
-      console.log(error);
-      if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
+      if(error?.response?.status === 400){
+        toast.warning(error?.response?.data?.message || "error adding product to cart")
+      }
+       else if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
         navigate("/login");
       } else {
         setError("Error adding to cart");
@@ -202,11 +210,13 @@ export default function ProductView({ className }) {
         setSelectedSize(sizes[0] || ""); // Set the first available size as the default
         const choosedImage = changedImage.stock_info.filter(variant => variant.stock);
         setStock(choosedImage);
+        setQuantity(1);
       } else {
         // Clear sizes for single type and set stock based on the image's stock
         setSizes([]);
         setSelectedSize("");
         setStock(stockAvailable); // Set stock to the single variant's stock
+        setQuantity(1);
       }
   
       // Always update the selected color
@@ -215,7 +225,16 @@ export default function ProductView({ className }) {
   };
   
 
-  const handleSizeChange = (event) => setSelectedSize(event.target.value);
+  const handleSizeChange = (event) => {
+    const newSize = event.target.value;
+    setSelectedSize(newSize);
+
+    // Find the stock for the newly selected size
+    const selectedVariant = selectedImage.stock_info.find(variant => variant.size === newSize);
+    const newStock = selectedVariant ? selectedVariant.stock : 0;
+    setStock(newStock); // Update stock based on selected size
+    setQuantity(1); // Reset quantity when a new size is selected
+  };
 
   const handleWishlistToggle = () => {
     const token = localStorage.getItem("token");
@@ -265,13 +284,57 @@ export default function ProductView({ className }) {
         setSizes(filteredVariants.map(variant => variant.size));
         setStock(filteredVariants.map(variant => variant.stock));
         setSelectedSize(filteredVariants[0]?.size || "");
+        setQuantity(1);
       } else {
         setSizes([]); // Clear sizes if product type is "single"
         setSelectedSize(""); // Clear selected size
         setStock(stockAvailable)
+        setQuantity(1);
       }
     }
   };
+
+
+
+   const incrementCounter = () =>{
+       if(quantity < stock)
+       setQuantity(quantity + 1)
+   }
+
+   const decrementCounter = () =>{
+       if( quantity > 1){
+        setQuantity(quantity - 1)
+       }
+   }
+
+
+
+   const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        // Make sure product and product.image exist before sharing
+        if (product && product.image) {
+          await navigator.share({
+            title: product.slug || 'Check this out!', // Provide a fallback title
+            text: 'Check out this product!', // Adding text for better sharing experience
+            url: window.location.href,
+            // image property can be included if you have a valid URL for product.image
+            // However, Web Share API might not support image sharing directly
+          });
+        } else {
+          console.error('Product or product image is not defined');
+        }
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      // Display a more user-friendly message or handle the case more gracefully
+      alert('Sharing is not supported on this browser.');
+    }
+  };
+  
+  };
+
 
 
   
@@ -340,24 +403,24 @@ export default function ProductView({ className }) {
 
   
 
-  useEffect(() => {
-    // Check if product is fully loaded and all necessary properties exist
-    if (product && product.categoryName && product.name && product.id && product.salePrice && window.fbq) {
-      window.fbq('track', 'ViewContent', {
-        content_category: product.categoryName,
-        content_name: product.name,
-        content_ids: product.id,
-        content_type: 'product_Group',
-        value: product.salePrice,
-        currency: 'INR',
-      });
-    }
-  }, [product]);
+  // useEffect(() => {
+  //   // Check if product is fully loaded and all necessary properties exist
+  //   if (product && product.categoryName && product.name && product.id && product.salePrice && window.fbq) {
+  //     window.fbq('track', 'ViewContent', {
+  //       content_category: product.categoryName,
+  //       content_name: product.name,
+  //       content_ids: product.id,
+  //       content_type: 'product_Group',
+  //       value: product.salePrice,
+  //       currency: 'INR',
+  //     });
+  //   }
+  // }, [product]);
 
 
   const handleButtonClick = () => {
     handleWishlistToggle();
-    handleTrackWishlist();
+    // handleTrackWishlist();
   };
   
 
@@ -489,6 +552,29 @@ export default function ProductView({ className }) {
             </div>
           </div>
 
+<div className="flex items-center space-x-4 mb-4" >
+  <button
+    className="bg-gray-200 rounded-full p-2 hover:bg-gray-300 focus:outline-none transition duration-300 ease-in-out"
+    onClick={decrementCounter}
+    aria-label="Increase quantity"
+  >
+    <FaCircleMinus />
+  </button>
+
+  <span className="text-lg font-semibold text-gray-800">
+    {quantity}
+  </span>
+
+  <button
+    className="bg-gray-200 rounded-full p-2 hover:bg-gray-300 focus:outline-none transition duration-300 ease-in-out"
+    onClick={incrementCounter}
+    aria-label="Decrease quantity"
+  >
+    <FaCirclePlus />
+  </button>
+</div>
+
+
 
           {product?.type !== "single" && sizes.length > 0 && (
   <div className="mb-4">
@@ -524,6 +610,7 @@ export default function ProductView({ className }) {
 >
   Add to Cart
 </button>
+
           </div>
           <div>
 <button
@@ -533,14 +620,9 @@ export default function ProductView({ className }) {
   {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
 </button>
 
-
           </div>
 
-          {showSuccessMessage && (
-            <Stack sx={{ width: "100%" }} spacing={2}>
-              <Alert severity="success">Product added to cart successfully!</Alert>
-            </Stack>
-          )}
+    
           {showWishlistSuccessMessage && (
             <Stack sx={{ width: "100%" }} spacing={2}>
               <Alert severity="success">Product added to wishlist successfully!</Alert>
@@ -551,8 +633,28 @@ export default function ProductView({ className }) {
               <Alert severity="error">{errorWishlist}</Alert>
             </Stack>
           )}
+
+
+<button
+            onClick={handleShare}
+            className="flex items-center space-x-2 text-qblack border border-qgray-border p-2 rounded-lg hover:bg-gray-100 transition duration-150 ease-in-out"
+          >
+            <FaShare className="text-lg" />
+            <span>Share</span>
+          </button>
         </div>
       </div>
+      <ToastContainer
+position="bottom-center"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="dark"
+/>
     </div>
   );
-}

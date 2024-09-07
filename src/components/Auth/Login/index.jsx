@@ -69,7 +69,8 @@ export default function Login() {
     } catch (error) {
       console.error("Google login error:", error.response ? error.response.data : error.message
       );
-      console.log(error,"erroorrrr")
+
+      console.log("error login with......",error);
       
       // Set error message
       setMessageType("error");
@@ -202,13 +203,26 @@ export default function Login() {
                           </button>
                         </div>
                       </div>
-                      <div className="google-login-section mb-3.5">
-                        <GoogleLogin
-                          onSuccess={handleGoogleLoginSuccess}
-                          onError={handleGoogleLoginError}
-                          buttonText="Login with Google"
-                        />
-                      </div>
+                      <div className="google-phone-login-section mb-3.5 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+  <div className="google-login-section flex-1">
+    <GoogleLogin
+      onSuccess={handleGoogleLoginSuccess}
+      onError={handleGoogleLoginError}
+      buttonText="Login with Google"
+      className="w-full"
+    />
+  </div>
+
+  <div className="phone-login-section flex-1">
+    <button 
+      className="bg-white-500 border-solid border-2 border-color: ring-black text-black py-2 px-4 rounded-sm hover:transition duration-200 ease-in-out w-full"
+      onClick={() => navigate('/phone-verify')}
+    >
+      Login with Phone Number
+    </button>
+  </div>
+</div>
+
                       <div className="signup-area flex justify-center">
                         <p className="text-base text-qgraytwo font-normal">
                           Don’t have an account?

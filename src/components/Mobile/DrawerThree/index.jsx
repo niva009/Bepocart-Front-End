@@ -140,12 +140,14 @@ export default function DrawerThree({ className, open, action }) {
                 </Link>
 </div>
 <div>
-                <Link to="/login">
-                <span>
-                <RiLoginBoxLine  style={{width:"50px", height:"22px"}}/>
-                </span>
-                </Link>
-              </div>
+      {!token && (
+        <Link to="/login">
+          <span>
+            <RiLoginBoxLine style={{ width: "50px", height: "22px" }} />
+          </span>
+        </Link>
+      )}
+    </div>
       
                 <div className="favorite relative">
                   <Link to="/wishlist">

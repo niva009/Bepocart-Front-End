@@ -12,7 +12,7 @@ export default function SearchBox({ className, type }) {
   const handleInputChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
-
+  
     if (query) {
       axios.get(`${import.meta.env.VITE_PUBLIC_URL}/search-products/?q=${query}`)
         .then((response) => {
@@ -27,17 +27,20 @@ export default function SearchBox({ className, type }) {
   };
 
   const handleSearch = (event) => {
-    event.preventDefault();  // Ensure this is inside the handleSearch function
-  
+    event.preventDefault();  // Ensure form submission is prevented
+    
+    console.log("Search triggered with query:", searchQuery);  // Debugging line
+    
     if (searchQuery) {
       axios.get(`${import.meta.env.VITE_PUBLIC_URL}/search-products/?q=${searchQuery}`)  // Corrected searchQuery usage
         .then((response) => {
-          console.log("response:", response.data);
+          console.log("Response data:", response.data);  // Debugging line
           navigate('/all-products', { state: { searchResult: response.data } });
           setErrorMessage(null);
         })
         .catch((error) => {
           const message = error?.response?.data?.message || 'An error occurred while fetching search results';
+          console.error("Search error:", message);  // Debugging line
           setErrorMessage(message);
           setTimeout(() => {
             setErrorMessage(null);
@@ -45,6 +48,7 @@ export default function SearchBox({ className, type }) {
         });
     }
   };
+  
 
   const handleClickOutside = (event) => {
     if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {

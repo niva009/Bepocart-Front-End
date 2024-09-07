@@ -19,17 +19,19 @@ const PhoneLogin = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // Make an API call to your backend to generate and send the OTP
-            const response = await axios.post('https://your-backend-url/send-otp', { phone });
+            const response = await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/generate-otp/`, { phone });
 
-            if (response.data.success) {
+            if (response.status === 200) {
                 // Navigate to the OTP verification page, pass the phone number
-                navigate('/verify-otp', { state: { phone } });
+                navigate('/mobile-Otp', { state: { phone } });
             } else {
                 setError('Failed to send OTP. Please try again.');
             }
         } catch (error) {
-            setError('An error occurred. Please try again.');
+            // Handle any error that occurs and display the appropriate error message
+            console.log(error)
+            const errorMessage = error?.response?.data?.error || 'An error occurred. Please try again.';
+            setError(errorMessage);
         }
     }
 

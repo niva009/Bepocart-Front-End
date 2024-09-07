@@ -7,6 +7,7 @@ import ThinLove from "../icons/ThinLove";
 import './modal-styles.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import { BiSolidOffer } from "react-icons/bi"; // Import the offer icon
 
 export default function   ProductCardStyleOne({ datas, type }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -86,58 +87,38 @@ export default function   ProductCardStyleOne({ datas, type }) {
   return (
   
     <div className="product-card-one w-full h-full bg-white relative group overflow-hidden" style={{ boxShadow: "0px 15px 64px 0px rgba(0, 0, 0, 0.05)" }}>
-    <Link to={`/single-product/${datas.slug}/`}>
-      <div className="product-card-img w-full h-[200px]" 
-        style={{
-          background: `url(${datas.image}) no-repeat center`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          display: "flex",
-        }}
-      >
-        <div className="discount-container absolute top-3 left-3 flex space-x-2">
-          {/* Render discount percentage box */}
-          {datas.discount && (
-        
-            <div className="discount-box px-2 py-1 bg-qh3-blue text-black text-xs font-bold rounded">
-              {parseInt(datas.discount)}% OFF
-            </div>
-          )}
+   <Link to={`/single-product/${datas.slug}/`}>
+        <div
+          className="product-card-img relative w-full h-[200px]"
+          style={{
+            background: `url(${datas.image}) no-repeat center`,
+            backgroundSize: "cover",
+          }}
+        >
+          <div className="discount-container absolute top-3 left-3 flex space-x-2">
+            {/* Render discount percentage box */}
+            {datas.discount && (
+              <div className="discount-box px-2 py-1 bg-qh3-blue text-black text-xs font-bold rounded">
+                {parseInt(datas.discount)}% OFF
+              </div>
+            )}
 
-          {/* Render sale box only if datas.sale exists */}
-          {datas.sale && (
-            <div className="discount-box px-2 py-1 bg-green-600 text-white text-xs font-bold rounded">
-              {datas.sale}
+            {/* Render sale box only if datas.sale exists */}
+            {datas.sale && (
+              <div className="discount-box px-2 py-1 bg-green-600 text-white text-xs font-bold rounded">
+                {datas.sale}
+              </div>
+            )}
+          </div>
+
+          {datas.offer && datas.offer !== "none" && (
+            <div className="offer-box absolute bottom-3 left-3 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded flex items-center">
+              <BiSolidOffer className="text-lg mr-1" />
+              {datas.offer}
             </div>
           )}
-        </div>
-  
-        {datas.campaingn_product && (
-          <>
-            <div className="px-[30px] absolute left-0 top-3 w-full">
-              <div className="progress-title flex justify-between">
-                <p className="text-xs text-qblack font-400 leading-6">Products Available</p>
-                <span className="text-sm text-qblack font-600 leading-6">{datas.stock}</span>
-              </div>
-              <div className="progress w-full h-[5px] rounded-[22px] bg-primarygray relative overflow-hidden">
-                <div
-                  style={{ width: `${datas.campaingn_product ? 100 - available : 0}%` }}
-                  className={`h-full absolute left-0 top-0 ${type === 3 ? "bg-qh3-blue" : "bg-qyellow"}`}
-                ></div>
-              </div>
-            </div>
-          </>
-        )}
-        {datas.product_type && !datas.campaingn_product && (
-          <div className="product-type absolute right-[14px] top-[17px]">
-            <span className={`text-[9px] font-700 leading-none py-[6px] px-3 uppercase text-white rounded-full tracking-wider ${datas.product_m === "popular" ? "bg-[#19CC40]" : "bg-qyellow"}`}>
-              {datas.product_type}
-            </span>
-          </div>
-        )}
-      </div>
-    </Link>
+        </div>
+      </Link>
   
     <div className="product-card-details px-[30px] pb-[30px] relative">
       <div className="absolute w-full h-10 px-[30px] left-0 top-40 group-hover:top-[85px] transition-all duration-300 ease-in-out">

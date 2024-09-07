@@ -7,6 +7,7 @@ import ThinPeople from '../../Helpers/icons/ThinPeople'
 import { RiLoginBoxLine } from "react-icons/ri";
 import { IoIosArrowDown } from "react-icons/io";
 
+
 export default function Drawer({ className, open, action }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [errorMessage, setErrorMessage] = useState(null);
@@ -140,12 +141,14 @@ export default function Drawer({ className, open, action }) {
                 </Link>
 </div>
 <div>
-                <Link to="/login">
-                <span>
-                <RiLoginBoxLine  style={{width:"50px", height:"22px"}}/>
-                </span>
-                </Link>
-              </div>
+      {!token && (
+        <Link to="/login">
+          <span>
+            <RiLoginBoxLine style={{ width: "50px", height: "22px" }} />
+          </span>
+        </Link>
+      )}
+    </div>
       
                 <div className="favorite relative">
                   <Link to="/wishlist">

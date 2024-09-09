@@ -35,6 +35,9 @@ export default function CheckoutPage() {
     fetchProfileData();
   }, []);
 
+
+  console.log("seleted address information..:",selectedAddress)
+
   const fetchProfileData = async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/profile-view/`, {
@@ -176,9 +179,8 @@ useEffect(() =>{
         amount: (subtotal * 100).toString(), // Amount in paise
         description: "Thank you for your order",
         image: "https://manuarora.in/logo.png",
-        callback_url: '/order-success',
+        callback_url: 'https://bepocart.com/order-success',
         handler: async function (response) {
-          // Payment handler
           const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
   
           try {
@@ -196,6 +198,9 @@ useEffect(() =>{
                 },
               }
             );
+
+            // console.log("orderrrr respojnsee....205",orderResponse);
+            
 
   
             if (orderResponse.status === 200) {

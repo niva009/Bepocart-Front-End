@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate , Link} from 'react-router-dom';
 
-export default function ProductsTable({ className, onQuantityChange }) {
+export default function ProductsTable({ className, onQuantityChange, onProductRemove }) {
   const [cartProducts, setCartProducts] = useState([]);
   const [offer, setOffer] = useState([]);
 
@@ -43,7 +43,7 @@ export default function ProductsTable({ className, onQuantityChange }) {
     fetchCartProducts();
   }, []);
 
-  console.log(cartProducts)
+
 
   const handleDeleteProduct = async (id) => {
     try {
@@ -54,6 +54,8 @@ export default function ProductsTable({ className, onQuantityChange }) {
         },
       });
       setCartProducts(prevProducts => prevProducts.filter(product => product.id !== id));
+      onProductRemove();
+      
     } catch (error) {
       console.error('Error deleting product:', error);
     }
@@ -116,21 +118,21 @@ export default function ProductsTable({ className, onQuantityChange }) {
 
   const hasOfferProducts = cartProducts.some(product => product.offer_type !== null);
 
-  console.log("cart data......:", cartProducts);
-  console.log("offer getting details  ", offer);
+  // console.log("cart data......:", cartProducts);
+  // console.log("offer getting details  ", offer);
 
   var offerName = ""
 
   const offerCategory = offer[0];
 
-  console.log("offerCategory-information", offerCategory);
-  console.log("cart information:", cartProducts);
+  // console.log("offerCategory-information", offerCategory);
+  // console.log("cart information:", cartProducts);
 
-  // Log offerCategory details for debugging
-  console.log("offerCategory:", offerCategory);
-  console.log("is_active:", offerCategory?.is_active);
-  console.log("get_option:", offerCategory?.get_option);
-  console.log("methord", offerCategory?.method);
+  // // Log offerCategory details for debugging
+  // console.log("offerCategory:", offerCategory);
+  // console.log("is_active:", offerCategory?.is_active);
+  // console.log("get_option:", offerCategory?.get_option);
+  // console.log("methord", offerCategory?.method);
 
 
 
@@ -140,7 +142,7 @@ export default function ProductsTable({ className, onQuantityChange }) {
     offerName = "BUY-TWO-GET-ONE";
   }
 
-  console.log("offername.....:", offerName)
+  // console.log("offername.....:", offerName)
   return (
     <div className={`w-full ${className || ''}`}>
       <div className="relative w-full overflow-x-auto border border-[#EDEDED]">

@@ -93,8 +93,8 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
             {type === 3 ? (
               <Link to="/">
                 <img
-                  width="150"
-                  height="30"
+                  width="130"
+                  height="26"
                   src={Logo}
                   className="pt-2.5"
                 />

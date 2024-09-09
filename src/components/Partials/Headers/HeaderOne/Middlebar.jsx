@@ -10,7 +10,7 @@ import SearchBox from "../../../Helpers/SearchBox";
 import Logo from '../../../../assets/bepocart.png';
 import BepoCoin from '../../../../assets/bepocoin.png';
 
-export default function Middlebar({ className, type }) {
+export default function Middlebar({ className, type ,}) {
   const [coinCount, setCoinCount] = useState([]);
   const [wishlistTotal, setWishlistTotal] = useState(0);
   const [wishlistItems, setWishlistItems] = useState([]);

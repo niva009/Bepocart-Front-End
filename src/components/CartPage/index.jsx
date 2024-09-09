@@ -95,6 +95,9 @@ export default function CardPage({ cart = true }) {
   const handleUpdateCart = () => {
     fetchCartProducts();
   };
+  const handleUpdate = () =>{
+    fetchCartProducts();
+  }
 
 
   console.log("cart at index pageeeee",cartProducts);
@@ -126,7 +129,7 @@ export default function CardPage({ cart = true }) {
                 { name: "cart", path: "/cart" },
               ]}
             />
-            <ProductsTable className="mb-6" cartProducts={cartProducts} onQuantityChange={handleQuantityChange} />
+            <ProductsTable className="mb-6" cartProducts={cartProducts} onQuantityChange={handleQuantityChange} onProductRemove={handleUpdate} />
 
 
 

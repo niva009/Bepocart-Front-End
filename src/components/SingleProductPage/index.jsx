@@ -49,7 +49,6 @@ export default function SingleProductPage() {
   };
 
 
-  console.log("reposne dataaaa...:",products);
 
 
 

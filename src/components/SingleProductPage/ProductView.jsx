@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaShare } from 'react-icons/fa'; //
 
 
-export default function ProductView({ className }) {
+export default function ProductView({ className, }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [product, setProduct] = useState(null);
@@ -27,8 +27,6 @@ export default function ProductView({ className }) {
   const [quantity, setQuantity] = useState(1);
   const [wishlist, setWishlist] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
-  const [showWishlistSuccessMessage, setShowWishlistSuccessMessage] = useState(false);
-  const [errorWishlist, setErrorWishlist] = useState(null);
   const [isReadMore, setIsReadMore] = useState(true);
   const [review, setReview] = useState([]);
   const [stock,setStock] = useState([]);
@@ -110,25 +108,9 @@ export default function ProductView({ className }) {
 
 
 
-  // Use effect for wishlist success message
-  useEffect(() => {
-    if (showWishlistSuccessMessage) {
-      const timer = setTimeout(() => {
-        setShowWishlistSuccessMessage(false);
-      }, 3000); // 2 seconds
-      return () => clearTimeout(timer); // Cleanup the timer
-    }
-  }, [showWishlistSuccessMessage]);
-
+  // Use effect for wishlist success mes
   // Use effect for error message
-  useEffect(() => {
-    if (errorWishlist) {
-      const timer = setTimeout(() => {
-        setErrorWishlist(null);
-      }, 3000); // 2 seconds
-      return () => clearTimeout(timer); // Cleanup the timer
-    }
-  }, [errorWishlist]);
+
   
   
 
@@ -185,7 +167,7 @@ export default function ProductView({ className }) {
       }
     } catch (error) {
       if(error?.response?.status === 400){
-        toast.warning(error?.response?.data?.message || "error adding product to cart")
+        toast.warning(error?.response?.data?.message || "error adding product to cart", { position: "bottom-center" });
       }
        else if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
         navigate("/login");
@@ -258,11 +240,16 @@ export default function ProductView({ className }) {
       }
     )
       .then((response) => {
-        setShowWishlistSuccessMessage(true);
+        if(response.status === 201){
+          toast.success("Added to wishlist Successfull!", { position: "bottom-center" });
+         
+
+        }
       })
       .catch((error) => {
-        console.error("Error adding to wishlist", error);
-        setErrorWishlist(error?.response?.data?.message || "Error adding to wishlist")
+        toast.warning(error?.response?.data?.message || "Error adding to wishlist", { position: "bottom-center" });
+        console.log("error wishlist..:",error);
+
       });
   };
 
@@ -333,9 +320,6 @@ export default function ProductView({ className }) {
     }
   };
   
-  };
-
-
 
   
 
@@ -403,25 +387,30 @@ export default function ProductView({ className }) {
 
   
 
-  // useEffect(() => {
-  //   // Check if product is fully loaded and all necessary properties exist
-  //   if (product && product.categoryName && product.name && product.id && product.salePrice && window.fbq) {
-  //     window.fbq('track', 'ViewContent', {
-  //       content_category: product.categoryName,
-  //       content_name: product.name,
-  //       content_ids: product.id,
-  //       content_type: 'product_Group',
-  //       value: product.salePrice,
-  //       currency: 'INR',
-  //     });
-  //   }
-  // }, [product]);
+  useEffect(() => {
+    // Check if product is fully loaded and all necessary properties exist
+    if (product && product.categoryName && product.name && product.id && product.salePrice && window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_category: product.categoryName,
+        content_name: product.name,
+        content_ids: product.id,
+        content_type: 'product_Group',
+        value: product.salePrice,
+        currency: 'INR',
+      });
+    }
+  }, [product]);
 
 
   const handleButtonClick = () => {
     handleWishlistToggle();
-    // handleTrackWishlist();
+    handleTrackWishlist();
   };
+
+  const handleCartClick =() =>{
+    handleTrackCart();
+    AddToCart();  
+  }
   
 
 
@@ -432,12 +421,28 @@ export default function ProductView({ className }) {
         content_category: product.categoryName,
         content_ids: product.id,
         content_name: product.name,
-        content_type: 'product_Group',
+        content_type: 'product_group',
         currency: 'INR',
         value: product.salePrice,
       });
     }
   };
+
+  const handleTrackCart = () => {
+    fbq('track', 'AddToCart', {
+      content_name: product.name,
+      content_ids: product.id,
+      content_type: 'product_group',
+      content_category: product.categoryName, // Add category
+      value: product.salePrice,
+      currency: 'INR',
+      quantity: quantity // Make sure to pass a valid quantity
+    });
+  };
+  
+  
+
+
   return (
     <div className={`product-view w-full lg:flex justify-between ${className || ""}`}>
       <div data-aos="fade-right" className="lg:w-1/2 xl:mr-[70px] lg:mr-[50px]">
@@ -605,7 +610,7 @@ export default function ProductView({ className }) {
 
 <button
   className="w-full bg-qyellow text-qblack py-3 text-lg font-medium"
-  onClick={AddToCart}
+  onClick={handleCartClick}
   disabled = {isOutOfStock}
 >
   Add to Cart
@@ -623,16 +628,7 @@ export default function ProductView({ className }) {
           </div>
 
     
-          {showWishlistSuccessMessage && (
-            <Stack sx={{ width: "100%" }} spacing={2}>
-              <Alert severity="success">Product added to wishlist successfully!</Alert>
-            </Stack>
-          )}
-          {errorWishlist && (
-            <Stack sx={{ width: "100%" }} spacing={2}>
-              <Alert severity="error">{errorWishlist}</Alert>
-            </Stack>
-          )}
+       
 
 
 <button
@@ -644,17 +640,7 @@ export default function ProductView({ className }) {
           </button>
         </div>
       </div>
-      <ToastContainer
-position="bottom-center"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="dark"
-/>
+      <ToastContainer/>
     </div>
   );
+}

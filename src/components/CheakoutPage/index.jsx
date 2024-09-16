@@ -141,95 +141,87 @@ useEffect(() =>{
 
 
 
-  const initializeRazorpay = () => {
-    return new Promise((resolve) => {
+function loadScript(src) {
+  return new Promise((resolve) => {
       const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-
+      script.src = src;
       script.onload = () => {
-        resolve(true);
+          resolve(true);
       };
       script.onerror = () => {
-        resolve(false);
+          resolve(false);
       };
       document.body.appendChild(script);
-    });
+  });
+}
+
+async function displayRazorpay() {
+  const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+
+  if (!res) {
+    alert("Razorpay SDK failed to load. Are you online?");
+    return;
+  }
+
+  if (!selectedAddress) {
+    alert("Please select an address");
+    return;
+  }
+
+  const options = {
+    key: `${import.meta.env.VITE_PAYMENT_KEY}`, // Ensure this is correctly loaded from .env
+    amount: (subtotal * 100).toString(), // Ensure subtotal is correctly calculated
+    currency: "INR",
+    name: "Bepocart Pvt Limited.",
+    description: "Thank you for your order",
+
+    handler: async function (response) {
+      const data = {
+        razorpayPaymentId: response.razorpay_payment_id,
+      };
+
+      try {
+        // Send the payment details to the backend
+        const result = await axios.post(
+          `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
+          {
+            payment_method: paymentMethod,
+            coupon_code: couponCode,
+            payment_id: data.razorpayPaymentId,
+          },
+          {
+            headers: { 'Authorization': `${token}` },
+          }
+        );
+
+        console.log("result successfull payment..:",result);
+
+        // Check if the backend successfully created the order
+        if (result.status === 200) {
+          alert("Payment successful and order created!");
+          setTimeout(() => {
+            navigate("/order-success");
+          }, 2000);
+        } else {
+          alert("Failed to create order. Please try again.");
+        }
+      } catch (error) {
+        console.log("Error processing payment: ", error);
+        alert("Payment was successful, but there was an issue creating the order. Please try again.");
+      }
+    },
+
+    prefill: {
+      name: profile.first_name,
+      email: profile.email,
+      contact: profile.phone,
+    },
   };
 
-  const makePayment = async () => {
-    // Initialize Razorpay SDK
-    const isRazorpayLoaded = await initializeRazorpay();
-    if (!isRazorpayLoaded) {
-      alert("Failed to load Razorpay SDK. Please try again later.");
-      return;
-    }
-  
-    // Check if address is selected
-    if (!selectedAddress) {
-      alert("Please select an address to place the order.");
-      return;
-    }
-  
-    // Proceed with payment initiation
-    try {
-      const paymentOptions = {
-        key: `${import.meta.env.VITE_PAYMENT_KEY}`, // Razorpay Key ID
-        name: "BepoCart Pvt Limited",
-        currency: "INR",
-        amount: (subtotal * 100).toString(), // Amount in paise
-        description: "Thank you for your order",
-        image: "https://manuarora.in/logo.png",
-        callback_url: 'https://bepocart.com/order-success',
-        handler: async function (response) {
-          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
-  
-          try {
-            // Create order after successful payment
-            const orderResponse = await axios.post(
-              `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
-              {
-                payment_method: paymentMethod,
-                coupon_code: couponCode,
-                payment_id: razorpay_payment_id, // Send payment ID
-              },
-              {
-                headers: {
-                  'Authorization': `${token}`,
-                },
-              }
-            );
+  const paymentObject = new Razorpay(options);
+  paymentObject.open(); // Opens Razorpay payment UI
+}
 
-            // console.log("orderrrr respojnsee....205",orderResponse);
-            
-
-  
-            if (orderResponse.status === 200) {
-              alert("Payment successful and order created!");
-              navigate('/order-success');
-            } else {
-              alert("Failed to create order. Please try again.");
-            }
-          } catch (orderError) {
-            console.error("Error creating order:", orderError);
-            alert("An error occurred while creating your order. Please try again.");
-          }
-        },
-        prefill: {
-          name: profile.first_name,
-          email: profile.email,
-          contact: profile.phone,
-        },
-      };
-  
-      // Open Razorpay payment dialog
-      const paymentObject = new window.Razorpay(paymentOptions);
-      paymentObject.open();
-    } catch (error) {
-      console.error("Error initializing payment:", error);
-      alert("Payment initialization failed. Redirecting to cart.");
-      navigate("/cart"); // Redirect to cart if payment fails
-    }
-  };
 
 
   const handlePlaceOrder = async () => {
@@ -249,7 +241,7 @@ useEffect(() =>{
         alert("Order creation failed.");
       }
     } else {
-      makePayment();
+      displayRazorpay();
     }
   };
 

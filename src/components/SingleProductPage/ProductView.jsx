@@ -31,6 +31,7 @@ export default function ProductView({ className, }) {
   const [review, setReview] = useState([]);
   const [stock,setStock] = useState([]);
   const [selectedImage, setSelectedImage] = useState([]);
+  const [ tostActive, setIsTostActive] = useState(false);
   
 
 
@@ -145,6 +146,8 @@ export default function ProductView({ className, }) {
 
   const AddToCart = async () => {
     try {
+          setIsTostActive(true);
+
       if (id) {
         const token = localStorage.getItem("token");
         const response = await axios.post(
@@ -160,7 +163,11 @@ export default function ProductView({ className, }) {
         );
 
         if(response.status === 201){
-          toast.success("Added to Cart Successfull!", { position: "bottom-center" });
+          toast.success("Added to Cart Successfull!", { position: "bottom-center", 
+            autoClose:3000,
+            onClose:()=> setIsTostActive(false),
+            style:{backgroundColor:'black'},
+          });
         }
       } else {
         toast.warning("id not found")
@@ -220,38 +227,55 @@ export default function ProductView({ className, }) {
 
   const handleWishlistToggle = () => {
     const token = localStorage.getItem("token");
-
+  
+    setIsTostActive(true);  // Set toast active state
+  
     if (!token) {
       navigate("/login");
       return;
     }
-
+  
     const body = {
       product: id,
     };
-
+  
+    // Use correct headers format and ensure token is in the right format
     axios.post(
       `${import.meta.env.VITE_PUBLIC_URL}/add-wishlist/${productId}/`,
-      body,
+      body,  // Include the body data here
       {
         headers: {
-          Authorization: token,
+          Authorization: `${token}`,  // Prepend "Bearer" to the token for better security
         },
       }
     )
       .then((response) => {
-        if(response.status === 201){
-          toast.success("Added to wishlist Successfull!", { position: "bottom-center" });
-         
-
+        if (response.status === 201) {
+          toast.success("Added to wishlist successfully!", {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: "black" },
+            onClose: () => setIsTostActive(false),  // Corrected function call
+          });
         }
       })
       .catch((error) => {
-        toast.warning(error?.response?.data?.message || "Error adding to wishlist", { position: "bottom-center" });
-        console.log("error wishlist..:",error);
-
+        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+          // Handle authorization errors (token is invalid or expired)
+          navigate("/login");
+        } else {
+          toast.warning(error?.response?.data?.message || "Error adding to wishlist", {
+            position: "bottom-center",
+            autoClose: 3000,
+            style: { backgroundColor: "black" },
+            onClose: () => setIsTostActive(false),
+          });
+        }
+  
+        console.log("Error in wishlist:", error);
       });
   };
+  
 
   const toggleReadMore = () => {
     setIsReadMore(!isReadMore)
@@ -409,7 +433,7 @@ export default function ProductView({ className, }) {
 
   const handleCartClick =() =>{
     handleTrackCart();
-    AddToCart();  
+    AddToCart(); 
   }
   
 
@@ -545,6 +569,7 @@ export default function ProductView({ className, }) {
               {productImages.map((image) => (
                 <button
                   key={image.id}
+                  disabled={tostActive}
                   className={`px-4 py-2 rounded border ${selectedColor === image.color
                       ? "border-qblack text-qblack font-semibold"
                       : "border-qgray text-qblack"
@@ -584,7 +609,7 @@ export default function ProductView({ className, }) {
           {product?.type !== "single" && sizes.length > 0 && (
   <div className="mb-4">
     <FormControl fullWidth>
-      <Select value={selectedSize} onChange={handleSizeChange}>
+      <Select value={selectedSize} onChange={handleSizeChange} disabled={tostActive}>
         {sizes.map((size) => (
           <MenuItem key={size} value={size}>
             {size}
@@ -611,7 +636,7 @@ export default function ProductView({ className, }) {
 <button
   className="w-full bg-qyellow text-qblack py-3 text-lg font-medium"
   onClick={handleCartClick}
-  disabled = {isOutOfStock}
+  disabled = {isOutOfStock ||tostActive}
 >
   Add to Cart
 </button>
@@ -621,6 +646,7 @@ export default function ProductView({ className, }) {
 <button
   className={`w-full py-3 text-lg font-medium ${wishlist ? "bg-qgray text-qwhite" : "bg-qblack text-white"}`}
   onClick={handleButtonClick}
+  disabled={tostActive}
 >
   {wishlist ? "Remove from Wishlist" : "Add to Wishlist"}
 </button>

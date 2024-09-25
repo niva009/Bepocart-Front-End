@@ -19,9 +19,8 @@ export default function CheckoutPage() {
   const [couponCode, setCouponCode] = useState("");
   const [couponError, setCouponError] = useState(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
-  const [ offer, setOffer] = useState("");
-  const [ profile, setProfile] = useState([]);
-
+  const [offer, setOffer] = useState("");
+  const [profile, setProfile] = useState([]);
 
   const token = localStorage.getItem("token");
   const { id } = useParams();
@@ -35,8 +34,7 @@ export default function CheckoutPage() {
     fetchProfileData();
   }, []);
 
-
-  console.log("seleted address information..:",selectedAddress)
+  console.log("seleted address information..:", selectedAddress);
 
   const fetchProfileData = async () => {
     try {
@@ -52,7 +50,6 @@ export default function CheckoutPage() {
     }
   };
 
-
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
@@ -64,7 +61,7 @@ export default function CheckoutPage() {
         const data = response.data;
         setCartItems(data.data);
         setSubtotal(data.Subtotal ?? 0);
-        setDataSubTotal(data.Subtotal ?? 0)
+        setDataSubTotal(data.Subtotal ?? 0);
         setShipping(data.Shipping ?? 0);
         setDiscount(data.Discount ?? 0);
         setTotal(data.TotalPrice ?? 0);
@@ -100,141 +97,151 @@ export default function CheckoutPage() {
     fetchCouponData();
   }, [token]);
 
-
-
-
   useEffect(() => {
     let calculatedTotal = total + shipping - discount;
-  
+
     if (paymentMethod === "COD" && dataSubTotal) {
       calculatedTotal += 40; // Add ₹40 COD charge for orders below ₹500
     }
-  
+
     setSubtotal(calculatedTotal);
-  }, [total, shipping, discount, paymentMethod,dataSubTotal]);
-
-
-
-
-
-
+  }, [total, shipping, discount, paymentMethod, dataSubTotal]);
 
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
-    
+
     let newShipping = 0;
-  
-    if (dataSubTotal< 500) {
+
+    if (dataSubTotal < 500) {
       newShipping = 60;
-    } 
-    
+    }
+
     setShipping(newShipping);
   };
 
-  
+  useEffect(() => {
+    const offerProduct = cartItems.some((element) => element.has_offer === "Offer Applied");
+    setOffer(offerProduct);
+  }, [cartItems]);
 
-useEffect(() =>{
- 
- const offerProduct = cartItems.some((element) => element.has_offer === "Offer Applied")
- setOffer (offerProduct)
-},[cartItems]);
-
-
-
-function loadScript(src) {
-  return new Promise((resolve) => {
+  function loadScript(src) {
+    return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = src;
       script.onload = () => {
-          resolve(true);
+        resolve(true);
       };
       script.onerror = () => {
-          resolve(false);
+        resolve(false);
       };
       document.body.appendChild(script);
-  });
-}
-
-async function displayRazorpay() {
-  const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
-
-  if (!res) {
-    alert("Razorpay SDK failed to load. Are you online?");
-    return;
+    });
   }
 
-  if (!selectedAddress) {
-    alert("Please select an address");
-    return;
-  }
+  async function displayRazorpay() 
+  {
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
-  const options = {
-    key: `${import.meta.env.VITE_PAYMENT_KEY}`, // Ensure this is correctly loaded from .env
-    amount: (subtotal * 100).toString(), // Ensure subtotal is correctly calculated
-    currency: "INR",
-    name: "Bepocart Pvt Limited.",
-    description: "Thank you for your order",
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
 
-    handler: async function (response) {
-      const data = {
-        razorpayPaymentId: response.razorpay_payment_id,
+    if (!selectedAddress) {
+      alert("Please select an address");
+      return;
+    }
+
+    try {
+      const InitialResponse = await axios.post(
+        `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
+        {
+          coupon_code: couponCode,
+          payment_method: paymentMethod,
+        },
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
+
+      const { razorpay_order_id } = InitialResponse.data; // Access razorpay_order_id here
+
+      const options = {
+        key: `${import.meta.env.VITE_PAYMENT_KEY}`,
+        amount: (subtotal * 100).toString(),
+        currency: "INR",
+        order_id: razorpay_order_id, // Use razorpay_order_id here
+        name: "Bepocart Pvt Limited.",
+        description: "Thank you for your order",
+        handler: async function (response) {
+          const data = {
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          };
+
+          console.log(data, "signature information...");
+
+          try {
+            const result = await axios.post(
+              `${import.meta.env.VITE_PUBLIC_URL}/verify-razorpay-payment/`, // Ensure correct URL
+              {
+                order_id: razorpay_order_id, // Make sure razorpay_order_id is available in this scope
+                coupon_code: couponCode,
+                payment_id: data.razorpayPaymentId,
+                razorpay_signature: data.razorpaySignature,
+                razorpayOrderId: data.razorpayOrderId,
+                total_amount: subtotal,
+                address_id: selectedAddress,
+                coupon_code: couponCode,
+              },
+              {
+                headers: { Authorization: `${token}` },
+              }
+            );
+
+            if (result.status === 200) {
+              alert("Payment successful and order created!");
+              navigate("/order-success");
+            } else {
+              alert("Failed to create order. Please try again.");
+            }
+          } catch (error) {
+            console.log("Error processing payment:", error);
+            alert("Payment was successful, but there was an issue creating the order. Please try again.");
+          }
+        },
+
+        prefill: {
+          name: profile.first_name,
+          email: profile.email,
+          contact: profile.phone,
+        },
       };
 
-      try {
-        // Send the payment details to the backend
-        const result = await axios.post(
-          `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
-          {
-            payment_method: paymentMethod,
-            coupon_code: couponCode,
-            payment_id: data.razorpayPaymentId,
-          },
-          {
-            headers: { 'Authorization': `${token}` },
-          }
-        );
-
-        console.log("result successfull payment..:",result);
-
-        // Check if the backend successfully created the order
-        if (result.status === 200) {
-          alert("Payment successful and order created!");
-          setTimeout(() => {
-            navigate("/order-success");
-          }, 2000);
-        } else {
-          alert("Failed to create order. Please try again.");
-        }
-      } catch (error) {
-        console.log("Error processing payment: ", error);
-        alert("Payment was successful, but there was an issue creating the order. Please try again.");
-      }
-    },
-
-    prefill: {
-      name: profile.first_name,
-      email: profile.email,
-      contact: profile.phone,
-    },
-  };
-
-  const paymentObject = new Razorpay(options);
-  paymentObject.open(); // Opens Razorpay payment UI
-}
-
-
+      const paymentObject = new Razorpay(options);
+      paymentObject.open(); // Opens Razorpay payment UI
+    } catch (error) {
+      console.error("Error creating Razorpay order:", error);
+      alert("Server error. Are you online?");
+    }
+  }
 
   const handlePlaceOrder = async () => {
     if (paymentMethod === "COD") {
       try {
-        await axios.post(`${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`, {
-          payment_method: paymentMethod,
-          coupon_code: couponCode,
-        }, {
-          headers: {
-            'Authorization': `${token}`,
+        await axios.post(
+          `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
+          {
+            payment_method: paymentMethod,
+            coupon_code: couponCode,
           },
-        });
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
         navigate("/order-success");
       } catch (error) {
         console.error("Error creating COD order:", error);
@@ -245,31 +252,28 @@ async function displayRazorpay() {
     }
   };
 
-
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCouponCode(value);
   };
 
-
   const applyCoupon = () => {
-    setCouponError(null); 
+    setCouponError(null);
     if (couponCode !== "") {
       const appliedCoupon = couponData.find(
         (coupon) => coupon.code === couponCode && coupon.status === "Active"
       );
-  
+
       if (appliedCoupon) {
         alert("Coupon code applied successfully");
-        
+
         let discountAmount = 0;
         if (appliedCoupon.coupon_type === "Percentage") {
           discountAmount = (subtotal * parseFloat(appliedCoupon.discount)) / 100;
         } else {
           discountAmount = parseFloat(appliedCoupon.discount);
         }
-  
+
         setCouponDiscount(discountAmount);
         setDiscount((prevDiscount) => prevDiscount + discountAmount);
       } else {
@@ -280,8 +284,6 @@ async function displayRazorpay() {
     }
   };
   
-
-
   return (
     <Layout childrenClasses="pt-0 pb-0">
       <div className="checkout-page-wrapper w-full bg-white pb-[60px]">

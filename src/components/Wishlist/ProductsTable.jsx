@@ -104,7 +104,7 @@ export default function ProductsTable({ className }) {
   
     if (productDetails.product.type === 'single') {
       const colorImage = productDetails.images.find(image => image.color === selectedColor);
-      const productStock = colorImage.stock;
+      const productStock = colorImage?.stock ?? 0;
       return productStock === 0;
     }
   
@@ -122,6 +122,9 @@ export default function ProductsTable({ className }) {
   };
 
 
+  console.log(productDetails,"ksndjk");
+
+
 
   const handleTrackCart = () => {
     if (typeof fbq !== 'function') {
@@ -133,7 +136,7 @@ export default function ProductsTable({ className }) {
       content_ids: [productDetails?.product?.id || ''],
       content_type: 'product_group',
       content_category: productDetails?.product?.category || '', // Ensure this is available
-      value: productDetails?.salePrice || 0, // Ensure this is available
+      value: productDetails?.product.salePrice || 0, // Ensure this is available
       currency: 'INR',
       quantity: 1 // Pass a valid quantity
     });

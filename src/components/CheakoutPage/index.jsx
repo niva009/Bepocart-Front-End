@@ -113,7 +113,7 @@ export default function CheckoutPage() {
     let newShipping = 0;
 
     if (dataSubTotal < 500) {
-      newShipping = 0;
+      newShipping = 60;
     }
 
     setShipping(newShipping);
@@ -160,7 +160,7 @@ export default function CheckoutPage() {
           payment_method: paymentMethod,
         },
         {
-          headers: { Authorization: `${token}` },
+          headers: { 'Authorization': `${token}` },
         }
       );
       const { razorpay_order_id } = InitialResponse.data; // Access razorpay_order_id here

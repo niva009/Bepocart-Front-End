@@ -175,7 +175,11 @@ export default function ProductView({ className, }) {
       }
     } catch (error) {
       if(error?.response?.status === 400){
-        toast.warning(error?.response?.data?.message || "error adding product to cart", { position: "bottom-center" });
+        toast.warning(error?.response?.data?.message || "error adding product to cart", { position: "bottom-center", 
+          onClose:()=> setIsTostActive(false),
+          backgroundColor:"yellow",
+          autoClose:3000,
+         });
       }
        else if (error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 500)) {
         navigate("/login");

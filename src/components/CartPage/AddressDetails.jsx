@@ -29,6 +29,8 @@ const style = {
 const defaultTheme = createTheme();
 
 const validationSchema = yup.object({
+  name: yup.string()
+  .required("name must require"),
   phone: yup
     .string()
     .required('Phone number is required')
@@ -50,6 +52,7 @@ const validationSchema = yup.object({
 export default function AddressDetails({ open, handleClose }) {
   const formik = useFormik({
     initialValues: {
+      NAME:'',
       address: '',
       email: '',
       phone: '',
@@ -109,6 +112,20 @@ export default function AddressDetails({ open, handleClose }) {
                 </Typography>
                 <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
                   <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                      <TextField
+                        required
+                        fullWidth
+                        name="name"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.name}
+                        label="name"
+                        id="name"
+                        error={formik.touched.name && Boolean(formik.errors.name)}
+                        helperText={formik.touched.name && formik.errors.name}
+                      />
+                    </Grid>
                     <Grid item xs={12} sm={6}>
                       <TextField
                         name="phone"

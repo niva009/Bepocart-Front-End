@@ -83,10 +83,11 @@ export default function CardPage({ cart = true }) {
     id:product.id,
     name: product.name,
     currency:"INR",
-    price: product.price,
+    price: product.salePrice,
     quantity:product.quantity,
 
   }))
+
 
 
   const handleTrackCheckout = () => {
@@ -112,7 +113,7 @@ export default function CardPage({ cart = true }) {
       item_brand: "Bepocart",  // Brand or default brand
       item_category: product.mainCategory,   // Main category
       item_category2: product.subcategory_slug,   // Subcategory
-      price: parseFloat(product.price).toFixed(2), // Price (convert to float and fix to 2 decimal places)
+      price: parseFloat(product.salePrice).toFixed(2), // Price (convert to float and fix to 2 decimal places)
       quantity: product.quantity             // Quantity
     }));
   
@@ -213,7 +214,7 @@ export default function CardPage({ cart = true }) {
                             readOnly
                           />
     <span>
-  {`${address.address}, ${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
+  {`${address.name},${address.address}, ${address.email}, ${address.phone}, ${address.pincode}, ${address.city}, ${address.state}`}
 </span>
 
                         </label>

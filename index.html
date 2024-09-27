@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favico.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,13 +31,15 @@
     let phone, email, name;
 
     if(token){
-        const decode = jwt_decode(token)
-        email=decode.email,
-        phone=decode.phone,
-        name=decode.name
-    }else{
-        console.log("token not found");
-    }
+   const decode = jwt_decode(token);
+   console.log(decode);  // Log to see the decoded token
+   email = decode.email;
+   phone = decode.phone;
+   name = decode.name;
+} else {
+   console.log("Token not found");
+}
+
     fbq('init', '1826070831209321',{
      
         em:email,

@@ -18,16 +18,7 @@ export default function CardPage({ cart = true }) {
   const [discount, setDiscount] = useState(0);
   const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
-
-
-
-  useEffect(() => {
-    if (window.fbq) {
-      window.fbq('track', 'PageView', { page: 'CardPage' });
-    }
-  }, []);
-
-
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
 
   const token = localStorage.getItem("token");
@@ -37,9 +28,10 @@ export default function CardPage({ cart = true }) {
     try {
       const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/cart-products/`, {
         headers: {
-          Authorization: `${token}`,
+          'Authorization': `${token}`,
         },
       });
+
       const data = response.data;
       setCartProducts(data.data);
       setSubtotal(data.Subtotal ?? 0);
@@ -51,7 +43,6 @@ export default function CardPage({ cart = true }) {
       console.error('Error fetching cart products:', error);
     }
   };
-
 
 
   const fetchUserAddresses = async () => {
@@ -87,6 +78,73 @@ export default function CardPage({ cart = true }) {
       alert("Please select an address before proceeding to checkout.");
     }
   };
+
+  const content = cartProducts.map(product => ({
+    id:product.id,
+    name: product.name,
+    currency:"INR",
+    price: product.price,
+    quantity:product.quantity,
+
+  }))
+
+
+  const handleTrackCheckout = () => {
+    fbq('track', 'InitiateCheckout', {
+      value: parseFloat(subtotal).toFixed(2), // Ensure it's a number
+      currency: 'INR',
+      content_ids: cartProducts.map(product => product.id.toString()),
+      contents: content,
+      content_type: 'product',
+    });
+  };
+
+  const handleGoogleTrackCheckOut = () => {
+    if (!cartProducts || cartProducts.length === 0) {
+      console.error("No products in the cart to track.");
+      return;
+    }
+  
+    const cartItems = cartProducts.map((product) => ({
+      item_id:   product.id,    // Use SKU or product ID
+      item_name: product.name,               // Product name
+      affiliation: "Bepocart",               // Store or brand name
+      item_brand: "Bepocart",  // Brand or default brand
+      item_category: product.mainCategory,   // Main category
+      item_category2: product.subcategory_slug,   // Subcategory
+      price: parseFloat(product.price).toFixed(2), // Price (convert to float and fix to 2 decimal places)
+      quantity: product.quantity             // Quantity
+    }));
+  
+    window.dataLayer.push({
+      event: "begin_checkout",
+      ecommerce: {
+        currency: "INR",  
+        value: parseFloat(subtotal).toFixed(2),  
+        items: cartItems 
+      }
+    });
+  
+    console.log("Begin Checkout event tracked:", cartItems);
+  };
+  
+
+
+  const checkoutUpdate = () =>{
+    handleTrackCheckout();
+    handleProceedToCheckout();
+    handleGoogleTrackCheckOut();
+  }
+
+  const CheckCart = () => {
+    const isOutOfStock = cartProducts.some(product => product.stock === 0);
+    setIsButtonDisabled(isOutOfStock); // Disable button if any product is out of stock
+  };
+  
+
+  useEffect(() => {
+    CheckCart();
+  }, [cartProducts]);
   
 
   const handleOpen = () => setOpen(true);
@@ -100,7 +158,6 @@ export default function CardPage({ cart = true }) {
   }
 
 
-  console.log("cart at index pageeeee",cartProducts);
 
   const hasFreeProduct = cartProducts.some(cart => cart.discount_product === "normal");
 
@@ -227,11 +284,17 @@ export default function CardPage({ cart = true }) {
                     <p className="text-lg sm:text-xl font-medium text-qred">₹{subtotal.toFixed(2)}</p>
                   </div>
                 </div>
-                <div className="w-full h-[50px] bg-black text-white flex justify-center items-center rounded-md cursor-pointer" onClick={handleProceedToCheckout}>
-                  <span className="text-sm font-semibold">
-                    Proceed to Checkout
-                  </span>
-                </div>
+                <div
+        className={`w-full h-[50px] bg-black text-white flex justify-center items-center rounded-md cursor-pointer ${
+          isButtonDisabled ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
+        onClick={!isButtonDisabled ? checkoutUpdate : null}
+        disabled={isButtonDisabled}
+      >
+        <span className="text-sm font-semibold">
+          Proceed to Checkout
+        </span>
+      </div>
                 
               </div>
             </div>

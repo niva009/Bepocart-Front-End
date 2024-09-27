@@ -13,6 +13,7 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaShare } from 'react-icons/fa'; //
+import{ Helmet} from 'react-helmet'
 
 
 export default function ProductView({ className, }) {
@@ -426,14 +427,40 @@ export default function ProductView({ className, }) {
   }, [product]);
 
 
+  useEffect(() => {
+    if (product && product.length > 0) {
+      const viewItems = product.map((value) => ({
+        item_id: value.id,              // Unique identifier for each item
+        item_name: value.name,          // Name of the product
+        item_brand: "Bepocart",         // Brand of the product
+        item_category: value.categoryName,  // Category of the product
+        price: value.salePrice,         // Sale price of the product
+        quantity: value.quantity        // Quantity of the product
+      }));
+  
+      window.dataLayer.push({
+        event: "view_item",
+        ecommerce: {
+          currency: "INR",                
+          value: product.salePrice,  
+          items: viewItems               
+        }
+      });
+    }
+  }, [product]);
+  
+
+
   const handleButtonClick = () => {
     handleWishlistToggle();
     handleTrackWishlist();
+    handleTrackGoogleWishlist();
   };
 
   const handleCartClick =() =>{
     handleTrackCart();
     AddToCart(); 
+    handleGoogleTrack();
   }
   
 
@@ -452,6 +479,34 @@ export default function ProductView({ className, }) {
     }
   };
 
+  const handleTrackGoogleWishlist = () =>{
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+  
+    window.dataLayer.push({
+      event: "add_to_wishlist",
+      ecommerce: {
+        currency: "INR",
+        value: product?.salePrice,  
+        items: [
+          {
+            item_id: product?.id,          // Safely access product's id
+            item_name: product?.name,      // Safely access product's name
+            affiliation: "Google Merchandise Store",
+            item_brand: "Google",
+            item_category: product?.mainCategory,  // Safely access category
+            item_category2: product?.categoryName, // Safely access sub-category
+            price: product?.salePrice,  // Safely access product's salePrice
+            quantity: quantity  // Assuming quantity is a variable in your component
+          }
+        ]
+      }
+    });
+
+
+  }
+
   const handleTrackCart = () => {
     fbq('track', 'AddToCart', {
       content_name: product.name,
@@ -463,7 +518,63 @@ export default function ProductView({ className, }) {
       quantity: quantity // Make sure to pass a valid quantity
     });
   };
+
+  const handleGoogleTrack = () => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
   
+    // Push the add_to_cart event with ecommerce data
+    window.dataLayer.push({
+      event: "add_to_cart",
+      ecommerce: {
+        currency: "INR",
+        value: product?.salePrice,  
+        items: [
+          {
+            item_id: product?.id,          // Safely access product's id
+            item_name: product?.name,      // Safely access product's name
+            affiliation: "Google Merchandise Store",
+            item_brand: "Google",
+            item_category: product?.mainCategory,  // Safely access category
+            item_category2: product?.categoryName, // Safely access sub-category
+            item_variant: "green",  // Example variant; make this dynamic if needed
+            price: product?.salePrice,  // Safely access product's salePrice
+            quantity: quantity  // Assuming quantity is a variable in your component
+          }
+        ]
+      }
+    });
+  };
+  
+  
+
+  const SchemaMarkup ={
+  
+      "@context":"http://schema.org",
+      "@type":"Product",
+      "@id":"https://www.cyclop.in/products/abus-gamechanger-2-0-helmet", 
+      "name": "Abus Gamechanger 2.0 Helmet",
+      "sku": "40033189802XX_S",
+      "description": "Product Description GAMECHANGER 2.0 - When Every Detail Matters!With this aero helmet, every detail has a big goal: high-end performance. That's why we developed it with professional athletes and manufactured it in Italy, the cradle of cycling. Always ahead of timesSecure the decisive advantage in the head-to-head race against the...",
+      "url": "https:\/\/www.cyclop.in\/products\/abus-gamechanger-2-0-helmet",
+      "image": "https://www.cyclop.in/cdn/shop/files/4003318980275_6d160d8e-2e07-450e-aa95-71b456538092_grande.jpg?v=1717392262",
+      "brand": {
+        "@type": "Brand",
+        "name": "Abus",
+        "url": null
+      },
+      "gtin": "4003318980251",
+      "offers": [{
+        "@type": "Offer",
+        "priceCurrency": "INR",
+        "price": "24890.00",
+        "availability": "InStock",
+        "itemCondition": "http://schema.org/NewCondition",
+        "seller": "Cyclop",
+      }]
+      
+
+  }
   
 
 
@@ -471,6 +582,12 @@ export default function ProductView({ className, }) {
     <div className={`product-view w-full lg:flex justify-between ${className || ""}`}>
       <div data-aos="fade-right" className="lg:w-1/2 xl:mr-[70px] lg:mr-[50px]">
         <div className="w-full">
+        <Helmet>
+        <script type="application/ld+json">
+              {JSON.stringify(SchemaMarkup)}
+            </script>
+    </Helmet>
+
           <div className="w-full h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
           <img src={`${src}`} alt="Product" className="object-contain" />
             <div className="w-[80px] h-[80px] rounded-full bg-qyellow text-qblack flex justify-center items-center text-xl font-medium absolute left-[30px] top-[30px]">

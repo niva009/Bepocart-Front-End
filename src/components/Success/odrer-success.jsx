@@ -3,8 +3,77 @@ import { Link } from 'react-router-dom';
 import PageTitle from "../Helpers/PageTitle";
 import Layout from "../Partials/Layout";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const OrderSuccess = () => {
+  const location = useLocation();
+  const data = location.state;
+
+  console.log("data in order success page", data);
+
+
+
+  const contents = data && data.contents ? data.contents.map(product => ({
+    id: product.id,
+    name: product.name,
+    currency: "INR",
+    price: product.price,
+    quantity: product.quantity,
+  })) : [];
+
+  // Add conditional check before calling 'fbq' function
+  useEffect(() => {
+    if (data && data.value) {
+      fbq('track', 'Purchase', {
+        value: data.value,
+        currency: 'INR',
+        transaction_id: data.transaction_id,
+        content_ids: ['112233', '445566'],
+        contents: contents,
+        num_items: data.num_items,
+        content_type: 'product',
+        coupon_code: data.coupon_code,
+        payment_method: data.payment_method,
+        customer_segment: 'new_customer',
+      });
+    }
+  }, [data, contents]);
+
+  let shipCharge = data.value > 500 ? 60: 0;
+  let deliveryCharge = data.payment_method === "COD" ? 40: 0;
+
+  useEffect(() => {
+    if (data && data.value) {
+      const PurchaseItems = data.contents.map((product) => ({
+        item_id: product.id,
+        item_name: product.name,
+        affiliation: "Bepocart",
+        coupon: product.coupon_code || null, // Add coupon if it exists
+        discount: product.discount || null,  // Add discount dynamically or a default
+        item_brand:"Bepocart", // Use brand dynamically if available
+        price: parseFloat(product.price).toFixed(2),    // Product price formatted as float
+        quantity: product.quantity                      // Quantity of the product
+      }));
+  
+      // Pushing the purchase event to the dataLayer
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: "purchase",
+        ecommerce: {
+          transaction_id: data.transaction_id,  // Transaction ID from data
+          value: parseFloat(data.value).toFixed(2), // Total value of the transaction
+          shipping: shipCharge,         // Shipping cost (can be dynamic)
+          delivery_charge: deliveryCharge,  // Delivery charge (can be dynamic)
+          currency: "INR",        // Currency should be a string
+          coupon: data.coupon_code || null,  // Coupon code if available
+          items: PurchaseItems    // The mapped purchase items
+        }
+      });
+    }
+  }, [data]);
+  
+
   return (
     <Layout>
       <div className="order-success-page-wrapper w-full bg-white pb-[60px]">

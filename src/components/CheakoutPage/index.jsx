@@ -113,7 +113,7 @@ export default function CheckoutPage() {
     let newShipping = 0;
 
     if (dataSubTotal < 500) {
-      newShipping = 60;
+      newShipping = 0;
     }
 
     setShipping(newShipping);
@@ -163,7 +163,6 @@ export default function CheckoutPage() {
           headers: { Authorization: `${token}` },
         }
       );
-
       const { razorpay_order_id } = InitialResponse.data; // Access razorpay_order_id here
 
       const options = {
@@ -196,13 +195,14 @@ export default function CheckoutPage() {
                 coupon_code: couponCode,
               },
               {
-                headers: { Authorization: `${token}` },
+                headers: { 'Authorization': `${token}` },
               }
             );
+            console.log("result", result);
 
             if (result.status === 200) {
               alert("Payment successful and order created!");
-              navigate("/order-success");
+              navigate("/order-success",{state:result.data.success});
             } else {
               alert("Failed to create order. Please try again.");
             }
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     if (paymentMethod === "COD") {
       try {
-        await axios.post(
+       const res =  await axios.post(
           `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
           {
             payment_method: paymentMethod,
@@ -238,11 +238,11 @@ export default function CheckoutPage() {
           },
           {
             headers: {
-              Authorization: `${token}`,
+              'Authorization': `${token}`,
             },
           }
         );
-        navigate("/order-success");
+        navigate("/order-success",{state:res.data.data});
       } catch (error) {
         console.error("Error creating COD order:", error);
         alert("Order creation failed.");

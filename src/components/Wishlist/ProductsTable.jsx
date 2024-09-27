@@ -12,7 +12,7 @@ Modal.setAppElement('#root'); // Set the root element for accessibility
 
 export default function ProductsTable({ className }) {
   const [wishlist, setWishlist] = useState([]);
-  const [productDetails, setProductDetails] = useState(null);
+  const [productDetails, setProductDetails] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -122,6 +122,57 @@ export default function ProductsTable({ className }) {
   };
 
 
+
+  const handleTrackCart = () => {
+    if (typeof fbq !== 'function') {
+      console.error('fbq is not defined');
+      return;
+    }
+    fbq('track', 'AddToCart', {
+      content_name: productDetails?.product?.name || '',
+      content_ids: [productDetails?.product?.id || ''],
+      content_type: 'product_group',
+      content_category: productDetails?.product?.category || '', // Ensure this is available
+      value: productDetails?.salePrice || 0, // Ensure this is available
+      currency: 'INR',
+      quantity: 1 // Pass a valid quantity
+    });
+  };
+
+  const handleGoogleTrack = () => {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+  
+    window.dataLayer.push({
+      event: "add_to_cart",
+      ecommerce: {
+        currency: "INR",
+        value:productDetails?.salePrice || 0,  
+        items: [
+          {
+            item_id: productDetails?.product?.id || '',          
+            item_name: productDetails?.product?.name || '',     
+            affiliation: "Bepocart",
+            item_brand: "Bepocart",
+            item_category: productDetails?.product?.category || '', // Safely access category
+            item_category2: productDetails?.product?.categoryName || '',
+            price: product?.salePrice,  // Safely access product's salePrice
+            quantity: 1  // Assuming quantity is a variable in your component
+          }
+        ]
+      }
+    });
+  }
+
+
+
+  const handleAddtoCart = () => {
+    handleTrackCart();
+    addToCart(productDetails.product.id, selectedWishlistItemId); // Ensure to pass the required parameters
+    handleGoogleTrack();
+  };
+
+
   return (
     <div className={`w-full ${className || ""}`}>
       <ToastContainer />
@@ -224,7 +275,7 @@ export default function ProductsTable({ className }) {
             <div className="flex justify-end space-x-3">
               
             <button
-  onClick={() => addToCart(productDetails.product.id, selectedWishlistItemId)}
+  onClick={handleAddtoCart}
   className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
   disabled={availableStock()} // Disable the button if out of stock for either single or variant products
 >

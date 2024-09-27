@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Navigate, useNavigate , Link} from 'react-router-dom';
+import { useNavigate , Link} from 'react-router-dom';
 
 export default function ProductsTable({ className, onQuantityChange, onProductRemove }) {
   const [cartProducts, setCartProducts] = useState([]);
   const [offer, setOffer] = useState([]);
 
 
-  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_PUBLIC_URL}/offer/`)
@@ -43,7 +42,33 @@ export default function ProductsTable({ className, onQuantityChange, onProductRe
     fetchCartProducts();
   }, []);
 
+  console.log("cart-products..:",cartProducts);
 
+
+
+  const removeGtm = () =>{
+
+window.dataLayer.push({
+
+  event: "remove_from_cart",
+  ecommerce: {
+    currency: "INR",
+    value: cartProducts.salePrice,
+    items: [
+    {
+      item_id: cartProducts.id,
+      item_name: cartProducts.name,
+      item_brand: "Bepocart",
+      item_category: cartProducts.mainCategory,
+      item_category2: cartProducts.subcategory_slug,
+      price: cartProducts.salePrice,
+      quantity: cartProducts.quantity
+    }
+    ]
+  }
+});
+
+  }
 
   const handleDeleteProduct = async (id) => {
     try {
@@ -55,6 +80,7 @@ export default function ProductsTable({ className, onQuantityChange, onProductRe
       });
       setCartProducts(prevProducts => prevProducts.filter(product => product.id !== id));
       onProductRemove();
+      removeGtm();
       
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -125,14 +151,6 @@ export default function ProductsTable({ className, onQuantityChange, onProductRe
 
   const offerCategory = offer[0];
 
-  // console.log("offerCategory-information", offerCategory);
-  // console.log("cart information:", cartProducts);
-
-  // // Log offerCategory details for debugging
-  // console.log("offerCategory:", offerCategory);
-  // console.log("is_active:", offerCategory?.is_active);
-  // console.log("get_option:", offerCategory?.get_option);
-  // console.log("methord", offerCategory?.method);
 
 
 
@@ -186,6 +204,12 @@ export default function ProductsTable({ className, onQuantityChange, onProductRe
                         <span className="absolute left-0 top-full mt-1 hidden group-hover:block bg-white text-black p-2 rounded shadow-lg">
                           {product.name}
                         </span>
+
+                        {product.stock === 0 && (
+                          <p style={{ color: "red", fontWeight: "bolder", fontSize: "16px", marginTop: "10px" }}>
+                            Out of Stock
+                          </p>
+                        )}
 
                       
                       </p>

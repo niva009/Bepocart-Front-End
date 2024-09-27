@@ -10,6 +10,7 @@ import { HiOutlineCash } from "react-icons/hi";
 import { RiSecurePaymentLine } from "react-icons/ri";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { MdLocalShipping } from "react-icons/md";
+
 export default function About() {
   const settings = {
     slidesToShow: 3,

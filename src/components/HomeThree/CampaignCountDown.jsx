@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import CountDown from "../Helpers/CountDown";
 import Playstore from '../../../src/assets/play-store.png';
 import phone from '../../assets/app-screen.png';
-import BackgroundImage from '../../assets/download-app-cover.png';
+import BackgroundImage from '../../assets/download-app-cover.jpg';
 import Iphone from '../../assets/brand-3.png';
 // import CoverImage from '../../assets/sellers-cover-5.png';
 
@@ -139,22 +139,22 @@ export default function CampaignCountDown({
                   </h1>
                   <div className="flex space-x-5 items-center">
                     <div>
-                      <a href="#">
+                      <a href="https://play.google.com/store/apps/details?id=com.bepocart.bepocart">
                         <img
                           width="170"
                           height="69"
                           src={Playstore}
-                          alt=""
+                          alt="bepocart playstore"
                         />
                       </a>
                     </div>
                     <div>
-                      <a href="#">
+                      <a href="https://apps.apple.com/in/app/bepocart/id6642701784">
                         <img
                           width="170"
                           height="69"
                           src={Iphone}
-                          alt=""
+                          alt="bepocart applestore"
                         />
                       </a>
                     </div>

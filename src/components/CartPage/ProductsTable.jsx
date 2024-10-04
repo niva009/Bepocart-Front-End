@@ -46,29 +46,32 @@ export default function ProductsTable({ className, onQuantityChange, onProductRe
 
 
 
-  const removeGtm = () =>{
-
-window.dataLayer.push({
-
-  event: "remove_from_cart",
-  ecommerce: {
-    currency: "INR",
-    value: cartProducts.salePrice,
-    items: [
-    {
-      item_id: cartProducts.id,
-      item_name: cartProducts.name,
-      item_brand: "Bepocart",
-      item_category: cartProducts.mainCategory,
-      item_category2: cartProducts.subcategory_slug,
-      price: cartProducts.salePrice,
-      quantity: cartProducts.quantity
+  const removeGtm = (id) => {
+    const cartProduct = cartProducts.find(product => product.id === id);
+    
+    if (cartProduct) {
+      window.dataLayer.push({
+        event: "remove_from_cart",
+        ecommerce: {
+          currency: "INR",
+          value: cartProduct.salePrice,
+          items: [
+            {
+              item_id: cartProduct.id,
+              item_name: cartProduct.name,
+              item_brand: "Bepocart",
+              item_category: cartProduct.mainCategory,
+              item_category2: cartProduct.subcategory_slug,
+              price: cartProduct.salePrice,
+              quantity: cartProduct.quantity,
+            }
+          ]
+        }
+      });
+    } else {
+      console.error('Product not found in cart');
     }
-    ]
-  }
-});
-
-  }
+  };
 
   const handleDeleteProduct = async (id) => {
     try {
@@ -80,7 +83,7 @@ window.dataLayer.push({
       });
       setCartProducts(prevProducts => prevProducts.filter(product => product.id !== id));
       onProductRemove();
-      removeGtm();
+      removeGtm(id);
       
     } catch (error) {
       console.error('Error deleting product:', error);

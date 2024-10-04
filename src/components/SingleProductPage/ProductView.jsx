@@ -5,8 +5,6 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { FormControl, Select, MenuItem } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import Stack from "@mui/material/Stack";
 import Star from "@mui/icons-material/Star";
 import { FaCircleMinus } from "react-icons/fa6";
 import { FaCirclePlus } from "react-icons/fa6";
@@ -39,11 +37,13 @@ export default function ProductView({ className, }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
+  const currentUrl = window.location.href
 
   useEffect(() => {
     fetchProduct(id);
     stock
   }, [id]);
+
 
 
   
@@ -431,7 +431,32 @@ export default function ProductView({ className, }) {
   }, [product]);
 
 
-  useEffect(() => {
+
+  useEffect(() =>{
+
+    if (product && product.categoryName && product.name && product.id && product.salePrice && window.fbq) {
+dataLayer.push({
+  event: "view_item",  // Event name indicating that the user is viewing their cart
+  ecommerce: {
+    currency: "INR" , // Currency used for the transaction
+    value: product.salePrice,  // Total value of the items in the cart
+    items: [  // Array containing details about each item in the cart
+      {
+        item_id: product.id,  // Unique identifier for the first item
+        item_name: product.name,  // Name of the first item
+        item_brand: "Bepocart",  // Brand of the first item
+        item_category: product?.mainCategory,
+        item_category2: product?.categoryName,
+        price: product.salePrice, 
+      }
+    ]
+  }
+})
+    };
+
+  },[product]);
+
+
     if (product && product.length > 0) {
       const viewItems = product.map((value) => ({
         item_id: value.id,              // Unique identifier for each item
@@ -451,8 +476,8 @@ export default function ProductView({ className, }) {
         }
       });
     }
-  }, [product]);
-  
+
+  console.log("category information...:", product);
 
 
   const handleButtonClick = () => {
@@ -513,11 +538,11 @@ export default function ProductView({ className, }) {
 
   const handleTrackCart = () => {
     fbq('track', 'AddToCart', {
-      content_name: product.name,
-      content_ids: product.id,
+      content_name: product?.name || "name",
+      content_ids: product?.id || "product-id",
       content_type: 'product_group',
-      content_category: product.categoryName, // Add category
-      value: product.salePrice,
+      content_category: product?.categoryName || "category", // Add category
+      value: product?.salePrice || "sale-price" ,
       currency: 'INR',
       quantity: quantity // Make sure to pass a valid quantity
     });
@@ -532,13 +557,13 @@ export default function ProductView({ className, }) {
       event: "add_to_cart",
       ecommerce: {
         currency: "INR",
-        value: product?.salePrice,  
+        value: product?.salePrice || "sale-price",  
         items: [
           {
             item_id: product?.id,          // Safely access product's id
             item_name: product?.name,      // Safely access product's name
-            affiliation: "Google Merchandise Store",
-            item_brand: "Google",
+            affiliation: "Bepocart",
+            item_brand: "Bepocart",
             item_category: product?.mainCategory,  // Safely access category
             item_category2: product?.categoryName, // Safely access sub-category
             item_variant: "green",  // Example variant; make this dynamic if needed
@@ -552,33 +577,31 @@ export default function ProductView({ className, }) {
   
   
 
-  const SchemaMarkup ={
+  // const SchemaMarkup ={
   
-      "@context":"http://schema.org",
-      "@type":"Product",
-      "@id":"https://www.cyclop.in/products/abus-gamechanger-2-0-helmet", 
-      "name": "Abus Gamechanger 2.0 Helmet",
-      "sku": "40033189802XX_S",
-      "description": "Product Description GAMECHANGER 2.0 - When Every Detail Matters!With this aero helmet, every detail has a big goal: high-end performance. That's why we developed it with professional athletes and manufactured it in Italy, the cradle of cycling. Always ahead of timesSecure the decisive advantage in the head-to-head race against the...",
-      "url": "https:\/\/www.cyclop.in\/products\/abus-gamechanger-2-0-helmet",
-      "image": "https://www.cyclop.in/cdn/shop/files/4003318980275_6d160d8e-2e07-450e-aa95-71b456538092_grande.jpg?v=1717392262",
-      "brand": {
-        "@type": "Brand",
-        "name": "Abus",
-        "url": null
-      },
-      "gtin": "4003318980251",
-      "offers": [{
-        "@type": "Offer",
-        "priceCurrency": "INR",
-        "price": "24890.00",
-        "availability": "InStock",
-        "itemCondition": "http://schema.org/NewCondition",
-        "seller": "Cyclop",
-      }]
-      
+  //     "@context":"http://schema.org",
+  //     "@type":"Product",
+  //     "@id": product?.id, 
+  //     "name": product?.name,
+  //     "description": product?.description ||"description",
+  //     "url": currentUrl,
+  //     "image":product?.image || "image",
+  //     "brand": {
+  //       "@type": "Brand",
+  //       "name": product?.name || "name",
+  //       "url": null
+  //     },
+  //     "offers": [{
+  //       "@type": "Offer",
+  //       "priceCurrency": "INR",
+  //       "price": product.salePrice,
+  //       "availability": "InStock",
+  //       "itemCondition": "http://schema.org/NewCondition",
+  //       "seller": "Bepocart",
+  //     }]
+  //     
 
-  }
+  // }
   
 
 
@@ -586,11 +609,11 @@ export default function ProductView({ className, }) {
     <div className={`product-view w-full lg:flex justify-between ${className || ""}`}>
       <div data-aos="fade-right" className="lg:w-1/2 xl:mr-[70px] lg:mr-[50px]">
         <div className="w-full">
-        <Helmet>
+        {/* <Helmet>
         <script type="application/ld+json">
               {JSON.stringify(SchemaMarkup)}
             </script>
-    </Helmet>
+    </Helmet> */}
 
           <div className="w-full h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
           <img src={`${src}`} alt="Product" className="object-contain" />

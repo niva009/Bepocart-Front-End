@@ -36,6 +36,25 @@ export default function Signup() {
     event.preventDefault();
   };
 
+
+  if(token){
+    try{
+  const decode = jwtDecode(token);
+  let SignUpMethord = decode.email? "Google": "Mobile"
+
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+  event: "sign_up",
+  sign_up_method: SignUpMethord,  // Can also be ""Facebook"", ""Email"", etc.
+  user_id: decode.id  // Optionally track the user's ID after login
+});
+    } catch(error){
+      console.log("error decoding token")
+    }
+  }else{
+    console.log("token not found")
+  }
+
   const validationSchema = yup.object({
     first_name: yup.string().required("First name required"),
     last_name: yup.string().required("Last name required"),

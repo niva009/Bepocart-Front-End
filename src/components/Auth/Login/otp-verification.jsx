@@ -30,6 +30,7 @@ const OtpVerification = () => {
         axios.post(`${import.meta.env.VITE_PUBLIC_URL}/verify-otp/`, { otp: otpCode, email })
             .then((res) => {
                 console.log("response from my side", res);
+                DataLayerLogin()
                 navigate(`/new-password/${email}`); // Navigate to the new password page
             })
             .catch((error) => {

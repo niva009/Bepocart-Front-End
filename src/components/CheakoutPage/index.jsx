@@ -21,6 +21,8 @@ export default function CheckoutPage() {
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [offer, setOffer] = useState("");
   const [profile, setProfile] = useState([]);
+  const [ totalPrice, setTotalPrice] = useState(0);
+  const [ isCouponApplied, setIsCouponApplied] = useState(false);
 
   const token = localStorage.getItem("token");
   const { id } = useParams();
@@ -70,6 +72,8 @@ export default function CheckoutPage() {
       }
     };
 
+
+
     const fetchUserAddresses = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_PUBLIC_URL}/get-address/`, {
@@ -99,30 +103,110 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     let calculatedTotal = total + shipping - discount;
-
+  
+    // Add ₹40 COD charge only if paymentMethod is COD and dataSubTotal exists
     if (paymentMethod === "COD" && dataSubTotal) {
-      calculatedTotal += 40; // Add ₹40 COD charge for orders below ₹500
+      calculatedTotal += 40; 
     }
+    setTotalPrice(calculatedTotal);
+  }, [total, dataSubTotal, shipping, paymentMethod, discount]);
+  
 
-    setSubtotal(calculatedTotal);
-  }, [total, shipping, discount, paymentMethod, dataSubTotal]);
-
+  console.log("data-total-price",totalPrice);
+  
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
-
+  
     let newShipping = 0;
-
+  
+    // Only apply extra shipping if the subtotal is less than ₹500
     if (dataSubTotal < 500) {
       newShipping = 60;
     }
-
     setShipping(newShipping);
+
   };
+  
 
   useEffect(() => {
     const offerProduct = cartItems.some((element) => element.has_offer === "Offer Applied");
     setOffer(offerProduct);
   }, [cartItems]);
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCouponCode(value);
+  };
+
+
+
+  const applyCoupon = () => {
+    setCouponError(null); // Reset any existing coupon errors
+    if (couponCode !== "") {
+      const appliedCoupon = couponData.find(
+        (coupon) => coupon.code === couponCode && coupon.status === "Active"
+      );
+  
+      if (appliedCoupon) {
+        alert("Coupon code applied successfully");
+        setIsCouponApplied(true);
+  
+        let discountAmount = 0;
+  
+        // Check if the coupon has specific discount products
+        if (appliedCoupon.discount_product.length > 0) {
+          // Iterate over cartItems to find applicable products
+          cartItems.forEach((item) => {
+            if (appliedCoupon.discount_product.includes(item.product)) {
+              // If coupon type is percentage
+              if (appliedCoupon.coupon_type === "Percentage") {
+                const itemDiscount = (item.salePrice * parseFloat(appliedCoupon.discount)) / 100;
+                discountAmount += itemDiscount;  // Accumulate the discount for applicable items
+              } else if (appliedCoupon.coupon_type === "Fixed Amount") {
+                // For fixed amount, apply the fixed discount to each applicable product
+                discountAmount += Math.min(parseFloat(appliedCoupon.discount), item.salePrice);
+              }
+            }
+          });
+        } else if (appliedCoupon.discount_category.length > 0) {
+          // If no specific products, check by category
+          cartItems.forEach((item) => {
+            if (appliedCoupon.discount_category.includes(item.category)) {
+              // If coupon type is percentage
+              if (appliedCoupon.coupon_type === "Percentage") {
+                const itemDiscount = (item.salePrice * parseFloat(appliedCoupon.discount)) / 100;
+                discountAmount += itemDiscount;  // Accumulate the discount for applicable items
+              } else if (appliedCoupon.coupon_type === "Fixed Amount") {
+                // For fixed amount, apply the fixed discount to each applicable product
+                discountAmount += Math.min(parseFloat(appliedCoupon.discount), item.salePrice);
+              }
+            }
+          });
+        } else {
+          // No specific products or categories are associated with the coupon
+          // Do not apply any discount, set an error message if needed
+          setCouponError("Coupon not applicable to any products in the cart");
+          return; // Exit the function if no applicable products or categories
+        }
+  
+        // Update discount and new subtotal after applying the coupon
+        setCouponDiscount(discountAmount);
+        setDiscount((prevDiscount) => prevDiscount + discountAmount);
+  
+      } else {
+        setCouponError("Invalid or inactive coupon code");
+      }
+    } else {
+      setCouponError("Please enter a coupon code");
+    }
+  };
+  
+  
+  
+console.log("datasub..:",dataSubTotal);
+ console.log("sub-total-inforamation..:",subtotal);
+ console.log("cart-itemsss..:",cartItems);
 
   function loadScript(src) {
     return new Promise((resolve) => {
@@ -138,20 +222,24 @@ export default function CheckoutPage() {
     });
   }
 
-  async function displayRazorpay() 
-  {
-    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
 
+  async function displayRazorpay() {
+    const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
+  
     if (!res) {
       alert("Razorpay SDK failed to load. Are you online?");
       return;
     }
-
+  
     if (!selectedAddress) {
       alert("Please select an address");
       return;
     }
-
+    if (subtotal <= 0) {
+      alert("Invalid subtotal amount.");
+      return;
+    }
+  
     try {
       const InitialResponse = await axios.post(
         `${import.meta.env.VITE_PUBLIC_URL}/order/create/${selectedAddress}/`,
@@ -163,13 +251,14 @@ export default function CheckoutPage() {
           headers: { 'Authorization': `${token}` },
         }
       );
-      const { razorpay_order_id } = InitialResponse.data; // Access razorpay_order_id here
-
+      const { razorpay_order_id } = InitialResponse.data;
+      
+  
       const options = {
         key: `${import.meta.env.VITE_PAYMENT_KEY}`,
-        amount: (subtotal * 100).toString(),
+        amount: (subtotal * 100).toString(), // Make sure you are using the updated subtotal here
         currency: "INR",
-        order_id: razorpay_order_id, // Use razorpay_order_id here
+        order_id: razorpay_order_id,
         name: "Bepocart Pvt Limited.",
         description: "Thank you for your order",
         handler: async function (response) {
@@ -178,31 +267,31 @@ export default function CheckoutPage() {
             razorpayOrderId: response.razorpay_order_id,
             razorpaySignature: response.razorpay_signature,
           };
-
+  
           console.log(data, "signature information...");
-
+  
           try {
             const result = await axios.post(
-              `${import.meta.env.VITE_PUBLIC_URL}/verify-razorpay-payment/`, // Ensure correct URL
+              `${import.meta.env.VITE_PUBLIC_URL}/verify-razorpay-payment/`,
               {
-                order_id: razorpay_order_id, // Make sure razorpay_order_id is available in this scope
+                order_id: razorpay_order_id,
                 coupon_code: couponCode,
                 payment_id: data.razorpayPaymentId,
                 razorpay_signature: data.razorpaySignature,
                 razorpayOrderId: data.razorpayOrderId,
-                total_amount: subtotal,
+                total_amount: subtotal, // Pass the updated subtotal here
                 address_id: selectedAddress,
-                coupon_code: couponCode,
+                shipping_charge : shipping,
               },
               {
                 headers: { 'Authorization': `${token}` },
               }
             );
             console.log("result", result);
-
+  
             if (result.status === 200) {
               alert("Payment successful and order created!");
-              navigate("/order-success",{state:result.data.success});
+              navigate("/order-success", { state: result.data.success });
             } else {
               alert("Failed to create order. Please try again.");
             }
@@ -211,14 +300,13 @@ export default function CheckoutPage() {
             alert("Payment was successful, but there was an issue creating the order. Please try again.");
           }
         },
-
         prefill: {
           name: profile.first_name,
           email: profile.email,
           contact: profile.phone,
         },
       };
-
+  
       const paymentObject = new Razorpay(options);
       paymentObject.open(); // Opens Razorpay payment UI
     } catch (error) {
@@ -226,7 +314,7 @@ export default function CheckoutPage() {
       alert("Server error. Are you online?");
     }
   }
-
+  
   const handlePlaceOrder = async () => {
     if (paymentMethod === "COD") {
       try {
@@ -252,37 +340,10 @@ export default function CheckoutPage() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCouponCode(value);
-  };
 
-  const applyCoupon = () => {
-    setCouponError(null);
-    if (couponCode !== "") {
-      const appliedCoupon = couponData.find(
-        (coupon) => coupon.code === couponCode && coupon.status === "Active"
-      );
-
-      if (appliedCoupon) {
-        alert("Coupon code applied successfully");
-
-        let discountAmount = 0;
-        if (appliedCoupon.coupon_type === "Percentage") {
-          discountAmount = (subtotal * parseFloat(appliedCoupon.discount)) / 100;
-        } else {
-          discountAmount = parseFloat(appliedCoupon.discount);
-        }
-
-        setCouponDiscount(discountAmount);
-        setDiscount((prevDiscount) => prevDiscount + discountAmount);
-      } else {
-        setCouponError("Invalid or inactive coupon code");
-      }
-    } else {
-      setCouponError("Please enter a coupon code");
-    }
-  };
+ 
+  
+  
   
   return (
     <Layout childrenClasses="pt-0 pb-0">
@@ -336,7 +397,7 @@ export default function CheckoutPage() {
                     type="button"
                     className="w-full lg:w-[120px] h-[44px] bg-black text-white rounded-md hover:bg-gray-800 disabled:opacity-50"
                     onClick={applyCoupon}
-                    disabled={offer === true}
+                    disabled={offer === true || isCouponApplied}
                   >
                     <span className="text-lg font-semibold">Apply</span>
                   </button>
@@ -456,7 +517,7 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-[15px] font-medium text-qred">₹{(subtotal).toFixed(2)}
+                      <p className="text-[15px] font-medium text-qred">₹{(totalPrice).toFixed(2)}
                       </p>
                     </div>
                   </div>

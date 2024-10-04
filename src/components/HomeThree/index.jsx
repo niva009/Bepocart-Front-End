@@ -32,6 +32,8 @@ export default function HomeThree() {
       }
     }, []);
 
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {

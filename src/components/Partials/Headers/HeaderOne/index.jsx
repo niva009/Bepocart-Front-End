@@ -6,7 +6,6 @@ import Logo from '../../../../assets/bepocart.png';
 import axios from "axios";
 import { useState, useEffect } from "react";
 import BepoCoin from './../../../../assets/bepocoin.png'
-import { jwtDecode } from "jwt-decode"
 
 
 
@@ -18,34 +17,6 @@ export default function HeaderOne({ className, drawerAction, type = 1 }) {
   const[coinCount, setCoinCount] = useState("");
 
   const token = localStorage.getItem("token")
-
-  if(token){
-    try{
-  const decode = jwtDecode(token);
-  let LoginMethord = decode.email? "Google": "Mobile"
-
-window.dataLayer = window.dataLayer || [];
-window.dataLayer.push({
-  event: "login",
-  login_method: LoginMethord,  // Can also be ""Facebook"", ""Email"", etc.
-  user_id: decode.id  // Optionally track the user's ID after login
-});
-
-window.dataLayer = window.dataLayer || [];
-window.dataLayer.push({
-  event: "sign_up",
-  sign_up_method: LoginMethord,
-  user_id: decode.id,  // Optional: Track user ID
-});
-
-    } catch(error){
-      console.log("error decoding token")
-    }
-
-  }else{
-    console.log("tken not found")
-  }
-
 
   useEffect(() => {
     const fetchWishlistAndCart = async () => {

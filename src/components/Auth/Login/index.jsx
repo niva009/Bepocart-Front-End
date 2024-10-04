@@ -27,6 +27,26 @@ export default function Login() {
     password: yup.string().required("Password is required"),
   });
 
+
+  if(token){
+    try{
+  const decode = jwtDecode(token);
+  let LoginMethord = decode.email? "Google": "Mobile"
+
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({
+  event: "login",
+  login_method: LoginMethord,  // Can also be ""Facebook"", ""Email"", etc.
+  user_id: decode.id  // Optionally track the user's ID after login
+});
+
+    } catch(error){
+      console.log("error decoding token")
+    }
+  }else{
+    console.log("tken not found")
+  }
+
   const handleSubmit = async (values, { setSubmitting }) => {
     setMessage("");
     try {
